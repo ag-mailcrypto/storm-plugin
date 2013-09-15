@@ -1,0 +1,5 @@
+content     storm       chrome/content/
+
+resource    storm       modules/
+
+overlay chrome://messenger/content/messenger.xul chrome://storm/content/myhelloworld.xul

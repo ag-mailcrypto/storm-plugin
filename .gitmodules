@@ -1,0 +1,3 @@
+[submodule "package/modules/subprocess"]
+	path = package/modules/subprocess
+	url = https://github.com/bit/subprocess
