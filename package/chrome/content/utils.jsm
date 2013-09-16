@@ -1,8 +1,13 @@
 Components.utils.import("resource://storm/subprocess/subprocess.jsm");
 Components.utils.import("chrome://storm/content/errors.jsm");
 
-// Global scope overrides
-Object.values = function (obj) {
+this.EXPORTED_SYMBOLS = [];
+
+this.EXPORTED_SYMBOLS.push("objectValues");
+/**
+ * Returns the own properties of an object, as array.
+ */
+function objectValues(obj) {
     var vals = [];
     for(var key in obj) {
         if(obj.hasOwnProperty(key)) {
@@ -11,12 +16,6 @@ Object.values = function (obj) {
     }
     return vals;
 }
-
-if(!('contains' in String.prototype)) {
-    String.prototype.contains = function(str, startIndex) { return -1 !== String.prototype.indexOf.call(this, str, startIndex); };
-}
-
-this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("callGpg");
 /**

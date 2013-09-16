@@ -51,12 +51,12 @@ Key.prototype.debug = function() {
 }
 
 /**
- * Returns whether this key matches a query string, e.g. mail address or
+ * Returns whether this key matches a query regex, e.g. mail address or
  * full name (searches in userIds).
- * @param query     The search string, checked with "contains".
+ * @param regex     The search regex.
  */
-Key.prototype.matches = function(query) {
-    if(this.userIds.some(function(user_id) { return user_id.contains(query); }))
+Key.prototype.matches = function(regex) {
+    if(this.userIds.some(function(user_id) { return user_id.match(regex); }))
         return true;
 
     // TODO: more matching stuff

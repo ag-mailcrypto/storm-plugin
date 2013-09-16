@@ -6,9 +6,7 @@ window.addEventListener("load", function(e) {
 }, false);
 
 function onLoad() {
-    var k = new Keyring();
-    k.loadKeys();
-
-    var pass = promptPassphrase().passphrase;
-    alert(signContent("CONTENT", pass));
+    var keyring = new Keyring();
+    keyring.loadKeys();
+    window.alert(keyring.searchKeys("2bienkow")[0].fingerprint);
 }

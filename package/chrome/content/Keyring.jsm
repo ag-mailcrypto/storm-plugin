@@ -51,7 +51,7 @@ Keyring.prototype.loadKeys = function() {
 }
 
 Keyring.prototype.searchKeys = function(query) {
-    return Object.values(this.keys).filter(function(key) {
+    return objectValues(this.keys).filter(function(key) {
         return key.matches(query);
     });
 }
