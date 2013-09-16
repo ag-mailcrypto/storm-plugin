@@ -1,8 +1,24 @@
 Components.utils.import("resource://storm/subprocess/subprocess.jsm");
+Components.utils.import("chrome://storm/content/errors.jsm");
 
-var EXPORTED_SYMBOLS = [];
+// Global scope overrides
+Object.values = function (obj) {
+    var vals = [];
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key)) {
+            vals.push(obj[key]);
+        }
+    }
+    return vals;
+}
 
-EXPORTED_SYMBOLS.push("callGpg");
+if(!('contains' in String.prototype)) {
+    String.prototype.contains = function(str, startIndex) { return -1 !== String.prototype.indexOf.call(this, str, startIndex); };
+}
+
+this.EXPORTED_SYMBOLS = [];
+
+this.EXPORTED_SYMBOLS.push("callGpg");
 /**
  * Calls the GPG executable with the specified arguments.
  * @param arguments:    An array of command line argument strings
@@ -13,7 +29,6 @@ function callGpg(arguments, input) {
 
     var result = {
         output: "",
-        error: "",
         code: null
     };
 
@@ -27,11 +42,9 @@ function callGpg(arguments, input) {
         environment: ["GPG_AGENT_INFO="+GPG_AGENT_INFO],
         //workdir: "/tmp",
         stdin: input,
+        stderr: gpgStderrThrow,
         stdout: function(data) {
             result.output += data;
-        },
-        stderr: function(data) {
-            result.error += data;
         },
         done: function(data) {
             result.code = data.exitCode;
@@ -39,10 +52,14 @@ function callGpg(arguments, input) {
         mergeStderr: false
     }).wait();
 
-    return result;
+    if(result.code != 0) {
+        throw new GPGError(result.output);
+    }
+
+    return result.output;
 }
 
-EXPORTED_SYMBOLS.push("signContent");
+this.EXPORTED_SYMBOLS.push("signContent");
 function signContent(content, passphrase) {
     var args = [];
     args.push("--clearsign");
@@ -53,21 +70,20 @@ function signContent(content, passphrase) {
     //args.push("-u");
     //args.push("signing-key-id");
 
-    var r = callGpg(args, function(pipe) {
+    return callGpg(args, function(pipe) {
         pipe.write(passphrase + "\n");
         pipe.write(content);
         pipe.close();
     });
-    return r.error ? r.error : r.output;
 }
 
-EXPORTED_SYMBOLS.push("promptPassphrase");
-function promptPassphrase(window) {
+this.EXPORTED_SYMBOLS.push("promptPassphrase");
+function promptPassphrase() {
     var result = {};
     var check = {};
 
     var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-    success = promptService.promptPassword(window, "Passphrase Required",
+    success = promptService.promptPassword(this.window, "Passphrase Required",
         "Please enter the passphrase for your secret key", result, "Remember my passphrase", check);
     return {
         passphrase: result.value,
