@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<overlay id="enigmailMessengerOverlay"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/javascript" src="chrome://storm/content/browserOverlay.js"/>
+    
+  <menubar id="mail-menubar">
+    <menu id="menu_Storm" 
+      insertafter="messageMenu"
+      accesskey="c"
+      label="Mail-Encryption">
+      <menupopup>
+        <menuitem id="Storm_OpenTab"
+             accesskey="O"
+             oncommand="openStormConfiguration()"
+             label="Options" />
+        <menuitem id="Storm_ClearPassphrase"
+             accesskey="c"
+             label="Clear Passphrase" />
+        <menuitem id="Storm_About"
+             accesskey="a"
+             label="About Storm 0.1" />
+
+      </menupopup>
+    </menu>
+  </menubar>  
+  
+    
+</overlay>
