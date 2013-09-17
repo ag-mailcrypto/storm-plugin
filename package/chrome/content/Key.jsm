@@ -9,7 +9,7 @@ this.EXPORTED_SYMBOLS.push("Key");
  */
 function Key(id) {
     this.id = id.toUpperCase();
-    this.subKeys = {}; // id->subkey
+    this.subKeys = [];
     this.userIDs = [];
 
     this.recordType     = null;
@@ -23,6 +23,41 @@ function Key(id) {
     this.signatureClass = null;
     this.capabilities   = null;
     this.fingerprint    = null;
+}
+
+/**
+ * Returns whether this key is trusted.
+ */
+Key.prototype.isOwnerTrusted = function() {
+    return this.ownerTrust == "m"
+        || this.ownerTrust == "f"
+        || this.ownerTrust == "u";
+}
+
+/**
+ * Returns one of the following:
+ * - trusted:   The key is signed by the user with at least marginal trust
+ *              or the owner trust is set to at least marginal.
+ * - untrusted: The key is valid, but neither signed nor with owner trust.
+ * - invalid:   The key cannot be used, i.e. is invalid, disabled or revoked.
+ */
+Key.prototype.getValidity = function() {
+    switch(this.validity) {
+        case "m":
+        case "f":
+        case "u":
+            return "trusted";
+        case "n":
+        case "o":
+        case "-":
+        case "q":
+            return this.isOwnerTrusted() ? "trusted" : "untrusted";
+        case "i":
+        case "d":
+        case "r":
+        case "e":
+            return "invalid";
+    }
 }
 
 /**
@@ -45,8 +80,9 @@ Key.prototype.isPrivate = function() {
  */
 Key.prototype.debug = function() {
     var x = this.id + " " + this.userIDs.join(";");
-    for(var i in this.subKeys)
-        x += "\n\nSubkey: " + this.subKeys[i].debug();
+    this.subKeys.forEach(function(subkey) {
+        x += "\n\nSubkey: " + subkey.debug();
+    });
     return x;
 }
 
@@ -56,7 +92,10 @@ Key.prototype.debug = function() {
  * @param regex     The search regex.
  */
 Key.prototype.matches = function(regex) {
-    return (this.userIDs.some(function(user_id) { return user_id.matches(regex); }));
+    return this.id.match(regex)
+        || this.userIDs.some(function(user_id) { return user_id.matches(regex); })
+        || this.subKeys.some(function(sub_key) { return sub_key.matches(regex); })
+        ;
     // TODO: Maybe other data matching?
 }
 

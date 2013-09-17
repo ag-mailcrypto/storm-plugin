@@ -30,7 +30,7 @@ UserID.prototype.parse = function() {
  * @param regex     The search regex.
  */
 UserID.prototype.matches = function(regex) {
-    return raw.match(regex);
+    return this.raw.match(regex);
 }
 
 /**

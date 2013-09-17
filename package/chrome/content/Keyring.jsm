@@ -24,6 +24,7 @@ Keyring.prototype.loadKeys = function() {
     var key = null;
     var keyring = this;
 
+    this.keys = [];
     lines.forEach(function(line) {
         if(line == "") return;
         var values = line.split(":");
@@ -34,7 +35,7 @@ Keyring.prototype.loadKeys = function() {
             expiration = values[6],
             user_id = values[9];
 
-        if(record_type == "pub") {
+        if(record_type == "pub" || record_type == "sec") {
             if(key) {
                 keyring.keys.push(key);
             }
@@ -43,7 +44,7 @@ Keyring.prototype.loadKeys = function() {
             if(!key) return; // we need to find a public key first
 
             if(record_type == "sub") {
-                key.subKeys[key_id] = createKeyFromValues(values);
+                key.subKeys.push(createKeyFromValues(values));
             } else if(record_type == "uid") {
                 key.userIDs.push(new UserID(user_id));
             } else if(record_type == "fpr") {
@@ -55,11 +56,13 @@ Keyring.prototype.loadKeys = function() {
 
 Keyring.prototype.getKey = function(id) {
     id = id.toUpperCase();
-    if(id.startswith("0X")) id = id.substr(2);
+    if(id.startsWith("0X")) id = id.substr(2);
+
+    if(id.length != 8 && id.length != 16) return null;
 
     return this.keys.filter(function(key) {
-        return key.key_id == key_id;
-    }).first();
+        return key.id.endsWith(id);
+    })[0];
 }
 
 Keyring.prototype.searchKeys = function(query) {

@@ -56,3 +56,16 @@
 .key-list > richlistitem image {
     transform: scale(0.6);
 }
+
+toolbarbutton > .toolbarbutton-text {
+    display: inline-block;
+    padding-top: 2px;
+}
+
+.key-list > richlistitem.invalid {
+    background-color: #FBB;
+}
+
+.key-list > richlistitem.untrusted {
+    background-color: #EEE;
+}

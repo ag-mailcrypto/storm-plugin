@@ -45,10 +45,15 @@
                             <tabpanel flex="1">
                                 <vbox flex="1">
                                     <hbox id="filter" align="baseline">
-                                        <label value="Filter" />
-                                        <textbox id="filter-string" />
+                                        <textbox placeholder="Type to search..." id="filter-string" size="50"/>
+                                        <toolbarbutton id="header-utils-btn" type="checkbox" label="Advanced" />
                                         <spacer flex="1" />
-                                        <button icon="refresh" id="button-list-refresh"/>
+                                        <toolbarbutton image="chrome://storm/skin/icons/arrow/arrow-right.png" type="checkbox" label="Reload" />
+                                    </hbox>
+                                    <hbox id="advanced-filter" align="baseline" hidden="true">
+                                        <checkbox id="advanced-show-trusted" label="Show trusted keys" checked="true"/>
+                                        <checkbox id="advanced-show-untrusted" label="Show untrusted keys" checked="true"/>
+                                        <checkbox id="advanced-show-invalid" label="Show invalid keys" />
                                     </hbox>
 
                                     <richlistbox id="key-list" flex="1" class="key-list" />
