@@ -2,8 +2,8 @@ Components.utils.import("chrome://storm/content/global.jsm");
 Components.utils.import("chrome://storm/content/utils.jsm");
 
 $(window).load(function() {
-    $("#tabs").select(function() {
-        $("#view").attr("selectedIndex", ($(this).find(":selected").attr("data-deck-index")));
+    $("#categories").select(function() {
+        $("#view-port").attr("selectedIndex", ($(this).find(":selected").attr("data-deck-index")));
     });
 
     $("button-list-refresh").click(buildKeyList);
@@ -18,15 +18,12 @@ $(window).load(function() {
 
 });
 
-function toggleKeyRow(newState) {
-}
-
 function fromTemplate(id, new_id) {
     return $("#"+id).clone().attr("id", new_id);
 }
 
 function buildKeyList() {
-    var listbox = $("#others-key-list");
+    var listbox = $("#key-list");
     var keys = storm.keyring.keys;
 
     listbox.children().remove();

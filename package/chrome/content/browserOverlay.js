@@ -15,9 +15,8 @@ function openStormConfiguration() {
   if (tabmail) {
     tabmail.openTab("contentTab", {contentPage: url});
   } else {
-    openContentTab("chrome://messenger/content/preferencesTab.xul");
-    window.openDialog("chrome://storm/content/", "preferencesTab.xul",
-                      "chrome,dialog=no,all", null,
+    window.openDialog("chrome://messenger/content/", "_blank",
+                      "chrome,dialog=no,toolbar=off,personalbar=off", null,
                       { tabType: "contentTab",
                         tabParams: {contentPage: url} });
   }

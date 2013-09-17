@@ -9,25 +9,33 @@
     <script type="application/javascript" src="chrome://storm/content/jquery-2.0.3.min.js"></script>
     <script type="application/javascript" src="chrome://storm/content/preferencesTab.js"/>
 
-    <page flex="1">
-        <hbox flex="1">
-            <richlistbox id="tabs">
-                <richlistitem id="tab-keys-others" data-deck-index="0">
-                    <label value="Other's keys" flex="1" />
-                </richlistitem>
-                <richlistitem id="tab-settings" data-deck-index="1">
-                    <label value="Configuration" flex="1" />
-                </richlistitem>
-                <richlistitem id="tab-keys-own" data-deck-index="2">
-                    <label value="My keys" flex="1" />
-                </richlistitem>
-                <richlistitem id="tab-expert-settings" data-deck-index="3">
-                    <label value="Expert settings" flex="1" />
-                </richlistitem>
-            </richlistbox>
+    <hbox flex="1">
+        <richlistbox id="categories">
+            <richlistitem class="category" id="tab-keys-others" data-deck-index="0">
+                <image class="category-icon" src="chrome://storm/skin/icons/32/key.png"/>
+                <label class="category-name" value="Other's keys" flex="1" />
+                <label anonid="badge" class="category-badge" value="0" />
+            </richlistitem>
+            <richlistitem class="category" id="tab-keys-own" data-deck-index="0">
+                <image class="category-icon" src="chrome://storm/skin/icons/32/lock_unlocked.png"/>
+                <label class="category-name" value="My keys" flex="1" />
+                <label anonid="badge" class="category-badge" value="0" />
+            </richlistitem>
+            <richlistitem class="category" id="tab-settings" data-deck-index="2">
+                <image class="category-icon" src="chrome://storm/skin/icons/32/settings.png"/>
+                <label class="category-name" value="Configuration" flex="1" />
+                <label anonid="badge" class="category-badge" value="0" />
+            </richlistitem>
+            <richlistitem class="category" id="tab-expert-settings" data-deck-index="3">
+                <image class="category-icon" src="chrome://storm/skin/icons/32/bullet_error.png"/>
+                <label class="category-name" value="Expert settings" flex="1" />
+                <label anonid="badge" class="category-badge" value="0" />
+            </richlistitem>
+        </richlistbox>
 
-            <deck id="view" flex="1" selectedIndex="0">
-                <box flex="1">
+        <box id="view-port-container" flex="1" class="main-content">
+            <deck id="view-port" flex="1" selectedIndex="0">
+                <box flex="1" class="view-pane">
                     <tabbox flex="1">
                         <tabs>
                             <tab label="Key list" />
@@ -36,14 +44,14 @@
                         <tabpanels flex="1">
                             <tabpanel flex="1">
                                 <vbox flex="1">
-                                    <hbox id="others-filter" align="baseline">
+                                    <hbox id="filter" align="baseline">
                                         <label value="Filter" />
                                         <textbox id="filter-string" />
                                         <spacer flex="1" />
                                         <button icon="refresh" id="button-list-refresh"/>
                                     </hbox>
 
-                                    <richlistbox id="others-key-list" flex="1" class="key-list" />
+                                    <richlistbox id="key-list" flex="1" class="key-list" />
                                 </vbox>
                             </tabpanel>
                             <tabpanel flex="1">
@@ -52,30 +60,28 @@
                         </tabpanels>
                     </tabbox>
                 </box>
-                <box flex="1">
+                <box class="view-pane" flex="1">
                     <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
                         <label value="Configuration" />
                     </vbox>
                 </box>
-                <box flex="1">
-                    <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
-                        <label value="My keys" />
-                    </vbox>
-                </box>
-                <box flex="1">
+                <box class="view-pane" flex="1">
                     <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
                         <label value="Experts" />
                     </vbox>
                 </box>
             </deck>
-        </hbox>
-    </page>
+        </box>
+    </hbox>
 
     <box class="template-area">
 
         <richlistitem id="key-list-template">
             <vbox flex="1">
                 <hbox flex="1">
+                    <image src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
+                    <image src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
+
                     <label class="realname" name="primary-uid-name" />
                     <label class="comment" name="primary-uid-comment" />
                     <spacer flex="1" />

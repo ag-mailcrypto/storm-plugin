@@ -1,65 +1,20 @@
+@import url("chrome://global/skin/global.css");
+@import url("chrome://global/skin/inContentUI.css");
+@import url("chrome://mozapps/skin/extensions/extensions.css");
+
 .template-area { display: none; }
 
 #storm-preferences {
     padding: 2em;
 }
 
-#tabs {
-    font-size: 1em;
-    background-color: inherit;
-    margin-right: 0px;
-}
-
-#tabs, #tabs > scrollbox {
-    -moz-appearance: none;
-}
-
-#tabs > scrollbox {
-    width: 18em;
-    padding-top: 5em;
-}
-
-#tabs richlistitem {
-    font-size: 1.5em;
-    margin: 1px;
-    padding: 10px;
-    text-shadow: 1px 1px 0px #EEE;
-}
-
-#tabs richlistitem[selected] {
-    color: #000;
-    margin: 0;
-    background-color: #FFF;
-    border: 1px solid #999;
-    border-radius: 5px 0 0 5px;
-    border-right: 0;
-    text-shadow: none;
-}
-
-#tabs richlistitem label {
-}
-
-#view > * {
-    border: 1px solid #999;
-    border-radius: 5px;
-    background: #FFF;
+#view-port-container {
     padding: 20px;
 }
 
-#view tabbox, #view tabpanel {
-    outline-color: -moz-Dialog;
-    border-color: -moz-Dialog;
-    background: -moz-Dialog;
-}
-
-#view tabs {
-    background: white;
-}
-
-#view tabs tab {
+#view-port-container tab {
     padding: 5px 10px;
 }
-
 
 .key-list > richlistitem {
     border-bottom: 1px solid #CCC;
@@ -77,9 +32,9 @@
 }
 
 .key-list .key-details {
-/*    background: -moz-Dialog;
-    border-top: 1px solid #CCC; */
-    padding: 5px 20px 10px 20px;
+/*    background: -moz-Dialog; */
+    border-top: 1px dotted #CCC;
+    padding: 5px;
 }
 
 .bold,
@@ -96,3 +51,8 @@
 
 .key-list > richlistitem .show-when-open { display: none; }
 .key-list > richlistitem[selected] .show-when-open { display: block; }
+.key-list > richlistitem[selected] .show-when-closed { display: none; }
+
+.key-list > richlistitem image {
+    transform: scale(0.6);
+}

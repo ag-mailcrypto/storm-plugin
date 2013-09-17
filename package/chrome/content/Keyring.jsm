@@ -17,12 +17,15 @@ function Keyring() {
 }
 
 Keyring.prototype.loadKeys = function() {
-    var lines = callGpg(["--list-keys", "--with-colons", "--with-fingerprint"]).split("\n");
+    var publicKeys = callGpg(["--list-public-keys", "--with-colons", "--with-sig-list", "--with-fingerprint"]);
+    var secretKeys = callGpg(["--list-secret-keys", "--with-colons", "--with-sig-list", "--with-fingerprint"]);
+    var lines = (publicKeys + "\n" + secretKeys).split("\n");
 
     var key = null;
     var keyring = this;
 
     lines.forEach(function(line) {
+        if(line == "") return;
         var values = line.split(":");
 
         var record_type = values[0],
