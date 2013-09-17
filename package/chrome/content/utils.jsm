@@ -89,4 +89,3 @@ function promptPassphrase() {
         remember: check.value
     }
 }
-

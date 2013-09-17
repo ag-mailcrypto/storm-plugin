@@ -1,5 +1,5 @@
 function openStormConfiguration() {
-  let url = "about:addons";
+  let url = "chrome://storm/content/preferencesTab.xul";
   let tabmail = document.getElementById("tabmail");
   if (!tabmail) {
     // Try opening new tabs in an existing 3pane window
@@ -15,7 +15,8 @@ function openStormConfiguration() {
   if (tabmail) {
     tabmail.openTab("contentTab", {contentPage: url});
   } else {
-    window.openDialog("chrome://messenger/content/", "_blank",
+    openContentTab("chrome://messenger/content/preferencesTab.xul");
+    window.openDialog("chrome://storm/content/", "preferencesTab.xul",
                       "chrome,dialog=no,all", null,
                       { tabType: "contentTab",
                         tabParams: {contentPage: url} });

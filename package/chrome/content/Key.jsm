@@ -5,12 +5,12 @@ this.EXPORTED_SYMBOLS = [];
 this.EXPORTED_SYMBOLS.push("Key");
 /**
  * A Key object represents one record in the keyring, either a public key,
- * private key, or subkey. It can have multiple userIds and subKeys.
+ * private key, or subkey. It can have multiple userIDs and subKeys.
  */
 function Key(id) {
-    this.id = id;
+    this.id = id.toUpperCase();
     this.subKeys = {}; // id->subkey
-    this.userIds = [];
+    this.userIDs = [];
 
     this.recordType     = null;
     this.validity       = null;
@@ -44,7 +44,7 @@ Key.prototype.isPrivate = function() {
  * Returns a debug output string with information about the key.
  */
 Key.prototype.debug = function() {
-    var x = this.id + " " + this.userIds.join(";");
+    var x = this.id + " " + this.userIDs.join(";");
     for(var i in this.subKeys)
         x += "\n\nSubkey: " + this.subKeys[i].debug();
     return x;
@@ -52,17 +52,27 @@ Key.prototype.debug = function() {
 
 /**
  * Returns whether this key matches a query regex, e.g. mail address or
- * full name (searches in userIds).
+ * full name (searches in userIDs).
  * @param regex     The search regex.
  */
 Key.prototype.matches = function(regex) {
-    if(this.userIds.some(function(user_id) { return user_id.match(regex); }))
-        return true;
-
-    // TODO: more matching stuff
-    return false;
+    return (this.userIDs.some(function(user_id) { return user_id.matches(regex); }));
+    // TODO: Maybe other data matching?
 }
 
+/**
+ * Returns the primary uid.
+ */
+Key.prototype.getPrimaryUserId = function() {
+    return this.userIDs && this.userIDs[0] || "No User-Id <none@example.com>";
+}
+
+/**
+ * Returns the primary uid.
+ */
+Key.prototype.formatID = function() {
+    return "0x" + this.id.substr(-8);
+}
 
 // ============================================================================
 // Helper functions

@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/preferencesTab.css" type="text/css"?>
+
+<window id="storm-preferences" title="Encryption Settings"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/javascript" src="chrome://storm/content/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/preferencesTab.js"/>
+
+    <page flex="1">
+        <hbox flex="1">
+            <richlistbox id="tabs">
+                <richlistitem id="tab-keys-others" data-deck-index="0">
+                    <label value="Other's keys" flex="1" />
+                </richlistitem>
+                <richlistitem id="tab-settings" data-deck-index="1">
+                    <label value="Configuration" flex="1" />
+                </richlistitem>
+                <richlistitem id="tab-keys-own" data-deck-index="2">
+                    <label value="My keys" flex="1" />
+                </richlistitem>
+                <richlistitem id="tab-expert-settings" data-deck-index="3">
+                    <label value="Expert settings" flex="1" />
+                </richlistitem>
+            </richlistbox>
+
+            <deck id="view" flex="1" selectedIndex="0">
+                <box flex="1">
+                    <tabbox flex="1">
+                        <tabs>
+                            <tab label="Key list" />
+                            <tab label="Accounts" />
+                        </tabs>
+                        <tabpanels flex="1">
+                            <tabpanel flex="1">
+                                <vbox flex="1">
+                                    <hbox id="others-filter" align="baseline">
+                                        <label value="Filter" />
+                                        <textbox id="filter-string" />
+                                        <spacer flex="1" />
+                                        <button icon="refresh" id="button-list-refresh"/>
+                                    </hbox>
+
+                                    <richlistbox id="others-key-list" flex="1" class="key-list" />
+                                </vbox>
+                            </tabpanel>
+                            <tabpanel flex="1">
+                                <label value="TODO" />
+                            </tabpanel>
+                        </tabpanels>
+                    </tabbox>
+                </box>
+                <box flex="1">
+                    <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
+                        <label value="Configuration" />
+                    </vbox>
+                </box>
+                <box flex="1">
+                    <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
+                        <label value="My keys" />
+                    </vbox>
+                </box>
+                <box flex="1">
+                    <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
+                        <label value="Experts" />
+                    </vbox>
+                </box>
+            </deck>
+        </hbox>
+    </page>
+
+    <box class="template-area">
+
+        <richlistitem id="key-list-template">
+            <vbox flex="1">
+                <hbox flex="1">
+                    <label class="realname" name="primary-uid-name" />
+                    <label class="comment" name="primary-uid-comment" />
+                    <spacer flex="1" />
+                    <label class="key-id" name="key-id" />
+                </hbox>
+                <hbox class="key-details show-when-open" flex="1">
+                    <vbox>
+                        <label value="Identities" class="bold" />
+                        <vbox name="user-ids"></vbox>
+                    </vbox>
+                </hbox>
+            </vbox>
+        </richlistitem>
+
+        <hbox id="user-id" class="user-id" flex="1">
+            <label class="email" name="email" />
+            <!-- <label class="realname" name="name" /> -->
+            <label class="comment" name="comment" />
+        </hbox>
+
+    </box>
+
+</window>

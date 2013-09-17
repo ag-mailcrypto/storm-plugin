@@ -1,12 +1,7 @@
+Components.utils.import("chrome://storm/content/global.jsm");
 Components.utils.import("chrome://storm/content/utils.jsm");
-Components.utils.import("chrome://storm/content/Keyring.jsm");
 
-window.addEventListener("load", function(e) {
-    onLoad();
+window.addEventListener("load", function() {
+    storm.keyring.loadKeys();
+    //window.alert(storm.keyring.searchKeys("2bienkow")[0].fingerprint);
 }, false);
-
-function onLoad() {
-    var keyring = new Keyring();
-    keyring.loadKeys();
-    window.alert(keyring.searchKeys("2bienkow")[0].fingerprint);
-}

@@ -8,6 +8,7 @@
     <em:name>Storm Mailcrypto</em:name>
     <em:version>0.1</em:version>
     <em:creator>ag-mailcrypto</em:creator>
+    <em:optionsURL>chrome://storm/content/preferencesTab.xul</em:optionsURL>
 
     <em:targetApplication>
       <Description>

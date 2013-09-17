@@ -3,9 +3,4 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/javascript" src="chrome://storm/content/overlay.js"/>
-
-    <statusbar id="status-bar">
-        <statusbarpanel id="my-panel" label="Date"/>
-    </statusbar>
-
 </overlay>
