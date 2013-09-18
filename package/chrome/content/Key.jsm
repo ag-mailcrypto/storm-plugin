@@ -51,6 +51,7 @@ Key.prototype.getValidity = function() {
         case "o":
         case "-":
         case "q":
+        case "":
             return this.isOwnerTrusted() ? "trusted" : "untrusted";
         case "i":
         case "d":
