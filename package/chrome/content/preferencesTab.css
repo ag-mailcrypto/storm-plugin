@@ -47,11 +47,11 @@
     color: #777;
 }
 
-.key-list > richlistitem .show-when-open { display: none; }
-.key-list > richlistitem[selected] .show-when-open { display: block; }
-.key-list > richlistitem[selected] .show-when-closed { display: none; }
+.key-list > .key .show-when-open { visibility: collapse; }
+.key-list > .key[selected] .show-when-open { visibility: visible; }
+.key-list > .key[selected] .show-when-closed { visibility: collapse; }
 
-.key-list > richlistitem image {
+.key-list .key image {
     transform: scale(0.6);
 }
 
@@ -60,10 +60,42 @@ toolbarbutton > .toolbarbutton-text {
     padding-top: 2px;
 }
 
-.key-list > richlistitem.trusted   { background: #F9F9F9; }
-.key-list > richlistitem.invalid   { background-color: #FBB; }
-.key-list > richlistitem.untrusted { background-color: #EEE; }
-.key-list > richlistitem.trusted   .show-when-open.key-details {background: #FFF; }
-.key-list > richlistitem.untrusted .show-when-open.key-details {background: #FAFAFA; }
-.key-list > richlistitem.invalid   .show-when-open.key-details {background: #FDD; }
+.key-list > .key.trusted   { background: #F9F9F9; }
+.key-list > .key.invalid   { background: #FBB; }
+.key-list > .key.untrusted { background: #EEE; }
+.key-list > .key.trusted   .show-when-open.key-details {background: #FFF; }
+.key-list > .key.untrusted .show-when-open.key-details {background: #FAFAFA; }
+.key-list > .key.invalid   .show-when-open.key-details {background: #FDD; }
 
+.key-list .key .key-info {
+    list-style-image: url("chrome://storm/skin/icons/32/key.png");
+    width: 16px;
+    height: 16px;
+    transform: scale(1.3);
+}
+
+.key-list .key .show-when-untrusted, .key-list .key .show-when-trusted, .key-list .key .show-when-invalid { visibility: collapse; }
+.key-list .key.untrusted .show-when-untrusted { visibility: visible; }
+.key-list .key.trusted .show-when-trusted { visibility: visible; }
+.key-list .key.invalid .show-when-invalid { visibility: visible; }
+
+.key-list .key.trusted .key-info {
+    list-style-image: url("chrome://storm/skin/icons/32/key_accept.png");
+}
+
+.key-list .key.untrusted .key-info {
+    list-style-image: url("chrome://storm/skin/icons/32/key_error.png");
+}
+
+.key-list .key.invalid .key-info {
+    list-style-image: url("chrome://storm/skin/icons/32/key_deny.png");
+}
+
+.settings-page {
+    max-width: 40em;
+}
+
+.section {
+    font-weight: bold;
+    margin-top: 1em;
+}

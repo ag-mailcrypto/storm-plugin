@@ -5,7 +5,11 @@ var keyListCache = [];
 
 $(window).load(function() {
     $("#categories").select(function() {
-        $("#view-port").attr("selectedIndex", ($(this).find(":selected").attr("data-deck-index")));
+        var selected = $(this).find(":selected");
+        $("#view-port").attr("selectedIndex", (selected.attr("data-deck-index")));
+        if(selected.attr("id").startsWith("tab-keys-")) {
+            buildKeyList();
+        }
     });
 
     $("button-list-refresh").click(function() {
@@ -17,16 +21,19 @@ $(window).load(function() {
     $("#filter-string").on("input", filterKeyList);
     $("#advanced-filter checkbox").on("CheckboxStateChange", filterKeyList);
 
-    //$("button.toggle").on("click", toggleKeyRow);
-    // var list = $("others-key-list");
-    // list.select(function(event) {
-    //     list.find("richlistitem:selected").removeClass("open").removeClass("closed").addClass(newState);
-    // });
-    // list.on("unselect", function() {alert("hi");});
     $("#header-utils-btn").click(function() {
         $("#advanced-filter").attr("hidden", !$(this).attr("checked"));
-    })
+    });
 
+    $(".key-sign-button").on("click", function() {
+        var id = $(this).parents(".key").attr("data-keyid");
+        storm.ui.dialogSignKey(window, storm.keyring.getKey(id));
+    });
+
+    $(".key-details-button").on("click", function() {
+        var id = $(this).parents(".key").attr("data-keyid");
+        storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
+    });
 });
 
 function fromTemplate(id, new_id) {
@@ -37,7 +44,9 @@ function buildKeyList() {
     var listbox = $("#key-list");
     listbox.children().remove();
 
-    keyListCache = storm.keyring.keys.slice(0);
+    var privateKeys = $("#tab-keys-own:selected").size() > 0;
+
+    keyListCache = storm.keyring.keys.filter(function(key) { return key.isPrivate() == privateKeys; }).slice(0);
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName > b.getPrimaryUserId().realName; });
     keyListCache.forEach(function(key, index) {
         var item = fromTemplate("key-list-template", "key-" + index);
@@ -60,7 +69,7 @@ function buildKeyList() {
             useridsListbox.append(uid);
         });
 
-        item.find('[name="key-id"]').attr("value", key.validity + "|" + key.ownerTrust + " " + key.formatID());
+        item.find('[name="key-id"]').attr("value", key.formatID());
         listbox.append(item);
     });
 

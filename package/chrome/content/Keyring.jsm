@@ -17,8 +17,11 @@ function Keyring() {
 }
 
 Keyring.prototype.loadKeys = function() {
-    var publicKeys = callGpg(["--list-public-keys", "--with-colons", "--with-sig-list", "--with-fingerprint"]);
-    var secretKeys = callGpg(["--list-secret-keys", "--with-colons", "--with-sig-list", "--with-fingerprint"]);
+    // INFO: "--list-sigs" list public keys, just like
+    //       "--list-public-keys --with-sigs-list",
+    //       but it is backwards compatible
+    var publicKeys = callGpg(["--list-sigs",        "--with-colons", "--with-fingerprint"]);
+    var secretKeys = callGpg(["--list-secret-keys", "--with-colons", "--with-fingerprint"]);
     var lines = (publicKeys + "\n" + secretKeys).split("\n");
 
     var key = null;

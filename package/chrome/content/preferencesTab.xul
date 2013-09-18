@@ -21,12 +21,12 @@
                 <label class="category-name" value="My keys" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
             </richlistitem>
-            <richlistitem class="category" id="tab-settings" data-deck-index="2">
+            <richlistitem class="category" id="tab-settings" data-deck-index="1">
                 <image class="category-icon" src="chrome://storm/skin/icons/32/settings.png"/>
                 <label class="category-name" value="Configuration" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
             </richlistitem>
-            <richlistitem class="category" id="tab-expert-settings" data-deck-index="3">
+            <richlistitem class="category" id="tab-expert-settings" data-deck-index="2">
                 <image class="category-icon" src="chrome://storm/skin/icons/32/bullet_error.png"/>
                 <label class="category-name" value="Expert settings" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
@@ -66,13 +66,53 @@
                     </tabbox>
                 </box>
                 <box class="view-pane" flex="1">
-                    <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
-                        <label value="Configuration" />
+                    <vbox flex="1" class="view-pane" tabindex="0">
+
+                        <prefpane id="pane2">
+                            <preferences>
+                                <preference id="pref2" name="pref.nam2" type="bool"/>
+                            </preferences>
+
+                            <checkbox id="check2" preference="pref2" label="checkbox" />
+                        </prefpane>
+
                     </vbox>
                 </box>
                 <box class="view-pane" flex="1">
-                    <vbox id="others-key-list" flex="1" class="view-pane" tabindex="0">
-                        <label value="Experts" />
+                    <vbox flex="1" class="view-pane" tabindex="0">
+
+                        <prefpane id="export-preferences" flex="1">
+                            <preferences>
+                                <preference id="pref-gpg-path" name="storm.gpg.path" type="string"/>
+                            </preferences>
+
+                            <vbox class="settings-page">
+                                <label value="OpenPGP binary path" class="section" />
+                                <textbox id="textbox-gpg-path" preference="pref-gpg-path" label="checkbox" />
+
+                                <label value="no" class="section" />
+                                <textbox id="textbox-gpg-path" preference="pref-gpg-path" label="checkbox" />
+
+                                <label value="Trust settings" class="section" />
+                                <hbox align="baseline">
+                                    <label value="Upon receiving a signed mail from an unknown key" />
+                                    <menulist>
+                                        <menupopup>
+                                            <menuitem label="do not trust without checking" value="1"/>
+                                            <menuitem label="ask for validation" value="1"/>
+                                            <menuitem label="set marginal owner trust" value="1"/>
+                                            <menuitem label="set full owner trust" value="2"/>
+                                            <menuitem label="sign with marginal trust" value="2"/>
+                                            <menuitem label="sign with full trust" value="2"/>
+                                        </menupopup>
+                                    </menulist>
+                                </hbox>
+
+                                <label value="Sending mail" class="section" />
+                                <checkbox label="Encrypt for SENT folder" />
+                            </vbox>
+                        </prefpane>
+
                     </vbox>
                 </box>
             </deck>
@@ -81,7 +121,7 @@
 
     <box class="template-area">
 
-        <richlistitem id="key-list-template">
+        <richlistitem id="key-list-template" class="key">
             <vbox flex="1">
                 <hbox flex="1">
                     <image src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
@@ -89,13 +129,26 @@
 
                     <label class="realname" name="primary-uid-name" />
                     <label class="comment" name="primary-uid-comment" />
+
                     <spacer flex="1" />
+
                     <label class="key-id" name="key-id" />
+                    <image class="key-info show-when-trusted" tooltiptext="Verified (trusted) key" />
+                    <image class="key-info show-when-untrusted" tooltiptext="Unverified (untrusted) key" />
+                    <image class="key-info show-when-invalid" tooltiptext="Invalid key" />
                 </hbox>
-                <hbox class="key-details show-when-open" flex="1">
+                <hbox class="key-details show-when-open">
                     <vbox>
                         <label value="Identities" class="bold" />
                         <vbox name="user-ids"></vbox>
+                    </vbox>
+                    <spacer flex="1" />
+                    <vbox>
+                        <spacer flex="1" />
+                        <hbox>
+                            <button label="Verify and sign" class="show-when-untrusted key-sign-button"/>
+                            <button label="Details" class="key-details-button" />
+                        </hbox>
                     </vbox>
                 </hbox>
             </vbox>
