@@ -47,7 +47,7 @@ function buildKeyList() {
     var privateKeys = $("#tab-keys-own:selected").size() > 0;
 
     keyListCache = storm.keyring.keys.filter(function(key) { return key.isPrivate() == privateKeys; }).slice(0);
-    keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName > b.getPrimaryUserId().realName; });
+    keyListCache.sort(function(a, b) { return a.getPrimaryUserId().raw.toLowerCase() > b.getPrimaryUserId().raw.toLowerCase(); });
     keyListCache.forEach(function(key, index) {
         var item = fromTemplate("key-list-template", "key-" + index);
         item.attr("data-keyid", key.id);
@@ -55,7 +55,7 @@ function buildKeyList() {
         item.addClass(key.getValidity());
 
         var primaryUid = key.getPrimaryUserId();
-        item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
+        item.find('[name="primary-uid-name"]').attr("value", primaryUid.raw);
         item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
 
         var useridsListbox = item.find('[name="user-ids"]');
