@@ -1,4 +1,5 @@
 Components.utils.import("chrome://storm/content/utils.jsm");
+Components.utils.import("chrome://storm/content/UserID.jsm");
 
 this.EXPORTED_SYMBOLS = [];
 
@@ -137,6 +138,9 @@ function createKeyFromValues(values) {
     //key.userId          = values[9];
     //key.signatureClass  = values[10];
     key.capabilities    = values[11];
+
+    // ???
+    if(values[9]) key.userIDs.push(new UserID(values[9]));
 
     return key;
 }
