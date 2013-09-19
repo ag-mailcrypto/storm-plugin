@@ -139,7 +139,8 @@ function createKeyFromValues(values) {
     //key.signatureClass  = values[10];
     key.capabilities    = values[11];
 
-    // ???
+    // Create primary user-id entry, which is contained in the "pub" record in
+    // some gpg versions when there is only one uid available
     if(values[9]) key.userIDs.push(new UserID(values[9]));
 
     return key;
