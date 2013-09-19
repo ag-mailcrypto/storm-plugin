@@ -9,6 +9,12 @@ function UserID(raw) {
     this.email      = null;
     this.comment    = null;
     this.parsed = this.parse();
+    
+    // If the raw userId could not be splitted, 
+    // use it as the realname anyway
+    if (!this.parsed) {
+      this.realName = raw;
+    }
 }
 
 /**
