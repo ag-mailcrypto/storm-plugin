@@ -7,12 +7,24 @@ var storm = {};
 storm.keyring = new Keyring();
 storm.keyring.loadKeys();
 
-storm.ui = {};
+storm.ui = {
+    dialogSignKey: function(window, key) {
+        window.alert("Signing key of " + key.getPrimaryUserId().realName);
+    },
 
-storm.ui.dialogSignKey = function(window, key) {
-    window.alert("Signing key of " + key.getPrimaryUserId().realName);
-}
+    dialogKeyDetails: function(window, key) {
+        window.alert("Details for key of " + key.getPrimaryUserId().realName);
+    },
 
-storm.ui.dialogKeyDetails = function(window, key) {
-    window.alert("Details for key of " + key.getPrimaryUserId().realName);
-}
+    dialogKeyserver: function(window) {
+        window.alert("Keyserver dialog");
+    },
+
+    dialogImportKeyFromFile: function(window) {
+        window.alert("Import key from file");
+    },
+
+    dialogImportKeyFromClipboard: function(window) {
+        window.alert("Import key from clipboard");
+    },
+};

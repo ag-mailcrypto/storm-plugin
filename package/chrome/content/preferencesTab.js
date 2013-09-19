@@ -21,7 +21,7 @@ $(window).load(function() {
     $("#filter-string").on("input", filterKeyList);
     $("#advanced-filter checkbox").on("CheckboxStateChange", filterKeyList);
 
-    $("#header-utils-btn").click(function() {
+    $("#advanced-filter-button").click(function() {
         $("#advanced-filter").attr("hidden", !$(this).attr("checked"));
     });
 
@@ -33,6 +33,18 @@ $(window).load(function() {
     $(".key-details-button").on("click", function() {
         var id = $(this).parents(".key").attr("data-keyid");
         storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
+    });
+
+    $("#import-keyserver").on("command", function() {
+        storm.ui.dialogKeyserver(window);
+    });
+
+    $("#import-file").on("command", function() {
+        storm.ui.dialogImportKeyFromFile(window);
+    });
+
+    $("#import-clipboard").on("command", function() {
+        storm.ui.dialogImportKeyFromClipboard(window);
     });
 });
 

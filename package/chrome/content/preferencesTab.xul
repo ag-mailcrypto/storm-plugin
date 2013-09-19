@@ -44,11 +44,18 @@
                         <tabpanels flex="1">
                             <tabpanel flex="1">
                                 <vbox flex="1">
-                                    <hbox id="filter" align="baseline">
-                                        <textbox placeholder="Type to search..." id="filter-string" size="50"/>
-                                        <toolbarbutton id="header-utils-btn" type="checkbox" label="Advanced" />
+                                    <hbox id="filter" align="baseline" class="toolbar">
+                                        <textbox placeholder="Type to search..." id="filter-string" flex="2"/>
+                                        <toolbarbutton id="advanced-filter-button" image="moz-icon://stock/gtk-preferences?size=menu" type="checkbox" label="Advanced" />
                                         <spacer flex="1" />
-                                        <toolbarbutton image="chrome://storm/skin/icons/arrow/arrow-right.png" type="checkbox" label="Reload" />
+                                        <button type="menu" label="Import key" icon="add">
+                                            <menupopup>
+                                                <menuitem id="import-keyserver" label="From internet (keyserver)" image="moz-icon://stock/gtk-network?size=menu" class="menuitem-iconic" />
+                                                <menuitem id="import-file"      label="From file" image="moz-icon://stock/gtk-directory?size=menu" class="menuitem-iconic" />
+                                                <menuitem id="import-clipboard" label="From clipboard" image="moz-icon://stock/gtk-paste?size=menu" class="menuitem-iconic" />
+                                            </menupopup>
+                                        </button>
+                                        <button icon="refresh" label="Reload" />
                                     </hbox>
                                     <hbox id="advanced-filter" align="baseline" hidden="true">
                                         <checkbox id="advanced-show-trusted" label="Show trusted keys" checked="true"/>
@@ -101,9 +108,7 @@
                                             <menuitem label="do not trust without checking" value="1"/>
                                             <menuitem label="ask for validation" value="1"/>
                                             <menuitem label="set marginal owner trust" value="1"/>
-                                            <menuitem label="set full owner trust" value="2"/>
                                             <menuitem label="sign with marginal trust" value="2"/>
-                                            <menuitem label="sign with full trust" value="2"/>
                                         </menupopup>
                                     </menulist>
                                 </hbox>
