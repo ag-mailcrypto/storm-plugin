@@ -4,10 +4,10 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/javascript" src="chrome://storm/content/browserOverlay.js"/>
-    
+  <script type="application/javascript" src="chrome://storm/content/ui/browserOverlay.js"/>
+
   <menubar id="mail-menubar">
-    <menu id="menu_Storm" 
+    <menu id="menu_Storm"
       insertafter="messageMenu"
       accesskey="c"
       label="Mail-Encryption">
@@ -25,7 +25,7 @@
 
       </menupopup>
     </menu>
-  </menubar>  
-  
-    
+  </menubar>
+
+
 </overlay>

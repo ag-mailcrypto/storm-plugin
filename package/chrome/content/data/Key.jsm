@@ -1,5 +1,5 @@
-Components.utils.import("chrome://storm/content/utils.jsm");
-Components.utils.import("chrome://storm/content/UserID.jsm");
+Components.utils.import("chrome://storm/content/lib/utils.jsm");
+Components.utils.import("chrome://storm/content/data/UserID.jsm");
 
 this.EXPORTED_SYMBOLS = [];
 

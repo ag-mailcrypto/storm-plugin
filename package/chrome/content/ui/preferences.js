@@ -1,5 +1,5 @@
-Components.utils.import("chrome://storm/content/global.jsm");
-Components.utils.import("chrome://storm/content/utils.jsm");
+Components.utils.import("chrome://storm/content/lib/global.jsm");
+Components.utils.import("chrome://storm/content/lib/utils.jsm");
 
 var keyListCache = [];
 

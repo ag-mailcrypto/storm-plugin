@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://storm/content/preferencesTab.css" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/preferences.css" type="text/css"?>
 
 <window id="storm-preferences" title="Encryption Settings"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <script type="application/javascript" src="chrome://storm/content/jquery-2.0.3.min.js"></script>
-    <script type="application/javascript" src="chrome://storm/content/preferencesTab.js"/>
+    <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/ui/preferences.js"/>
 
     <hbox flex="1">
         <richlistbox id="categories">

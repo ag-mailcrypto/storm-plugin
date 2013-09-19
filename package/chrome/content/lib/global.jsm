@@ -1,4 +1,4 @@
-Components.utils.import("chrome://storm/content/Keyring.jsm");
+Components.utils.import("chrome://storm/content/data/Keyring.jsm");
 
 this.EXPORTED_SYMBOLS = ["storm"];
 var storm = {};

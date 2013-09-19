@@ -1,5 +1,5 @@
 Components.utils.import("resource://storm/subprocess/subprocess.jsm");
-Components.utils.import("chrome://storm/content/errors.jsm");
+Components.utils.import("chrome://storm/content/lib/errors.jsm");
 
 this.EXPORTED_SYMBOLS = [];
 
@@ -87,5 +87,37 @@ function promptPassphrase() {
     return {
         passphrase: result.value,
         remember: check.value
+    }
+}
+
+this.EXPORTED_SYMBOLS.push("openBrowserTab");
+/**
+ * Opens the URL in a browser tab.
+ * @param window    The current window object.
+ * @param url       The URL to open.
+ * @param features  The window features, defaults to:
+ *                  "chrome,dialog=no,toolbar=off,personalbar=off"
+ */
+function openBrowserTab(window, url, features) {
+    features = features || "chrome,dialog=no,toolbar=off,personalbar=off";
+
+    let tabmail = window.document.getElementById("tabmail");
+    if (!tabmail) {
+        // Try opening new tabs in an existing 3pane window
+        let mail3PaneWindow = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+            .getService(Components.interfaces.nsIWindowMediator)
+            .getMostRecentWindow("mail:3pane");
+        if (mail3PaneWindow) {
+            tabmail = mail3PaneWindow.document.getElementById("tabmail");
+            mail3PaneWindow.focus();
+        }
+    }
+
+    if (tabmail) {
+        tabmail.openTab("contentTab", {contentPage: url});
+    } else {
+        window.openDialog("chrome://messenger/content/", "_blank",
+            features, null, { tabType: "contentTab", tabParams: {contentPage: url}}
+        );
     }
 }

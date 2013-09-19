@@ -3,4 +3,4 @@ resource    storm       modules/
 
 skin        storm       core         chrome/skin/
 
-overlay chrome://messenger/content/messenger.xul chrome://storm/content/browserOverlay.xul
+overlay chrome://messenger/content/messenger.xul chrome://storm/content/ui/browserOverlay.xul

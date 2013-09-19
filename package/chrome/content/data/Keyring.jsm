@@ -1,6 +1,6 @@
-Components.utils.import("chrome://storm/content/utils.jsm");
-Components.utils.import("chrome://storm/content/Key.jsm");
-Components.utils.import("chrome://storm/content/UserID.jsm");
+Components.utils.import("chrome://storm/content/lib/utils.jsm");
+Components.utils.import("chrome://storm/content/data/Key.jsm");
+Components.utils.import("chrome://storm/content/data/UserID.jsm");
 
 // TODO
 // - Signatures
