@@ -15,7 +15,7 @@ $(window).load(function() {
 
     $("button-list-refresh").click(function() {
         storm.keyring.loadKeys();
-        buildKeyList()
+        buildKeyList();
     });
     buildKeyList();
 
@@ -74,6 +74,8 @@ function buildKeyList() {
         var primaryUid = key.getPrimaryUserId();
         item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
         item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
+
+        item.find('.key-info').attr("tooltiptext", "Trust Status: " + key.getValidityString());
 
         var useridsListbox = item.find('[name="user-ids"]');
         useridsListbox.children().remove();

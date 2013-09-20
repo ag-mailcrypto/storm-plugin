@@ -63,6 +63,35 @@ Key.prototype.getValidity = function() {
 }
 
 /**
+ * Returns a describing Status String for the Key Validity
+ */
+Key.prototype.getValidityString = function() {
+    switch(this.validity) {
+        case "m":
+            return "marginal valid";
+        case "f":
+            return "fully valid";
+        case "u":
+            return "ultimately valid";
+        case "n":
+            return "valid";
+        case "o":
+        case "q":
+        case "-":
+            return "untrusted";
+        case "i":
+            return "invalid";
+        case "d":
+            return "disabled";
+        case "r":
+            return "revoked";
+        case "e":
+            return "expired";
+        return "unknown";
+    }
+}
+
+/**
  * Returns whether this key is of primary type, i.e. public ("pub") or
  * private/secret ("sec") record.
  */

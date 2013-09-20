@@ -129,8 +129,8 @@
         <richlistitem id="key-list-template" class="key">
             <vbox flex="1">
                 <hbox flex="1" class="key-header">
-                    <image src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
-                    <image src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
+                    <image width="16" src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
+                    <image width="16" src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
 
                     <label class="realname" name="primary-uid-name" />
                     <label class="comment" name="primary-uid-comment" />
@@ -138,9 +138,7 @@
                     <spacer flex="1" />
 
                     <label class="key-id" name="key-id" />
-                    <image class="key-info show-when-trusted" tooltiptext="Verified (trusted) key" />
-                    <image class="key-info show-when-untrusted" tooltiptext="Unverified (untrusted) key" />
-                    <image class="key-info show-when-invalid" tooltiptext="Invalid key" />
+                    <image class="key-info" />
                 </hbox>
                 <hbox class="key-details show-when-open">
                     <vbox>
