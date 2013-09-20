@@ -28,12 +28,12 @@ $(window).load(function() {
         $("#advanced-filter").attr("hidden", !$(this).attr("checked"));
     });
 
-    $(".key-sign-button").on("command", function() {
+    $("#key-list").on("command", ".key-sign-button", function() {
         var id = $(this).parents(".key").attr("data-keyid");
         storm.ui.dialogSignKey(window, storm.keyring.getKey(id));
     });
 
-    $(".key-details-button").on("command", function() {
+    $("#key-list").on("command", ".key-details-button", function() {
         var id = $(this).parents(".key").attr("data-keyid");
         storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
     });
