@@ -9,8 +9,8 @@ function UserID(raw) {
     this.email      = null;
     this.comment    = null;
     this.parsed = this.parse();
-    
-    // If the raw userId could not be splitted, 
+
+    // If the raw userId could not be splitted,
     // use it as the realname anyway
     if (!this.parsed) {
       this.realName = raw;
@@ -25,7 +25,7 @@ UserID.prototype.parse = function() {
     var m = REGEX_UID.exec(this.raw);
     if(!m) return false;
     this.realName   = m[1];
-    this.comment    = m[2];
+    this.comment    = m[2] || "";
     this.email      = m[3];
     return true;
 }
@@ -44,4 +44,11 @@ UserID.prototype.matches = function(regex) {
  */
 UserID.prototype.toString = function() {
     return this.raw;
+}
+
+/**
+ * Returns the comment without the brackets.
+ */
+UserID.prototype.getPureComment = function() {
+    return this.comment.replace(/^\((.*)\)$/, "$1");
 }

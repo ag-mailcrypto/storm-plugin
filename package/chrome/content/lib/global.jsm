@@ -13,7 +13,7 @@ storm.ui = {
     },
 
     dialogKeyDetails: function(window, key) {
-        window.alert("Details for key of " + key.getPrimaryUserId().realName);
+        window.openDialog("chrome://storm/content/ui/keyDetails.xul", "", "", key);
     },
 
     dialogKeyserver: function(window) {

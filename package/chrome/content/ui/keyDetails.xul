@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/preferences.css" type="text/css"?>
+
+<window id="storm-key-details" title="Key Details" width="600"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/ui/keyDetails.js"/>
+
+    <vbox>
+        <!--
+            * type
+            * validity
+            * owner trust
+            * expiration date
+            * fingerprint
+            * user IDs
+            * signatures
+            * subkeys
+        -->
+        <label value="This key is valid for the following addresses:" class="section" />
+        <tree rows="5" id="user-ids">
+            <treecols>
+                <treecol id="realName" label="Real name" flex="1"/>
+                <treecol id="address" label="Mail address" flex="1"/>
+                <treecol id="comment" label="Comment" flex="1"/>
+            </treecols>
+            <treechildren id="user-ids-children" />
+        </tree>
+    </vbox>
+    <hbox>
+        <spacer flex="1" />
+        <button id="button-close" icon="yes" label="Close" />
+    </hbox>
+</window>

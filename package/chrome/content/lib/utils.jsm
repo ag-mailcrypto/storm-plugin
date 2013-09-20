@@ -121,3 +121,29 @@ function openBrowserTab(window, url, features) {
         );
     }
 }
+
+this.EXPORTED_SYMBOLS.push("addTreeItem");
+/**
+ * Inserts an item in a tree.
+ */
+function addTreeItem(document, treechildrenId, columns) {
+    var item = document.createElement("treeitem");
+    var row = document.createElement("treerow");
+    item.appendChild(row);
+
+    columns.forEach(function(column) {
+        var cell = document.createElement("treecell");
+        cell.setAttribute("label", column);
+        row.appendChild(cell);
+    });
+
+    document.getElementById(treechildrenId).appendChild(item);
+}
+
+this.EXPORTED_SYMBOLS.push("escapeRegExp");
+/**
+ * Escapes a string for use in regular expressions.
+ */
+function escapeRegExp(str) {
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}

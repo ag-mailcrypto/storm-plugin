@@ -21,16 +21,16 @@ $(window).load(function() {
     $("#filter-string").on("input", filterKeyList);
     $("#advanced-filter checkbox").on("CheckboxStateChange", filterKeyList);
 
-    $("#advanced-filter-button").click(function() {
+    $("#advanced-filter-button").on("command", function() {
         $("#advanced-filter").attr("hidden", !$(this).attr("checked"));
     });
 
-    $(".key-sign-button").on("click", function() {
+    $(".key-sign-button").on("command", function() {
         var id = $(this).parents(".key").attr("data-keyid");
         storm.ui.dialogSignKey(window, storm.keyring.getKey(id));
     });
 
-    $(".key-details-button").on("click", function() {
+    $(".key-details-button").on("command", function() {
         var id = $(this).parents(".key").attr("data-keyid");
         storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
     });
@@ -90,6 +90,7 @@ function buildKeyList() {
 
 function filterKeyList() {
     var query = $("#filter-string").val();
+    query = new RegExp(escapeRegExp(query), "i"); // i = case insensitive
 
     keyListCache.forEach(function(key, index) {
         var visible = true;

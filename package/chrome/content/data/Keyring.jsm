@@ -52,6 +52,8 @@ Keyring.prototype.loadKeys = function() {
                 key.userIDs.push(new UserID(user_id));
             } else if(record_type == "fpr") {
                 key.fingerprint = user_id; // field 10 is used for fingerprint here
+            } else if(record_type == "sig") {
+
             }
         }
     });
