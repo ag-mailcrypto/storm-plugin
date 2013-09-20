@@ -4,7 +4,7 @@
 <?xml-stylesheet href="chrome://storm/content/ui/preferences.css" type="text/css"?>
 
 <window id="storm-preferences" title="Encryption Settings"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
     <script type="application/javascript" src="chrome://storm/content/ui/preferences.js"/>
@@ -131,7 +131,12 @@
                 <hbox flex="1" class="key-header">
                     <image width="16" src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
                     <image width="16" src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
-                    <image class="key-info" />
+                    <vbox>
+                        <spacer flex="1" />
+                        <image class="key-info" />
+                        <spacer flex="1" />
+                    </vbox>
+
 
                     <label class="realname" name="primary-uid-name" />
                     <label class="comment" name="primary-uid-comment" />

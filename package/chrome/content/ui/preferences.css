@@ -76,12 +76,12 @@ toolbarbutton > .toolbarbutton-text {
 .key-list > .key.untrusted .show-when-open.key-details {background: #FFF; }
 .key-list > .key.invalid   .show-when-open.key-details {background: #FFF; }
 
-.key-list .key .key-info {
+/*.key-list .key .key-info {
     list-style-image: url("chrome://storm/skin/icons/32/key.png");
     width: 16px;
     height: 16px;
     transform: scale(1.3);
-}
+}*/
 
 .key-list .key .show-when-untrusted, .key-list .key .show-when-trusted, .key-list .key .show-when-invalid { visibility: collapse; }
 .key-list .key.untrusted .show-when-untrusted { visibility: visible; }
@@ -89,15 +89,15 @@ toolbarbutton > .toolbarbutton-text {
 .key-list .key.invalid .show-when-invalid { visibility: visible; }
 
 .key-list .key.trusted .key-info {
-    list-style-image: url("chrome://storm/skin/icons/32/key_accept.png");
+    list-style-image: url("chrome://storm/skin/icons/trust-level/trusted.png");
 }
 
 .key-list .key.untrusted .key-info {
-    list-style-image: url("chrome://storm/skin/icons/32/key_error.png");
+    list-style-image: url("chrome://storm/skin/icons/trust-level/untrusted.png");
 }
 
 .key-list .key.invalid .key-info {
-    list-style-image: url("chrome://storm/skin/icons/32/key_deny.png");
+    list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png");
 }
 
 .settings-page {
