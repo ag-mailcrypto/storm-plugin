@@ -11,6 +11,8 @@ $(window).load(function() {
         if(selected.attr("id").startsWith("tab-keys-")) {
             buildKeyList();
         }
+        
+        $("#view-port .view-pane").attr("class", "view-pane").addClass(selected.attr("id"));
     });
 
     $("#button-list-refresh").click(function() {
@@ -46,6 +48,10 @@ $(window).load(function() {
 
     $("#import-clipboard").on("command", function() {
         storm.ui.dialogImportKeyFromClipboard(window);
+    });
+
+    $(".create-key").on("command", function() {
+        storm.ui.dialogCreateKey(window);
     });
 
     $("#key-list").on("click", ".key-header", function() {

@@ -48,13 +48,14 @@
                                         <textbox placeholder="Type to search..." id="filter-string" flex="2"/>
                                         <toolbarbutton id="advanced-filter-button" image="moz-icon://stock/gtk-preferences?size=menu" type="checkbox" label="Advanced" />
                                         <spacer flex="1" />
-                                        <button type="menu" label="Import key" icon="add">
+                                        <button class="import-menu" type="menu" label="Import key" icon="add">
                                             <menupopup>
                                                 <menuitem id="import-keyserver" label="From internet (keyserver)" image="moz-icon://stock/gtk-network?size=menu" class="menuitem-iconic" />
                                                 <menuitem id="import-file"      label="From file" image="moz-icon://stock/gtk-directory?size=menu" class="menuitem-iconic" />
                                                 <menuitem id="import-clipboard" label="From clipboard" image="moz-icon://stock/gtk-paste?size=menu" class="menuitem-iconic" />
                                             </menupopup>
                                         </button>
+                                        <button class="create-key" type="button" label="Create key" icon="add"></button>
                                         <button icon="refresh" label="Reload" />
                                     </hbox>
                                     <hbox id="advanced-filter" align="baseline" hidden="true">

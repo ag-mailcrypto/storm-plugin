@@ -22,4 +22,9 @@ storm.ui = {
     dialogImportKeyFromClipboard: function(window) {
         window.alert("Import key from clipboard");
     },
+    
+    dialogCreateKey: function(window) {
+        window.alert("Create key dialog");
+    },
+
 };
