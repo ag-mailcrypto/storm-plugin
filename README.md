@@ -1,3 +1,16 @@
-# Howto test
+# STORM Thunderbird Plugin
 
-Go to `~/.thunderbird/*.default/extensions` and create symlink to the package directory: `ln -s /path/to/repository/package/ storm@ag-mailcrypto.informatik.uni-hamburg.de`.
+**S**ecurity **T**rough **O**pporunistic enc**R**yption **M**ethods
+
+This is, of course, a WIP title.
+
+## Installation
+
+For development, clone this repo somewhere (now called `$REPO`) and create the
+following symlink:
+
+    cd ~/.thunderbird/*.default/extensions/
+    ln -s $REPO/package/ storm@ag-mailcrypto.informatik.uni-hamburg.de
+
+For production, zip up the `package/` folder, rename extension to `xpi` and
+use addon manager in thunderbird to install.
