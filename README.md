@@ -8,7 +8,7 @@ This is, of course, a WIP title.
 
 Make sure you have all submodules up-to-date. To do so, run:
 
-   git submodule update --init
+    git submodule update --init
 
 For development, clone this repo somewhere (now called `$REPO`) and create the
 following symlink:
