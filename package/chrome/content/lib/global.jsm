@@ -1,12 +1,7 @@
-Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
-
 this.EXPORTED_SYMBOLS = ["storm"];
 var storm = {};
 
-// prepare the keyring
-storm.keyring = new Keyring();
-storm.keyring.loadKeys();
-
+// TODO: this should be somewhere else, at some point
 storm.ui = {
     dialogSignKey: function(window, key) {
         window.alert("Signing key of " + key.getPrimaryUserId().realName);

@@ -1,27 +1,23 @@
+Components.utils.import("chrome://storm/content/lib/global.jsm");
+Components.utils.import("chrome://storm/content/lib/gpg.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/Key.jsm");
 Components.utils.import("chrome://storm/content/lib/UserID.jsm");
-
-// TODO
-// - Signatures
-// - Revokation
-// - Expiry
-// - Trust
-// - ...
 
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("Keyring");
 function Keyring() {
     this.keys = [];
+    this.loadKeys();
 }
 
 Keyring.prototype.loadKeys = function() {
     // INFO: "--list-sigs" list public keys, just like
     //       "--list-public-keys --with-sigs-list",
     //       but it is backwards compatible
-    var publicKeys = callGpg(["--list-sigs",        "--with-colons", "--with-fingerprint"]);
-    var secretKeys = callGpg(["--list-secret-keys", "--with-colons", "--with-fingerprint"]);
+    var publicKeys = storm.gpg.call(["--list-sigs",        "--with-colons", "--with-fingerprint"]);
+    var secretKeys = storm.gpg.call(["--list-secret-keys", "--with-colons", "--with-fingerprint"]);
     var lines = (publicKeys + "\n" + secretKeys).split("\n");
 
     var key = null;
@@ -76,3 +72,6 @@ Keyring.prototype.searchKeys = function(query) {
     });
 }
 
+// Prepare the instance
+Components.utils.import("chrome://storm/content/lib/global.jsm");
+storm.keyring = new Keyring();
