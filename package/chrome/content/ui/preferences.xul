@@ -129,10 +129,9 @@
         <richlistitem id="key-list-template" class="key">
             <vbox flex="1">
                 <hbox flex="1" class="key-header">
-                    <image src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
-                    <image src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
+                    <image width="16" src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
+                    <image width="16" src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
                     <image class="key-info" />
-
 
                     <label class="realname" name="primary-uid-name" />
                     <label class="comment" name="primary-uid-comment" />

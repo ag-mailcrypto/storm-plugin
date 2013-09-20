@@ -15,7 +15,7 @@ $(window).load(function() {
 
     $("button-list-refresh").click(function() {
         storm.keyring.loadKeys();
-        buildKeyList()
+        buildKeyList();
     });
     buildKeyList();
 
