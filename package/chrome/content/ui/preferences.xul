@@ -131,6 +131,8 @@
                 <hbox flex="1" class="key-header">
                     <image src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
                     <image src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
+                    <image class="key-info" />
+
 
                     <label class="realname" name="primary-uid-name" />
                     <label class="comment" name="primary-uid-comment" />
@@ -138,7 +140,6 @@
                     <spacer flex="1" />
 
                     <label class="key-id" name="key-id" />
-                    <image class="key-info" />
                 </hbox>
                 <hbox class="key-details show-when-open">
                     <vbox>

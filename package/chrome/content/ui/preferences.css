@@ -60,12 +60,21 @@ toolbarbutton > .toolbarbutton-text {
     padding-top: 2px;
 }
 
-.key-list > .key.trusted   { background: #F9F9F9; }
-.key-list > .key.invalid   { background: #FBB; }
-.key-list > .key.untrusted { background: #EEE; }
+.key-list > .key.trusted   {
+    background: #FFF;
+    color: #000;
+}
+.key-list > .key.invalid   {
+    background: #FFF;
+    color: #000;
+}
+.key-list > .key.untrusted {
+    background: #FFF;
+    color: #000;
+}
 .key-list > .key.trusted   .show-when-open.key-details {background: #FFF; }
-.key-list > .key.untrusted .show-when-open.key-details {background: #FAFAFA; }
-.key-list > .key.invalid   .show-when-open.key-details {background: #FDD; }
+.key-list > .key.untrusted .show-when-open.key-details {background: #FFF; }
+.key-list > .key.invalid   .show-when-open.key-details {background: #FFF; }
 
 .key-list .key .key-info {
     list-style-image: url("chrome://storm/skin/icons/32/key.png");
