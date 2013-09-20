@@ -75,6 +75,8 @@ function buildKeyList() {
         item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
         item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
 
+        item.find('.key-info').attr("tooltiptext", "Trust Status: " + key.getValidityString());
+
         var useridsListbox = item.find('[name="user-ids"]');
         useridsListbox.children().remove();
 
