@@ -13,7 +13,7 @@ $(window).load(function() {
         }
     });
 
-    $("button-list-refresh").click(function() {
+    $("#button-list-refresh").click(function() {
         storm.keyring.loadKeys();
         buildKeyList();
     });
@@ -48,7 +48,7 @@ $(window).load(function() {
         storm.ui.dialogImportKeyFromClipboard(window);
     });
 
-    $(".key-header").on("click", function() {
+    $("#key-list").on("click", ".key-header", function() {
         $(this).parents(".key").toggleClass("open");
     });
 });
