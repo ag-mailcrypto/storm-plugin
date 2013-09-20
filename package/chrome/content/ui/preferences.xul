@@ -128,7 +128,7 @@
 
         <richlistitem id="key-list-template" class="key">
             <vbox flex="1">
-                <hbox flex="1">
+                <hbox flex="1" class="key-header">
                     <image src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
                     <image src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
 

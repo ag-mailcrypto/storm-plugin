@@ -47,6 +47,10 @@ $(window).load(function() {
     $("#import-clipboard").on("command", function() {
         storm.ui.dialogImportKeyFromClipboard(window);
     });
+
+    $(".key-header").on("click", function() {
+        $(this).parents(".key").toggleClass("open");
+    });
 });
 
 function fromTemplate(id, new_id) {

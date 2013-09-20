@@ -16,16 +16,16 @@
     padding: 5px 10px;
 }
 
-.key-list > richlistitem {
+.key-list .key {
     border-bottom: 1px solid #CCC;
     padding: 0;
 }
 
-.key-list > richlistitem > * > * {
+.key-list .key > * > * {
     padding: 5px;
 }
 
-.key-list > richlistitem[selected] {
+.key-list .key[selected] {
     color: inherit;
 }
 
@@ -48,8 +48,8 @@
 }
 
 .key-list > .key .show-when-open { visibility: collapse; }
-.key-list > .key[selected] .show-when-open { visibility: visible; }
-.key-list > .key[selected] .show-when-closed { visibility: collapse; }
+.key-list > .key.open .show-when-open { visibility: visible; }
+.key-list > .key.open .show-when-closed { visibility: collapse; }
 
 .key-list .key image {
     transform: scale(0.6);
