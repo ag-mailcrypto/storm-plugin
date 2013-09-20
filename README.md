@@ -1,10 +1,14 @@
 # STORM Thunderbird Plugin
 
-**S**ecurity **T**rough **O**pporunistic enc**R**yption **M**ethods
+**S**ecurity **T**rough **O**pporunistic enc<strong>R</strong>yption **M**ethods
 
 This is, of course, a WIP title.
 
 ## Installation
+
+Make sure you have all submodules up-to-date. To do so, run:
+
+   git submodule update --init
 
 For development, clone this repo somewhere (now called `$REPO`) and create the
 following symlink:
