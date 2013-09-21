@@ -68,7 +68,14 @@
                                 </vbox>
                             </tabpanel>
                             <tabpanel flex="1">
-                                <label value="TODO" />
+                                <tree id="account-list" flex="1" rows="2" class="account-list">
+                                    <treecols>
+                                        <treecol id="email" label="E-Mail" flex="1"/>
+                                        <treecol id="key" label="Key" flex="1"/>
+                                    </treecols>
+                                      <treechildren>
+                                      </treechildren>
+                                </tree>
                             </tabpanel>
                         </tabpanels>
                     </tabbox>
@@ -168,6 +175,13 @@
             <!-- <label class="realname" name="name" /> -->
             <label class="comment" name="comment" />
         </hbox>
+
+        <treeitem id="account-list-template">
+            <treerow>
+                <treecell class="email" name="email"/>
+                <treecell class="key" name="key"/>
+            </treerow>
+        </treeitem> 
 
     </box>
 
