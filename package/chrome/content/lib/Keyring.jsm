@@ -87,6 +87,12 @@ function parseKeys(keyList, type) {
     return keys;
 }
 
+/**
+ * Return a Key() object from the keyring, matching the given id
+ *
+ * @param  String  The requested keyId, beginning with 0x or not, it must end with 8 or 16 hex digits.
+ * @return Key     Return the first key ending with the given id string.
+ */ 
 Keyring.prototype.getKey = function(id) {
     id = id.toUpperCase();
     if(id.startsWith("0X")) id = id.substr(2);

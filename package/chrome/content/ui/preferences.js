@@ -47,6 +47,11 @@ $(window).load(function() {
         $("#advanced-filter").attr("hidden", !$(this).attr("checked"));
     });
 
+
+    $(".generate-key").on("command", function() {
+        storm.ui.dialogGenerateKey(window);
+    });
+
     $("#import-keyserver").on("command", function() {
         storm.ui.dialogKeyserver(window);
     });
