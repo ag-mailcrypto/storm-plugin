@@ -17,17 +17,17 @@ Keyring.prototype.loadKeys = function() {
     // INFO: "--list-sigs" list public keys, just like
     //       "--list-public-keys --with-sigs-list",
     //       but it is backwards compatible
-    var publicKeys = storm.gpg.call(["--list-sigs",        "--with-colons", "--with-fingerprint"]);
-    var secretKeys = storm.gpg.call(["--list-secret-keys", "--with-colons", "--with-fingerprint"]);
-    var lines = (publicKeys + "\n" + secretKeys).split("\n");
+    this.keys       = parseKeys(storm.gpg.call(["--list-sigs",        "--with-colons", "--with-fingerprint"]).split("\n"), "pub");
+    this.secretKeys = parseKeys(storm.gpg.call(["--list-secret-keys", "--with-colons", "--with-fingerprint"]).split("\n"), "sec");
+}
 
+function parseKeys(keyList, type) {
+    var keys = [];
     var key = null, subkey = null, userID = null, signature = null;
-    var keyring = this;
 
-    this.keys = [];
-    lines.forEach(function(line) {
-        if(line == "") return;
-        var values = line.split(":");
+    keyList.forEach(function(keyLine) {
+        if(keyLine == "") return;
+        var values = keyLine.split(":");
 
         var record_type = values[0],
             validity = values[1],
@@ -39,7 +39,7 @@ Keyring.prototype.loadKeys = function() {
             case "pub":
             case "sec":
                 key = createKeyFromValues(values);
-                keyring.keys.push(key);
+                keys.push(key);
                 subkey = key;
                 if(key.userIDs.length) userID = key.userIDs[0];
                 break;
@@ -68,6 +68,8 @@ Keyring.prototype.loadKeys = function() {
                 break;
         }
     });
+
+    return keys;
 }
 
 Keyring.prototype.getKey = function(id) {

@@ -1,8 +1,10 @@
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
+Components.utils.import("chrome://storm/content/lib/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 
 var keyListCache = [];
+var accountListCache = [];
 
 $(window).load(function() {
     $("#categories").select(function() {
@@ -11,13 +13,17 @@ $(window).load(function() {
         if(selected.attr("id").startsWith("tab-keys-")) {
             buildKeyList();
         }
+
+        $("#view-port .view-pane").attr("class", "view-pane").addClass(selected.attr("id"));
     });
 
     $("#button-list-refresh").click(function() {
         storm.keyring.loadKeys();
         buildKeyList();
     });
+
     buildKeyList();
+    buildAccountList();
 
     $("#filter-string").on("input", filterKeyList);
     $("#advanced-filter checkbox").on("CheckboxStateChange", filterKeyList);
@@ -102,5 +108,21 @@ function filterKeyList() {
         visible = visible && document.getElementById("advanced-show-" + key.getValidity()).checked;
 
         $("#key-"+index).attr("hidden", !visible);
+    });
+}
+
+function buildAccountList() {
+    var listbox = $("#account-list > treechildren");
+    listbox.children().remove();
+
+    var privateKeys = $("#tab-keys-own:selected").size() > 0;
+
+    accountListCache = storm.accountList.accounts;
+    accountListCache.sort(function(a, b) { return a.getEmail().toLowerCase() > b.getEmail().toLowerCase(); });
+    accountListCache.forEach(function(account, index) {
+        var item = fromTemplate("account-list-template", "account-" + index);
+        item.find('[name="email"]').attr("label", account.email);
+        item.find('[name="key"]').attr("label", account.key);
+        listbox.append(item);
     });
 }
