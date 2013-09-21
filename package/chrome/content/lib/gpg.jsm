@@ -19,13 +19,17 @@ Components.utils.import("chrome://storm/content/lib/errors.jsm");
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("GPG");
-function GPG() {
-}
+/**
+ * This class groups the interface to GPG.
+ */
+function GPG() {}
 
 /**
  * Calls the GPG executable with the specified arguments.
- * @param arguments:    An array of command line argument strings
- * @param input:        Input passed to stdin (optional)
+ * @param {Array} arguments         An array of command line argument strings
+ * @param {String|Function} input   Input passed to stdin (optional)
+ * @returns {String}                The program output.
+ * @throws {GPGError}               If gpg prints output to stderr.
  */
 GPG.prototype.call = function(arguments, input) {
     input = input || "";

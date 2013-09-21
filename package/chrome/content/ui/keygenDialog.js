@@ -14,23 +14,16 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 $(window).ready(function() {
-    /**
-     * On expert settings: Show the tab "Advanced options"
-     */
+    // On expert settings: Show the tab "Advanced options"
     $("#keygen-expert-settings").on("command", function() {
         $(".advances-options").show();
     });
 
-
-    /**
-     * On recommended settings: Hide the tab "Advanced options"
-     */
+    // On recommended settings: Hide the tab "Advanced options"
     $("#keygen-recommended").on("command", function() {
         $(".advances-options").hide();
     });
 
-    /**
-     * Hide the tab "Advanced options" on default
-     */
+    // Hide the tab "Advanced options" on default
     $(".advances-options").hide();
 });

@@ -16,18 +16,22 @@
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("GPGError");
+/**
+ * Exception for runtime errors when calling GPG.
+ * @param {String} message The error message.
+ */
 function GPGError(message) {
     this.message = message;
     this.typeString = "GPG Error";
 }
 
-this.EXPORTED_SYMBOLS.push("TypeError");
-function TypeError(message) {
-    this.message = message;
-    this.typeString = "Type Error";
-}
-
 this.EXPORTED_SYMBOLS.push("gpgStderrThrow");
+/**
+ * Used as callback function in subprocess calls, to throw a GPGError when
+ * output to stderr occurs.
+ * @param  {String} data  The output from stderr.
+ * @throws {GPGError}     Always :)
+ */
 function gpgStderrThrow(data) {
     throw new GPGError(data);
 }

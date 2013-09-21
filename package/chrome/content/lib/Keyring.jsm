@@ -23,20 +23,35 @@ Components.utils.import("chrome://storm/content/lib/Signature.jsm");
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("Keyring");
+/**
+ * A Keyring is responsible for loading and storing keys from GPG. The most
+ * important properties are the `keys` and `secretKeys` arrays.
+ */
 function Keyring() {
     this.keys = [];
+    this.secretKeys = [];
     this.loadKeys();
 }
 
+/**
+ * Loads all keys from GPG into the arrays `keys` and `secretKeys`.
+ */
 Keyring.prototype.loadKeys = function() {
     // INFO: "--list-sigs" list public keys, just like
     //       "--list-public-keys --with-sigs-list",
     //       but it is backwards compatible
-    this.keys       = parseKeys(storm.gpg.call(["--list-sigs",        "--with-colons", "--with-fingerprint"]).split("\n"), "pub");
-    this.secretKeys = parseKeys(storm.gpg.call(["--list-secret-keys", "--with-colons", "--with-fingerprint"]).split("\n"), "sec");
+    this.keys       = parseKeys(storm.gpg.call(["--list-sigs",        "--with-colons", "--with-fingerprint"]).split("\n"));
+    this.secretKeys = parseKeys(storm.gpg.call(["--list-secret-keys", "--with-colons", "--with-fingerprint"]).split("\n"));
 }
 
-function parseKeys(keyList, type) {
+/**
+ * Parses a list of record lines (from GPG --with-colons) into keys and their
+ * respective subrecords.
+ * @param {Array} keyList   An array of lines with records, separated by colons (`:`), as
+ *                          described in /usr/share/doc/gnupg/DETAILS
+ * @return {Array}          An array of keys that reference their subrecords.
+ */
+function parseKeys(keyList) {
     var keys = [];
     var key = null, subkey = null, userID = null, signature = null;
 
@@ -88,11 +103,12 @@ function parseKeys(keyList, type) {
 }
 
 /**
- * Return a Key() object from the keyring, matching the given id
+ * Returns a Key object from the keyring, matching the given id.
  *
- * @param  String  The requested keyId, beginning with 0x or not, it must end with 8 or 16 hex digits.
- * @return Key     Return the first key ending with the given id string.
- */ 
+ * @param  {String} id  The requested keyId, beginning with 0x or not, it must
+ *                      end with 8 or 16 hex digits.
+ * @return {Key}        Return the first key ending with the given id string.
+ */
 Keyring.prototype.getKey = function(id) {
     id = id.toUpperCase();
     if(id.startsWith("0X")) id = id.substr(2);
@@ -104,6 +120,13 @@ Keyring.prototype.getKey = function(id) {
     })[0];
 }
 
+/**
+ * Returns all keys that contain at least one UserID with the given mail address
+ * (case insensitive).
+ *
+ * @param  {String} email   The email to search for.
+ * @return {Array}          Array of matching keys.
+ */
 Keyring.prototype.getKeysByEmail = function(email) {
     email = email.toLowerCase();
 
@@ -114,6 +137,12 @@ Keyring.prototype.getKeysByEmail = function(email) {
     });
 };
 
+/**
+ * Searches for a query (or regex) in all keys. See `Key.matches` for more
+ * description on matching.
+ * @param  {String} query  The query string, as regex.
+ * @return {Array}         An array of all matching keys.
+ */
 Keyring.prototype.searchKeys = function(query) {
     return this.keys.filter(function(key) {
         return key.matches(query);
