@@ -38,8 +38,8 @@ storm.ui = {
         window.alert("Import key from clipboard");
     },
 
-    dialogCreateKey: function(window) {
-        window.alert("Create key dialog");
+    dialogGenerateKey: function(window) {
+        window.openDialog("chrome://storm/content/ui/enigmailKeygen.xul", "", "", "");
     },
 
 };

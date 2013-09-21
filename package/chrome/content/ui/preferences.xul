@@ -71,7 +71,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                                 <menuitem id="import-clipboard" label="From clipboard" image="moz-icon://stock/gtk-paste?size=menu" class="menuitem-iconic" />
                                             </menupopup>
                                         </button>
-                                        <button class="create-key" type="button" label="Create key" icon="add"></button>
+                                        <button class="generate-key" type="button" label="Generate key" icon="add"></button>
                                         <button icon="refresh" label="Reload" />
                                     </hbox>
                                     <hbox id="advanced-filter" align="baseline" hidden="true">
