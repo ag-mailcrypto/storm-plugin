@@ -1,0 +1,15 @@
+.composeWindowTrustLevelIcon {
+	list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png");
+}
+
+.composeWindowTrustLevelIcon.trusted {
+	list-style-image: url("chrome://storm/skin/icons/trust-level/trusted.png");
+}
+
+.composeWindowTrustLevelIcon.untrusted {
+	list-style-image: url("chrome://storm/skin/icons/trust-level/untrusted.png");
+}
+
+.composeWindowTrustLevelIcon.invalid {
+	list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png");
+}

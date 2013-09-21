@@ -98,6 +98,16 @@ Keyring.prototype.getKey = function(id) {
     })[0];
 }
 
+Keyring.prototype.getKeysByEmail = function(email) {
+    email = email.toLowerCase();
+
+    return this.keys.filter(function(key) {
+        return key.userIDs.some(function(userID) {
+            return userID.parsed && userID.email.toLowerCase() == email;
+        });
+    });
+};
+
 Keyring.prototype.searchKeys = function(query) {
     return this.keys.filter(function(key) {
         return key.matches(query);
