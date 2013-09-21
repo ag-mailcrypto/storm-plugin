@@ -4,6 +4,8 @@ this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("UserID");
 function UserID(raw) {
+    this.signatures = [];
+
     this.raw = raw;
     this.realName   = null;
     this.email      = null;

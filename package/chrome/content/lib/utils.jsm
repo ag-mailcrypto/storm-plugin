@@ -96,6 +96,7 @@ function addTreeItem(document, treechildrenId, columns) {
     });
 
     document.getElementById(treechildrenId).appendChild(item);
+    return item;
 }
 
 this.EXPORTED_SYMBOLS.push("escapeRegExp");

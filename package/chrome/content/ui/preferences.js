@@ -26,16 +26,6 @@ $(window).load(function() {
         $("#advanced-filter").attr("hidden", !$(this).attr("checked"));
     });
 
-    $(".key-sign-button").on("command", function() {
-        var id = $(this).parents(".key").attr("data-keyid");
-        storm.ui.dialogSignKey(window, storm.keyring.getKey(id));
-    });
-
-    $(".key-details-button").on("command", function() {
-        var id = $(this).parents(".key").attr("data-keyid");
-        storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
-    });
-
     $("#import-keyserver").on("command", function() {
         storm.ui.dialogKeyserver(window);
     });
@@ -48,8 +38,15 @@ $(window).load(function() {
         storm.ui.dialogImportKeyFromClipboard(window);
     });
 
+    // controls inside key list
     $("#key-list").on("click", ".key-header", function() {
         $(this).parents(".key").toggleClass("open");
+    }).on("command", ".key-sign-button", function() {
+        var id = $(this).parents(".key").attr("data-keyid");
+        storm.ui.dialogSignKey(window, storm.keyring.getKey(id));
+    }).on("command", ".key-details-button", function() {
+        var id = $(this).parents(".key").attr("data-keyid");
+        storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
     });
 });
 

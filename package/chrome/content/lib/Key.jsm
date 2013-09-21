@@ -10,8 +10,11 @@ this.EXPORTED_SYMBOLS.push("Key");
  */
 function Key(id) {
     this.id = id.toUpperCase();
-    this.subKeys = [];
-    this.userIDs = [];
+
+    this.subKeys        = [];
+    this.userIDs        = [];
+    this.signatures     = [];
+    this.parentKey      = null;
 
     this.recordType     = null;
     this.validity       = null;

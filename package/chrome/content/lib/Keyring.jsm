@@ -3,6 +3,7 @@ Components.utils.import("chrome://storm/content/lib/gpg.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/Key.jsm");
 Components.utils.import("chrome://storm/content/lib/UserID.jsm");
+Components.utils.import("chrome://storm/content/lib/Signature.jsm");
 
 this.EXPORTED_SYMBOLS = [];
 
@@ -20,7 +21,7 @@ Keyring.prototype.loadKeys = function() {
     var secretKeys = storm.gpg.call(["--list-secret-keys", "--with-colons", "--with-fingerprint"]);
     var lines = (publicKeys + "\n" + secretKeys).split("\n");
 
-    var key = null;
+    var key = null, subkey = null, userID = null, signature = null;
     var keyring = this;
 
     this.keys = [];
@@ -34,23 +35,37 @@ Keyring.prototype.loadKeys = function() {
             expiration = values[6],
             user_id = values[9];
 
-        if(record_type == "pub" || record_type == "sec") {
-            if(key) {
+        switch(record_type) {
+            case "pub":
+            case "sec":
+                key = createKeyFromValues(values);
                 keyring.keys.push(key);
-            }
-            key = createKeyFromValues(values);
-        } else {
-            if(!key) return; // we need to find a public key first
-
-            if(record_type == "sub") {
-                key.subKeys.push(createKeyFromValues(values));
-            } else if(record_type == "uid") {
-                key.userIDs.push(new UserID(user_id));
-            } else if(record_type == "fpr") {
-                key.fingerprint = user_id; // field 10 is used for fingerprint here
-            } else if(record_type == "sig") {
-
-            }
+                subkey = key;
+                if(key.userIDs.length) userID = key.userIDs[0];
+                break;
+            case "sub":
+            case "ssb":
+                subkey = createKeyFromValues(values);
+                subkey.parentKey = key;
+                if(subkey.userIDs.length) userID = subkey.userIDs[0];
+                key.subKeys.push(subkey);
+                break;
+            case "uid":
+                userID = new UserID(user_id);
+                key.userIDs.push(userID);
+                break;
+            case "fpr":
+                // field 10 is used for fingerprint here
+                key.fingerprint = user_id;
+                break;
+            case "sig":
+                signature = createSignatureFromValues(values);
+                signature.targetUserID = userID;
+                userID.signatures.push(signature);
+                break;
+            default:
+                // others are unhandled
+                break;
         }
     });
 }

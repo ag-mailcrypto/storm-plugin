@@ -21,13 +21,23 @@
             * subkeys
         -->
         <label value="This key is valid for the following addresses:" class="section" />
-        <tree rows="5" id="user-ids">
+        <tree rows="5" id="user-ids" seltype="single">
             <treecols>
                 <treecol id="realName" label="Real name" flex="1"/>
                 <treecol id="address" label="Mail address" flex="1"/>
                 <treecol id="comment" label="Comment" flex="1"/>
             </treecols>
             <treechildren id="user-ids-children" />
+        </tree>
+
+        <label value="Signatures for selected address" class="section" />
+        <tree rows="5" id="signatures">
+            <treecols>
+                <treecol flex="1" label="Issuer" />
+                <treecol flex="1" label="Issuer key" />
+                <treecol flex="1" label="Trust level" />
+            </treecols>
+            <treechildren id="signatures-children" />
         </tree>
     </vbox>
     <hbox>
