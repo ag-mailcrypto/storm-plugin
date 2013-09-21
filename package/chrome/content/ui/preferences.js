@@ -81,7 +81,13 @@ function buildKeyList() {
 
     var privateKeys = $("#tab-keys-own:selected").size() > 0;
 
-    keyListCache = storm.keyring.keys.filter(function(key) { return key.isPrivate() == privateKeys; }).slice(0);
+    // select which key list (secret/public) to use, and copy it (.slice)
+    if(privateKeys) {
+        keyListCache = storm.keyring.secretKeys.slice(0);
+    } else {
+        keyListCache = storm.keyring.keys.slice(0);
+    }
+
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName.toLowerCase() > b.getPrimaryUserId().realName.toLowerCase(); });
     keyListCache.forEach(function(key, index) {
         var item = fromTemplate("key-list-template", "key-" + index);
