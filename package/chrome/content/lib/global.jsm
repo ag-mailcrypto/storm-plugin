@@ -16,6 +16,11 @@
 this.EXPORTED_SYMBOLS = ["storm"];
 var storm = {};
 
+// load preferences branch
+var preferences = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
+storm.preferences = preferences.getBranch("extensions.storm.");
+storm.defaultPreferences = preferences.getDefaultBranch("extensions.storm.");
+
 // TODO: this should be somewhere else, at some point
 storm.ui = {
     dialogSignKey: function(window, key) {
@@ -43,3 +48,12 @@ storm.ui = {
     },
 
 };
+
+storm.log = function(msg) {
+    // error console
+    Components.utils.reportError(msg);
+
+    // stdout
+    var console = (Components.utils.import("resource://gre/modules/devtools/Console.jsm", {})).console;
+    console.log(msg);
+}

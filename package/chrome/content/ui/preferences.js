@@ -78,7 +78,19 @@ $(window).load(function() {
         var id = $(this).parents(".key").attr("data-keyid");
         storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
     });
+
+    // Preferences
+    $("#textbox-gpg-pathAutodetect").on("command", updatePreferencesTab);
+    updatePreferencesTab();
 });
+
+/**
+ * Updates the preferences tab to disable/enable elements based on other
+ * preferences, e.g. autodetect vs. manual value.
+ */
+function updatePreferencesTab() {
+    $("#textbox-gpg-path").prop("disabled", $("#textbox-gpg-pathAutodetect")[0].checked);
+}
 
 /**
  * Clones a DOM Element.
