@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/gpg.jsm");
 
 this.EXPORTED_SYMBOLS = [];
@@ -32,6 +33,7 @@ function objectValues(obj) {
 }
 
 this.EXPORTED_SYMBOLS.push("signContent");
+// TODO: Move to GPG.
 function signContent(content, passphrase) {
     var args = [];
     args.push("--clearsign");
@@ -50,6 +52,7 @@ function signContent(content, passphrase) {
 }
 
 this.EXPORTED_SYMBOLS.push("promptPassphrase");
+// TODO: Move to GPG.
 function promptPassphrase() {
     var result = {};
     var check = {};
@@ -98,6 +101,10 @@ function openBrowserTab(window, url, features) {
 this.EXPORTED_SYMBOLS.push("addTreeItem");
 /**
  * Inserts an item in a tree.
+ * @param {DOMElement} document     The window root document.
+ * @param {String} treechildrenId   The ID of the <treechildren> element.
+ * @param {Array} columns           Array of columns, as strings.
+ * @return {DOMElement}             The inserted <treeitem>.
  */
 function addTreeItem(document, treechildrenId, columns) {
     var item = document.createElement("treeitem");
@@ -117,7 +124,46 @@ function addTreeItem(document, treechildrenId, columns) {
 this.EXPORTED_SYMBOLS.push("escapeRegExp");
 /**
  * Escapes a string for use in regular expressions.
+ * @param {String} str  The string to escape.
+ * @return {String}     The escaped string.
  */
 function escapeRegExp(str) {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
+
+this.EXPORTED_SYMBOLS.push("isEmail");
+/**
+ * Returns whether a string is a valid email address. Note that this may not
+ * be 100% RFC-2822 compilant, but it should be good enough.
+ * @param  {String} email   The email, as string.
+ * @return {Boolean}        Whether this is a valid email address or not.
+ */
+function isEmail(email){
+    return /^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*$/.test(email);
+}
+
+this.EXPORTED_SYMBOLS.push("time");
+/**
+ * Times a function, printing the duration it took to execute the function to
+ * the console, along with an optional message (for identification).
+ * @param  {Function} callback The function to exectute.
+ * @param  {String}   msg      An optional message to print alongside the time.
+ * @return {any}               The return value of the function, if any.
+ */
+time = function(callback, msg) {
+    var start = new Date().getTime();
+    var result = callback();
+    var end = new Date().getTime();
+    var ms = end - start;
+
+    var duration;
+    if(ms > 10000) {
+        duration = (ms / 1000) + "s";
+    } else {
+        duration = ms + "ms";
+    }
+
+    storm.log("[time] " + (msg ? msg + ": " : "") + duration);
+    return result;
+}
+

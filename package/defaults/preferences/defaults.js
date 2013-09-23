@@ -13,25 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-this.EXPORTED_SYMBOLS = [];
+// Path to GPG
+pref("extensions.storm.gpg.pathAutodetect",         true);
+pref("extensions.storm.gpg.path",                   "/usr/bin/gpg");
 
-this.EXPORTED_SYMBOLS.push("GPGError");
-/**
- * Exception for runtime errors when calling GPG.
- * @param {String} message The error message.
- */
-function GPGError(message) {
-    this.message = message;
-    this.typeString = "GPG Error";
-}
-
-this.EXPORTED_SYMBOLS.push("gpgStderrThrow");
-/**
- * Used as callback function in subprocess calls, to throw a GPGError when
- * output to stderr occurs.
- * @param  {String} data  The output from stderr.
- * @throws {GPGError}     Always :)
- */
-function gpgStderrThrow(data) {
-    throw new GPGError(data);
-}
+// Upon receiving a signed mail from an unknown key, perform this action:
+// Accepted values: nothing|ask|marginal-owner|marginal-sign
+pref("extensions.storm.receive.signedAction",       "marginal-owner");

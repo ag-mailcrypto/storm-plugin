@@ -23,6 +23,7 @@ $(window).ready(function() {
         addTreeItem(document, "user-ids-children", [userID.realName, userID.email, userID.getPureComment()]);
     });
 
+    // Update signatures when another user ID is selected
     $("#user-ids").select(function(e) {
         updateSignatures($(this)[0].currentIndex);
     });
@@ -31,6 +32,11 @@ $(window).ready(function() {
     $("#button-close").on("command", closeWindow);
 });
 
+/**
+ * Updates the signatures list to the signatures of the selected user ID.
+ * @param  {int} index  The index of the selected user ID. The list is cleared
+ *                      for index < 0.
+ */
 function updateSignatures(index) {
     $("#signatures-children").empty();
 
@@ -46,11 +52,10 @@ function updateSignatures(index) {
     }
 }
 
+// Close on <Escape>
 $(window).keypress(function(e) {
-    // Close on <Escape>
     if(e.keyCode == 27) closeWindow();
 });
-
 
 function closeWindow() {
     window.close();

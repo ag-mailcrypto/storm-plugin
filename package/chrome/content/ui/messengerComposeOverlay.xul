@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://storm/content/ui/messengerComposeOverlay.css" type="text/css"?>
+
+<overlay id="stormMessengerComposeOverlay"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+  <script type="application/javascript" src="chrome://storm/content/ui/messengerComposeOverlay.js"/>
+
+  <textbox id="addressCol2#1">
+    <image class="composeWindowTrustLevelIcon" />
+  </textbox>
+
+</overlay>

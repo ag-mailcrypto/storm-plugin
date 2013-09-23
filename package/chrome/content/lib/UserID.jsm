@@ -18,6 +18,12 @@ var REGEX_UID = /^(.*?)\s*(\(.*\))?\s*\<(.*)\>$/;
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("UserID");
+/**
+ * A uid record.
+ * @param {String} raw  The raw string from GPG, usually in the format
+ *                      `Firstname Lastname <mail@address.org>` or
+ *                      `[Error Message]`.
+ */
 function UserID(raw) {
     this.signatures = [];
 
@@ -36,7 +42,7 @@ function UserID(raw) {
 
 /**
  * Parses the raw value into its parts and saves them into the object.
- * @returns True if successful, false otherwise.
+ * @return {bool}   True if successful, false otherwise.
  */
 UserID.prototype.parse = function() {
     var m = REGEX_UID.exec(this.raw);
@@ -50,7 +56,8 @@ UserID.prototype.parse = function() {
 /**
  * Returns whether this UserID matches a query regex, e.g. mail address or
  * full name.
- * @param regex     The search regex.
+ * @param {RegExp} regex    The search regex.
+ * @return {bool}           Whether this raw UID matches the regex, or not.
  */
 UserID.prototype.matches = function(regex) {
     return this.raw.match(regex);
@@ -65,6 +72,7 @@ UserID.prototype.toString = function() {
 
 /**
  * Returns the comment without the brackets.
+ * @return {String} The comment without the brackets.
  */
 UserID.prototype.getPureComment = function() {
     return this.comment.replace(/^\((.*)\)$/, "$1");

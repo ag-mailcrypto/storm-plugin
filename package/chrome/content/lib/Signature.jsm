@@ -18,6 +18,9 @@ Components.utils.import("chrome://storm/content/lib/UserID.jsm");
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("Signature");
+/**
+ * A signature record inside a key.
+ */
 function Signature() {
     this.targetUserID       = null;
 
@@ -29,7 +32,8 @@ function Signature() {
 }
 
 /**
- * According to RFC-4880...
+ * See RFC-4880.
+ * @returns {String} A human readable string describing the type of the signature.
  */
 Signature.prototype.debugType = function() {
     var t = parseInt(this.signatureType.substr(0, 2), 16);
@@ -54,7 +58,8 @@ Signature.prototype.debugType = function() {
 }
 
 /**
- * Returns whether this is exportable (true) or local (false).
+ * Returns whether this is exportable or local.
+ * @return {bool} True if exportable, false if local.
  */
 Signature.prototype.isExportable = function() {
     return this.signatureType.endsWith("x");
@@ -70,8 +75,7 @@ Signature.prototype.getCheckLevel = function() {
 }
 
 /**
- * Returns the check level (0..3) for UID signatures. If this is no UID signature,
- * returns -1.
+ * Returns the check level (see `getCheckLevel`), but as a string for displaying.
  */
 Signature.prototype.getCheckLevelString = function() {
     switch(this.getCheckLevel()) {
@@ -88,7 +92,9 @@ Signature.prototype.getCheckLevelString = function() {
 this.EXPORTED_SYMBOLS.push("createSignatureFromValues");
 /**
  * Creates a new signature object from --with-colons values, similar to
- *
+ * `createKeyFromValues`.
+ * @param {Array} values    Array of values split at the colons.
+ * @return {Signature}      The newly created signature object.
  */
 function createSignatureFromValues(values) {
     var sig = new Signature();

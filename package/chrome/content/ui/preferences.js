@@ -22,9 +22,12 @@ var keyListCache = [];
 var accountListCache = [];
 
 $(window).load(function() {
+    // Category (left menu) switches view-port
     $("#categories").select(function() {
         var selected = $(this).find(":selected");
         $("#view-port").attr("selectedIndex", (selected.attr("data-deck-index")));
+
+        // rebuild key list if switching to a key list viewport
         if(selected.attr("id").startsWith("tab-keys-")) {
             buildKeyList();
         }
@@ -32,34 +35,40 @@ $(window).load(function() {
         $("#view-port .view-pane").attr("class", "view-pane").addClass(selected.attr("id"));
     });
 
+    // Refresh the key list
     $("#button-list-refresh").click(function() {
         storm.keyring.loadKeys();
         buildKeyList();
     });
 
+    // Initial list setup
     buildKeyList();
     buildAccountList();
 
+    // Filter change event
     $("#filter-string").on("input", filterKeyList);
     $("#advanced-filter checkbox").on("CheckboxStateChange", filterKeyList);
-
     $("#advanced-filter-button").on("command", function() {
         $("#advanced-filter").attr("hidden", !$(this).attr("checked"));
     });
 
+    // Generate key button
+    $(".generate-key").on("command", function() {
+        storm.ui.dialogGenerateKey(window);
+    });
+
+    // Import menu buttons
     $("#import-keyserver").on("command", function() {
         storm.ui.dialogKeyserver(window);
     });
-
     $("#import-file").on("command", function() {
         storm.ui.dialogImportKeyFromFile(window);
     });
-
     $("#import-clipboard").on("command", function() {
         storm.ui.dialogImportKeyFromClipboard(window);
     });
 
-   $(".generate-key").on("command", function() {
+    $(".generate-key").on("command", function() {
         storm.ui.dialogGenerateKey(window);
     });
 
@@ -73,25 +82,47 @@ $(window).load(function() {
         var id = $(this).parents(".key").attr("data-keyid");
         storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
     });
+
+    // Preferences
+    $("#textbox-gpg-pathAutodetect").on("command", updatePreferencesTab);
+    updatePreferencesTab();
 });
 
+/**
+ * Updates the preferences tab to disable/enable elements based on other
+ * preferences, e.g. autodetect vs. manual value.
+ */
+function updatePreferencesTab() {
+    $("#textbox-gpg-path").prop("disabled", $("#textbox-gpg-pathAutodetect")[0].checked);
+}
+
+/**
+ * Clones a DOM Element.
+ * @param  {String}         The ID of the template element.
+ * @param  {String}         The ID for the cloned version.
+ * @return {DOMElement}     The clone.
+ */
 function fromTemplate(id, new_id) {
     return $("#"+id).clone().attr("id", new_id);
 }
 
+/**
+ * Builds a key list with the values from either `keys` or `secretKeys` array,
+ * depending on the tab selected.
+ */
 function buildKeyList() {
     var listbox = $("#key-list");
     listbox.children().remove();
 
-    var privateKeys = $("#tab-keys-own:selected").size() > 0;
-
     // select which key list (secret/public) to use, and copy it (.slice)
+    var privateKeys = $("#tab-keys-own:selected").size() > 0;
     if(privateKeys) {
         keyListCache = storm.keyring.secretKeys.slice(0);
     } else {
         keyListCache = storm.keyring.keys.slice(0);
     }
 
+    // Sort by real name
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName.toLowerCase() > b.getPrimaryUserId().realName.toLowerCase(); });
       keyListCache.forEach(function(key, index) {
         setTimeout( function () {
@@ -117,21 +148,24 @@ function buildKeyList() {
               useridsListbox.append(uid);
           });
 
-          item.find('[name="key-id"]').attr("value", key.formatID());
-          listbox.append(item);
-          
-        }, 1 * index);
-          
-      });
+        item.find('[name="key-id"]').attr("value", key.formatID());
+        listbox.append(item);
+                
+    });
 
-      
-
+    // run the filter directly after building the list
+    filterKeyList();
 }
 
+/**
+ * Filters the key list according to the filter elements.
+ */
 function filterKeyList() {
     var query = $("#filter-string").val();
     query = new RegExp(escapeRegExp(query), "i"); // i = case insensitive
 
+    // The key list, sorted as rendered, is cached by buildKeyList, so we
+    // can access them here and assume they match the DOM keys
     keyListCache.forEach(function(key, index) {
         var visible = true;
         if(query && !key.matches(query)) visible = false;
@@ -141,6 +175,9 @@ function filterKeyList() {
     });
 }
 
+/**
+ * Builds the list of account mappings.
+ */
 function buildAccountList() {
     var listbox = $("#account-list > treechildren");
     listbox.children().remove();
