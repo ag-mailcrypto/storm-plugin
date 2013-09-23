@@ -69,6 +69,9 @@ $(window).load(function() {
     });
 
     // Controls inside key list
+   $(".generate-key").on("command", function() {
+        storm.ui.dialogGenerateKey(window);
+    });
     $("#key-list").on("click", ".key-header", function() {
         $(this).parents(".key").toggleClass("open");
     }).on("command", ".key-sign-button", function() {
@@ -120,7 +123,6 @@ function buildKeyList() {
 
     // Sort by real name
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName.toLowerCase() > b.getPrimaryUserId().realName.toLowerCase(); });
-
     keyListCache.forEach(function(key, index) {
         var item = fromTemplate("key-list-template", "key-" + index);
         item.attr("data-keyid", key.id);
@@ -146,6 +148,7 @@ function buildKeyList() {
 
         item.find('[name="key-id"]').attr("value", key.formatID());
         listbox.append(item);
+                
     });
 
     // run the filter directly after building the list
