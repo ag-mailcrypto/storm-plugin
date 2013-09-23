@@ -59,6 +59,10 @@ $(window).load(function() {
         storm.ui.dialogImportKeyFromClipboard(window);
     });
 
+   $(".generate-key").on("command", function() {
+        storm.ui.dialogGenerateKey(window);
+    });
+
     // controls inside key list
     $("#key-list").on("click", ".key-header", function() {
         $(this).parents(".key").toggleClass("open");
@@ -89,34 +93,39 @@ function buildKeyList() {
     }
 
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName.toLowerCase() > b.getPrimaryUserId().realName.toLowerCase(); });
-    keyListCache.forEach(function(key, index) {
-        var item = fromTemplate("key-list-template", "key-" + index);
-        item.attr("data-keyid", key.id);
+      keyListCache.forEach(function(key, index) {
+        setTimeout( function () {
+          var item = fromTemplate("key-list-template", "key-" + index);
+          item.attr("data-keyid", key.id);
 
-        item.addClass(key.getValidity());
+          item.addClass(key.getValidity());
 
-        var primaryUid = key.getPrimaryUserId();
-        item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
-        item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
+          var primaryUid = key.getPrimaryUserId();
+          item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
+          item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
 
-        item.find('.key-info').attr("tooltiptext", "Trust Status: " + key.getValidityString());
+          item.find('.key-info').attr("tooltiptext", "Trust Status: " + key.getValidityString());
 
-        var useridsListbox = item.find('[name="user-ids"]');
-        useridsListbox.children().remove();
+          var useridsListbox = item.find('[name="user-ids"]');
+          useridsListbox.children().remove();
 
-        key.userIDs.forEach(function(userID, index) {
-            var uid = fromTemplate("user-id", "key-" + key.id + "-uid-" + index);
-            uid.find('[name="name"]').attr("value", userID.realName);
-            uid.find('[name="comment"]').attr("value", userID.comment);
-            uid.find('[name="email"]').attr("value", userID.email);
-            useridsListbox.append(uid);
-        });
+          key.userIDs.forEach(function(userID, index) {
+              var uid = fromTemplate("user-id", "key-" + key.id + "-uid-" + index);
+              uid.find('[name="name"]').attr("value", userID.realName);
+              uid.find('[name="comment"]').attr("value", userID.comment);
+              uid.find('[name="email"]').attr("value", userID.email);
+              useridsListbox.append(uid);
+          });
 
-        item.find('[name="key-id"]').attr("value", key.formatID());
-        listbox.append(item);
-    });
+          item.find('[name="key-id"]').attr("value", key.formatID());
+          listbox.append(item);
+          
+        }, 1 * index);
+          
+      });
 
-    filterKeyList();
+      
+
 }
 
 function filterKeyList() {

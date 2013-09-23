@@ -127,10 +127,11 @@ toolbarbutton > .toolbarbutton-text {
 .view-pane .create-key  {    display: none;  }
 
 .view-pane.tab-keys-own .import-menu {    display: none;   }
-.view-pane.tab-keys-own .create-key  {    display: block;  }
+.view-pane.tab-keys-own .generate-key  {    display: block;  }
 
 .view-pane.tab-keys-others .import-menu {  display: block; }
-.view-pane.tab-keys-others .create-key  {  display: none;  }
+.view-pane.tab-keys-others .generate-key  {  display: none;  }
+
 
 
 
