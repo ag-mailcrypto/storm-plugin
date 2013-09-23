@@ -47,11 +47,7 @@
      id="enigmailKeygen"
      title="enigmail.keygenTitle.label;"
      windowtype="enigmail:keygen"
-<<<<<<< HEAD
-     width="600" height="480"
-=======
      width="600" height="280"
->>>>>>> Some ui changes in the "generate key" dialog
      orient="vertical"
      onload="enigmailKeygenLoad()"
      onclose="return enigmailOnClose();"
@@ -64,177 +60,6 @@
 <script type="application/x-javascript" src="chrome://storm/content/ui/keygenDialog.js"/>
 
 <script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
-<<<<<<< HEAD
-<script type="application/x-javascript" src="chrome://enigmail/content/enigmailKeygen.js"/>
-
-<popupset id="aTooltipSet"/>
-            <deck id="view-port" flex="1" selectedIndex="0">
-                <box flex="1" class="view-pane">
-                    <tabbox flex="1">
-                        <tabs>
-                            <tab label="Choose Identities" />
-                            <tab label="Advanced Options"  class="advances-options"/>
-                            <tab label="Password" />
-                        </tabs>
-                        <tabpanels flex="1">
-                            <tabpanel flex="1">
-                            <vbox>
-                                <hbox><label>Please select the identity, for which you want to create an encryption key:</label></hbox>
-                            
-                                <groupbox id="userIdBox" orient="vertical">
-
-                                  <hbox orient="horizontal" align="center">
-                                    <label value="User Identity" control="userIdentity"/>
-                                    <richlistbox id="userIdentity" label="..." flex="1" minheight="50">
-                                      <richlistitem id="userIdentityPopup" >
-                                        <checkbox checked="true"/>
-                                      </richlistitem>
-                                    </richlistbox>
-                                  </hbox>
-                                </groupbox>
-                                <radiogroup>
-                                  <radio id="keygen-recommended"     label="Recommended Configuration" accesskey="R"  selected="true"/>
-                                  <radio id="keygen-expert-settings" label="Use Expert Settings"       accesskey="E"/>
-                                </radiogroup>
-
-                              </vbox>
-                            </tabpanel>
-                            <tabpanel class="advances-options" flex="1">
-
-<checkbox id="noPassphrase"
-          label="key No Passphrase"
-          oncommand="enigmailKeygenUpdate(false, false);" />
-
-<grid>
-  <columns>
-    <column />
-    <column flex="1"/>
-  </columns>
-
-  <rows>
-    <row>
-      <hbox id="passphraseBox" align="center">
-        <label control="passphrase" value="key Passphrase" />
-      </hbox>
-      <hbox align="center">
-        <textbox id="passphrase" type="password" />
-        <label control="passphraseRepeat" value="key Passphrase Repeat" />
-        <textbox id="passphraseRepeat" type="password" />
-      </hbox>
-    </row>
-
-    <row>
-      <hbox align="center">
-        <label control="keyComment" value="key Comment" />
-      </hbox>
-      <textbox id="keyComment" />
-    </row>
-  </rows>
-</grid>
-                            </tabpanel>
-                            <tabpanel flex="1">
-
-<tabbox flex="1">
-  <tabs id="settingsTabBox">
-    <tab id="basicTab"    label="key Gen expiry"/>
-    <tab id="advancedTab" label="advanced Prefs Button"/>
-  </tabs>
-
-  <tabpanels flex="1">
-
-    <hbox> <!-- Basic Tab -->
-      <hbox align="center">
-        <label value="key Gen expire" control="expireInput"/>
-      </hbox>
-      <hbox align="center">
-        <textbox id="expireInput" size="5" maxlength="5" value="9"/>
-        <menulist id="timeScale" label="years" value="365">
-          <menupopup id="timeScalePopup">
-            <menuitem id="years" value="365" label="years"/>
-            <menuitem id="months" value="30" label="months" selected="true"/>
-            <menuitem id="days" value="1" label="days"/>
-          </menupopup>
-        </menulist>
-      </hbox>
-    </hbox>
-
-    <vbox> <!-- Advanced Tab -->
-      <grid>
-        <columns>
-          <column/>
-          <column flex="1"/>
-        </columns>
-
-        <rows>
-          <row>
-
-
-            <hbox align="center">
-              <label value="keySize" control="keySize"/>
-            </hbox>
-            <hbox flex="0">
-              <menulist id="keySize" label="2048" value="2048" >
-                <menupopup id="keySizePopup">
-                  <menuitem id="keySize_1024" value="1024" label="1024"/>
-                  <menuitem id="keySize_2048" value="2048" label="2048"/>
-                  <menuitem id="keySize_4096" value="4096" label="4096" selected="true"/>
-                </menupopup>
-              </menulist>
-            </hbox>
-          </row>
-          <row>
-            <hbox align="center">
-              <label value="keyType" control="keyType"/>
-            </hbox>
-            <hbox flex="0">
-              <menulist id="keyType" label="&enigmail.keyGen.keyType.dsa;" value="1" >
-                <menupopup id="keyTypePopup">
-                  <menuitem id="keySize_rsa" value="2" label="keyType.rsa;" selected="true"/>
-                  <menuitem id="keyType_dsa" value="1" label="keyType.dsa;"/>
-                </menupopup>
-              </menulist>
-            </hbox>
-          </row>
-        </rows>
-      </grid>
-  </vbox>
-  </tabpanels>
-</tabbox>
-
-<separator/>
-
-<hbox autostretch="never">
-  <button label="generateKey"
-          class="dialog"
-          tooltip="aTooltip"
-          tooltiptext="&enigmail.generateKey.tooltip;"
-          oncommand="enigmailKeygenStart();" />
-
-  <button label="cancelKey"
-          class="dialog"
-          tooltip="aTooltip"
-          tooltiptext="cancelKey.tooltip"
-          oncommand="enigmailKeygenCancel();" />
-</hbox>
-
-<separator/>
-
-<groupbox id="keygenConsoleBox" orient="vertical" flex="1">
-
-  <caption label="console"/>
-
-  <description>keygen</description>
-
-  <groupbox>
-    <progressmeter id="keygenProgress" mode="determined" value="0"/>
-  </groupbox>
-
-</groupbox>
-                            </tabpanel>
-                        </tabpanels>
-                    </tabbox>
-                </box>
-=======
 <script type="application/x-javascript" src="chrome://storm/content/ui/enigmailKeygen.js"/>
 
 <popupset id="aTooltipSet"/>
@@ -370,7 +195,6 @@
             </tabpanels>
         </tabbox>
     </box>
->>>>>>> Some ui changes in the "generate key" dialog
 </deck>
 
 </window>

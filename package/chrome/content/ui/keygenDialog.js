@@ -14,16 +14,35 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 $(window).ready(function() {
+<<<<<<< HEAD
     // On expert settings: Show the tab "Advanced options"
+=======
+    /**
+     * On expert settings: Show the tab "Advanced options"
+     */
+>>>>>>> 1a74036fd6e3513d00d86104533fd79d9e6d1bed
     $("#keygen-expert-settings").on("command", function() {
         $(".advances-options").show();
     });
 
+<<<<<<< HEAD
     // On recommended settings: Hide the tab "Advanced options"
+=======
+
+    /**
+     * On recommended settings: Hide the tab "Advanced options"
+     */
+>>>>>>> 1a74036fd6e3513d00d86104533fd79d9e6d1bed
     $("#keygen-recommended").on("command", function() {
         $(".advances-options").hide();
     });
 
+<<<<<<< HEAD
     // Hide the tab "Advanced options" on default
+=======
+    /**
+     * Hide the tab "Advanced options" on default
+     */
+>>>>>>> 1a74036fd6e3513d00d86104533fd79d9e6d1bed
     $(".advances-options").hide();
 });
