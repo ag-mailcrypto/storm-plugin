@@ -72,7 +72,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                             </menupopup>
                                         </button>
                                         <button class="generate-key" type="button" label="Generate key" icon="add"></button>
-                                        <button icon="refresh" label="Reload" />
+                                        <button id="button-list-refresh" icon="refresh" label="Reload" />
                                     </hbox>
                                     <hbox id="advanced-filter" align="baseline" hidden="true">
                                         <checkbox id="advanced-show-trusted" label="Show trusted keys" checked="true"/>
