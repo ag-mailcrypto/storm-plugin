@@ -117,8 +117,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 <preference id="pref-gpg-path"              name="extensions.storm.gpg.path"                type="string"/>
                                 <preference id="pref-gpg-path-autodetect"   name="extensions.storm.gpg.pathAutodetect"      type="bool"/>
                                 <preference id="pref-receive-signed-action" name="extensions.storm.receive.signedAction"    type="string"/>
-                                <preference id="pref-public-keyring"        name="extensions.storm.gpg.publicKeyring"       type="string"/>
-                                <preference id="pref-secret-keyring"        name="extensions.storm.gpg.secretKeyring"       type="string"/>
+                                <preference id="pref-gpg-homedir"           name="extensions.storm.gpg.homedir"             type="string"/>
                             </preferences>
 
                             <vbox class="settings-page">
@@ -142,14 +141,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 <label value="Sending mail" class="section" />
                                 <checkbox label="Encrypt for SENT folder" />
 
-                                <label value="Keyrings, leave empty for default" class="section" />
-
-                                <hbox>
-                                    <label value="Public keyring: " />
-                                    <textbox preference="pref-public-keyring" preference-editable="true"/>
-                                    <label value="Secret keyring: " />
-                                    <textbox preference="pref-secret-keyring" preference-editable="true"/>
-                                </hbox>
+                                <label value="GPG home directory, leave empty for default (~/.gnupg)" class="section" />
+                                <textbox preference="pref-gpg-homedir" />
                             </vbox>
                         </prefpane>
 

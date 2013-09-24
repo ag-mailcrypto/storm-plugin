@@ -43,27 +43,17 @@ GPG.prototype.call = function(arguments, input) {
     var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
     var GPG_AGENT_INFO = env.get("GPG_AGENT_INFO");
 
-    if(arguments.indexOf("--keyring") !== -1 || arguments.indexOf("--secret-keyring") !== -1) {
-        storm.log("ERROR: arguments --keyring and --secret-keyring are not allowed outside gpg.call");
+    // Override gpg --homedir
+
+    if(arguments.indexOf("--homedir") !== -1) {
+        storm.log("ERROR: Argument '--homedir <dir>' is not allowed outside gpg.call()");
         return;
     }
 
-    // override keyring
-    var publicKeyring = storm.preferences.getCharPref("gpg.publicKeyring");
-    var secretKeyring = storm.preferences.getCharPref("gpg.secretKeyring");
-
-    arguments.push("--no-default-keyring");
-
-    if(publicKeyring || secretKeyring) {
-        arguments.push("--no-default-keyring");
-    }
-    if(publicKeyring) {
-        arguments.push("--keyring");
-        arguments.push(publicKeyring);
-    }
-    if(secretKeyring) {
-        arguments.push("--secret-keyring");
-        arguments.push(secretKeyring);
+    var gpgHomedir = storm.preferences.getCharPref("gpg.homedir");
+    if(gpgHomedir) {
+        arguments.push("--homedir");
+        arguments.push(gpgHomedir);
     }
 
     try {

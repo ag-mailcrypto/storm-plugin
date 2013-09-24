@@ -17,11 +17,10 @@
 pref("extensions.storm.gpg.pathAutodetect",         true);
 pref("extensions.storm.gpg.path",                   "/usr/bin/gpg");
 
-// Replacement keyrings, used for debug. If empty, defaults are used.
-// Path rules as in `man gpg` apply, i.e. a simple file name without slashes
-// is interpreted as inside `~/.gnupg/`, and `~/` as `$HOME`.
-pref("extensions.storm.gpg.publicKeyring",          "");
-pref("extensions.storm.gpg.secretKeyring",          "");
+// Replacement directory for gpg files, defaults to "~/.gnupg" if empty. This
+// is the place where the gpg keyrings/trustdb and settings are stored. Useful
+// for debugging.
+pref("extensions.storm.gpg.homedir", "");
 
 // Upon receiving a signed mail from an unknown key, perform this action:
 // Accepted values: nothing|ask|marginal-owner|marginal-sign
