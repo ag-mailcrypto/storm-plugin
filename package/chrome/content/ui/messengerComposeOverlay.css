@@ -1,15 +1,24 @@
-.composeWindowTrustLevelIcon {
+.textbox-addressingWidget .storm-trust-icon {
+    transform: scale(0.8);
 	list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png");
 }
 
-.composeWindowTrustLevelIcon.trusted {
+.textbox-addressingWidget .storm-trust-icon.trusted {
 	list-style-image: url("chrome://storm/skin/icons/trust-level/trusted.png");
 }
 
-.composeWindowTrustLevelIcon.untrusted {
+.textbox-addressingWidget .storm-trust-icon.untrusted {
 	list-style-image: url("chrome://storm/skin/icons/trust-level/untrusted.png");
 }
 
-.composeWindowTrustLevelIcon.invalid {
+.textbox-addressingWidget .storm-trust-icon.invalid {
 	list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png");
+}
+
+.textbox-addressingWidget .storm-trust-icon.marginal {
+    list-style-image: url("chrome://storm/skin/icons/trust-level/marginal.png");
+}
+
+.textbox-addressingWidget .storm-trust-icon.none {
+    list-style-image: url("chrome://storm/skin/icons/trust-level/none.png");
 }
