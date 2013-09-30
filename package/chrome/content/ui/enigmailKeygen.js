@@ -35,6 +35,9 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
+Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
+Components.utils.import("chrome://storm/content/lib/gpg.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -44,7 +47,7 @@ EnigInitCommon("enigmailKeygen");
 var gAccountManager = Components.classes[ENIG_ACCOUNT_MANAGER_CONTRACTID].getService(Components.interfaces.nsIMsgAccountManager);
 
 var gUserIdentityList;
-var gUserIdentityListPopup;
+var userIdentityList;
 var gUseForSigning;
 
 var gKeygenRequest;
@@ -57,22 +60,32 @@ const KEYTYPE_DSA = 1;
 const KEYTYPE_RSA = 2;
 
 function enigmailKeygenLoad() {
-  DEBUG_LOG("enigmailKeygen.js: Load\n");
+    DEBUG_LOG("enigmailKeygen.js: Load\n");
 
-  gUserIdentityList      = document.getElementById("userIdentity");
-  gUserIdentityListPopup = document.getElementById("userIdentityPopup");
+  gUserIdentityList  = document.getElementById("userIdentity");
   gUserIdentityField = document.getElementById("userIdentityField");
   gUseForSigning     = document.getElementById("useForSigning");
 
+    /**
+     * Fill the user identities
+     */
+    accountList = new AccountList();
+    identityCount = accountList.getIdentityCount();
+    if (identityCount <= 0) {
+        alert("ERROR: Couldn't find user identites");    
+    } else if (identityCount <= 1) {
+        $('.oneIdentity').show();
+        $('.multipleIdentities').hide();
+    } else {
+        $('.oneIdentity').hide();
+        $('.multipleIdentities').show();
+    }
+    var userIdentityList = $('#userIdentities');
+    fillIdentityList(userIdentityList, accountList);
 
+//  gUserIdentityList.focus();
 
-
-  if (gUserIdentityListPopup) {
-    fillIdentityListPopup();
-  }
-  gUserIdentityList.focus();
-
-  enigmailKeygenUpdate(true, false);
+/*  enigmailKeygenUpdate(true, false);
 
   var enigmailSvc = GetEnigmailSvc();
   if (!enigmailSvc) {
@@ -83,6 +96,7 @@ function enigmailKeygenLoad() {
      EnigAlert(EnigGetString("onlyGPG"));
      return;
   }
+  */
 }
 
 function enigmailOnClose() {
@@ -193,157 +207,196 @@ function enigmailKeygenCloseRequest() {
   }
 }
 
-function enigmailCheckPassphrase() {
-  var passphraseElement = document.getElementById("passphrase");
-  var passphrase2Element = document.getElementById("passphraseRepeat");
 
-  var passphrase = passphraseElement.value;
+keygenValidation = {
+    /**
+     * @return Boolean: Is password valid?
+     */
+    validatePassphrase: function() {
+        var passphraseElement = document.getElementById("passphrase");
+        var passphrase2Element = document.getElementById("passphraseRepeat");
+        var passphrase = passphraseElement.value;
+        var noPassphraseElement = document.getElementById("noPassphrase");
 
-  if (passphrase != passphrase2Element.value) {
-    EnigAlert(EnigGetString("passNoMatch"));
-    return null;
-  }
+        if (!passphrase && !noPassphraseElement.checked) {
+            alert("Please set a password");
+            return false;
+        } else if (passphrase != passphrase2Element.value) {
+           EnigAlert(EnigGetString("passNoMatch"));
+           return false;
+        } else if (passphrase.search(/[\x80-\xFF]/)>=0) {
+            EnigAlert(EnigGetString("passCharProblem"));
+            return false;
+        } else if ((passphrase.search(/^\s/)==0) || (passphrase.search(/\s$/)>=0)) {
+            EnigAlert(EnigGetString("passSpaceProblem"));
+            return false;
+        }
+        return true;
+    },
+    /**
+     * @return Boolean:  no parallel key generate process is running?
+     */
+    validateNoProcessPending: function () {    
+        if (gKeygenRequest) {
+          let req = gKeygenRequest.QueryInterface(Components.interfaces.nsIRequest);
+          if (req.isPending()) {
+             EnigAlert(EnigGetString("genGoing"));
+             return false;
+          }
+        }
+        return true;
+    }, 
+    validateKeyExpiryDate: function() {
+        var noExpiry = $("#noExpiry");
+        var expireInput = $("#expireInput");
+        var timeScale = $("#timeScale");
 
-  if (passphrase.search(/[\x80-\xFF]/)>=0) {
-    EnigAlert(EnigGetString("passCharProblem"));
-    return null;
-  }
-  if ((passphrase.search(/^\s/)==0) || (passphrase.search(/\s$/)>=0)) {
-    EnigAlert(EnigGetString("passSpaceProblem"));
-    return null;
-  }
-  return passphrase;
+        var expiryTime = 0;
+        if (! noExpiry.checked) {
+            expiryTime = Number(expireInput.val()) * Number(timeScale.val());
+            if (expiryTime > 36500) {
+                EnigAlert(EnigGetString("expiryTooLong"));
+                return false;
+            } else if (! (expiryTime > 0)) {
+                EnigAlert(EnigGetString("expiryTooShort"));
+               return false;
+            }
+        }
+        return true;
+    },
+    validateKeySize: function() {
+        var keySize = Number(document.getElementById("keySize").value);
+        var keyType = Number(document.getElementById("keyType").value);
+
+        if ((keyType==KEYTYPE_DSA) && (keySize>3072)){
+           EnigAlert(EnigGetString("dsaSizeLimit"));
+           keySize = 3072;
+            return false;
+        }
+        return true;
+    }
 }
 
 
+/**
+ * Do all the validations on the Key-Generate form
+ *
+ * @return True: Form is ok. False: Stop processing!
+ */
+function validateKeygenForm() {
+    switch (false) {
+        case keygenValidation.validatePassphrase():
+        case keygenValidation.validateNoProcessPending():
+        case keygenValidation.validateKeyExpiryDate():
+        case keygenValidation.validateKeySize():
+            return false;
+            break;
+        default:
+            return true;
+            break;
+    }
+}
 
+function getKeygenFormValues() {
+    var keySize = Number(document.getElementById("keySize").value);
+    var keyType = Number(document.getElementById("keyType").value);
+    var passphraseElement = document.getElementById("passphrase");
+    var passphrase2Element = document.getElementById("passphraseRepeat");
+    var passphrase = passphraseElement.value;
+    var noPassphraseElement = document.getElementById("noPassphrase");
+    
+    getSelectedIdentitesIds();
+
+}
+
+/**
+ * React on pressing the button "Generate a new keypair"
+ *
+ * First check the form inputs. Only if "true" returns from there, continue;
+ */ 
 function enigmailKeygenStart() {
-   DEBUG_LOG("enigmailKeygen.js: Start\n");
+    getKeygenFormValues();
+    if (validateKeygenForm()) {
 
+        var newKeyParams = getKeygenFormValues();        
+        alert(newKeyParams);
+        
+        // Disable all tabs.
+        var allTabs = $('tab');
+        allTabs.attr('disabled', true);
+      
+        // Allow only the "result" tab
+        var resultTab = $('tab#result-tab');
+        resultTab.attr('disabled', false);
 
-   if (gKeygenRequest) {
-      let req = gKeygenRequest.QueryInterface(Components.interfaces.nsIRequest);
-      if (req.isPending()) {
-         EnigAlert(EnigGetString("genGoing"));
+        // Switch to the tab and the tabpanel (Change Focus)
+        var resultTabPanel = $('tabpanel#result-tabpanel');
+        var tabBox = $('tabbox#keygen-tabbox');
+        tabBox[0].selectedPanel = resultTabPanel[0];
+        tabBox[0].selectedTab   = resultTab[0];
+
+       gGeneratedKey = null;
+       gAllData = "";
+
+       var enigmailSvc = GetEnigmailSvc();
+       if (!enigmailSvc) {
+          EnigAlert(EnigGetString("accessError"));
+          return;
+       }
+
+       var commentElement = document.getElementById("keyComment");
+       var comment = commentElement.value;
+       
+       var confirmMsg = "Are you sure?";
+       if (!confirm(confirmMsg, EnigGetString("keyMan.button.generateKey"))) {
          return;
-      }
-   }
+       }
 
-   gGeneratedKey = null;
-   gAllData = "";
+       var proc = null;
 
-   var enigmailSvc = GetEnigmailSvc();
-   if (!enigmailSvc) {
-      EnigAlert(EnigGetString("accessError"));
-      return;
-   }
+       var listener = {
+          onStartRequest: function () {},
+          onStopRequest: function(status) {
+            enigmailKeygenTerminate(status);
+          },
+          onDataAvailable: function(data) {
+            DEBUG_LOG("enigmailKeygen.js: onDataAvailable() "+data+"\n");
+            
+            var l = document.createElement('label');
+            l.innerHTML = data;
+            $('#result-output').append(l);
 
-   var passphrase = enigmailCheckPassphrase();
-   if (passphrase == null) return;
+            gAllData += data;
+            var keyCreatedIndex = gAllData.indexOf("[GNUPG:] KEY_CREATED");
+            if (keyCreatedIndex >0) {
+              gGeneratedKey = gAllData.substr(keyCreatedIndex);
+              gGeneratedKey = gGeneratedKey.replace(/(.*\[GNUPG:\] KEY_CREATED . )([a-fA-F0-9]+)([\n\r].*)*/, "$2");
+              gAllData = gAllData.replace(/\[GNUPG:\] KEY_CREATED . [a-fA-F0-9]+[\n\r]/, "");
+            }
+            gAllData = gAllData.replace(/[\r\n]*\[GNUPG:\] GOOD_PASSPHRASE/g, "").replace(/([\r\n]*\[GNUPG:\] PROGRESS primegen )(.)( \d+ \d+)/g, "$2");
+            var progMeter = document.getElementById("keygenProgress");
+            var progValue = Number(progMeter.value);
+            progValue += (1+(100-progValue)/200);
+            if (progValue >= 95) progValue=10;
+            progMeter.setAttribute("value", progValue);
+          }
+       };
 
-   var noPassphraseElement = document.getElementById("noPassphrase");
+        keyring = new Keyring();
+        gKeygenRequest = keyring.generateKey(window,
+                             Ec.convertFromUnicode(userName),
+                             Ec.convertFromUnicode(comment),
+                             userEmail,
+                             expiryTime,
+                             keySize,
+                             keyType,
+                             passphrase,
+                             listener);
 
-   if (!passphrase && !noPassphraseElement.checked) {
-      alert("Please set a password");
-      return;
-   }
-
-   var commentElement = document.getElementById("keyComment");
-   var comment = commentElement.value;
-
-   var noExpiry = document.getElementById("noExpiry");
-   var expireInput = document.getElementById("expireInput");
-   var timeScale = document.getElementById("timeScale");
-
-   var expiryTime = 0;
-   if (! noExpiry.checked) {
-      expiryTime = Number(expireInput.value) * Number(timeScale.value);
-      if (expiryTime > 36500) {
-        EnigAlert(EnigGetString("expiryTooLong"));
-        return;
-      }
-      if (! (expiryTime > 0)) {
-        EnigAlert(EnigGetString("expiryTooShort"));
-        return;
-      }
-   }
-   var keySize = Number(document.getElementById("keySize").value);
-   var keyType = Number(document.getElementById("keyType").value);
-
-   if ((keyType==KEYTYPE_DSA) && (keySize>3072)){
-     EnigAlert(EnigGetString("dsaSizeLimit"));
-     keySize = 3072;
-   }
-
-   var curId = getCurrentIdentity();
-   gUsedId = curId;
-
-   var userName = curId.fullName;
-   var userEmail = curId.email;
-
-   if (!userName) {
-      EnigAlert(EnigGetString("passUserName"));
-      return;
-   }
-
-   var idString = userName;
-
-   if (comment)
-      idString += " (" + comment + ")";
-
-   idString += " <" + userEmail + ">";
-
-   var confirmMsg = EnigGetString("keyConfirm", idString);
-
-   if (!EnigConfirm(confirmMsg, EnigGetString("keyMan.button.generateKey"))) {
-     return;
-   }
-
-   var proc = null;
-
-   var listener = {
-      onStartRequest: function () {},
-      onStopRequest: function(status) {
-        enigmailKeygenTerminate(status);
-      },
-      onDataAvailable: function(data) {
-        DEBUG_LOG("enigmailKeygen.js: onDataAvailable() "+data+"\n");
-
-        gAllData += data;
-        var keyCreatedIndex = gAllData.indexOf("[GNUPG:] KEY_CREATED");
-        if (keyCreatedIndex >0) {
-          gGeneratedKey = gAllData.substr(keyCreatedIndex);
-          gGeneratedKey = gGeneratedKey.replace(/(.*\[GNUPG:\] KEY_CREATED . )([a-fA-F0-9]+)([\n\r].*)*/, "$2");
-          gAllData = gAllData.replace(/\[GNUPG:\] KEY_CREATED . [a-fA-F0-9]+[\n\r]/, "");
-        }
-        gAllData = gAllData.replace(/[\r\n]*\[GNUPG:\] GOOD_PASSPHRASE/g, "").replace(/([\r\n]*\[GNUPG:\] PROGRESS primegen )(.)( \d+ \d+)/g, "$2");
-        var progMeter = document.getElementById("keygenProgress");
-        var progValue = Number(progMeter.value);
-        progValue += (1+(100-progValue)/200);
-        if (progValue >= 95) progValue=10;
-        progMeter.setAttribute("value", progValue);
-      }
-   };
-
-   try {
-      gKeygenRequest = Ec.generateKey(window,
-                         Ec.convertFromUnicode(userName),
-                         Ec.convertFromUnicode(comment),
-                         userEmail,
-                         expiryTime,
-                         keySize,
-                         keyType,
-                         passphrase,
-                         listener);
-   } catch (ex) {
-      Ec.DEBUG_LOG("enigmailKeygen.js: generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");
-   }
-
-   if (!gKeygenRequest) {
-      EnigAlert(EnigGetString("keyGenFailed"));
-   }
-
-   WRITE_LOG("enigmailKeygen.js: Start: gKeygenRequest = "+gKeygenRequest+"\n");
+       if (!gKeygenRequest) {
+          alert(EnigGetString("keyGenFailed"));
+       }
+    }
 }
 
 function abortKeyGeneration() {
@@ -375,26 +428,6 @@ function onNoExpiry() {
   timeScale.disabled=noExpiry.checked;
 }
 
-
-function queryISupArray(supportsArray, iid) {
-  var result = [];
-  var i;
-  try {
-    // Gecko <= 20
-    for (i=0; i<supportsArray.Count(); i++) {
-      result.push(supportsArray.GetElementAt(i).QueryInterface(iid));
-    }
-  }
-  catch(ex) {
-    // Gecko > 20
-    for (i=0; i<supportsArray.length; i++) {
-      result.push(supportsArray.queryElementAt(i, iid));
-    }
-  }
-
-  return result;
-}
-
 function getCurrentIdentity()
 {
   var item = gUserIdentityList.selectedItem;
@@ -405,95 +438,56 @@ function getCurrentIdentity()
   return identity;
 }
 
-function fillIdentityListPopup()
-{
-  DEBUG_LOG("enigmailKeygen.js: fillIdentityListPopup\n");
-
-  var idSupports = gAccountManager.allIdentities;
-  var identities = queryISupArray(idSupports,
-                                       Components.interfaces.nsIMsgIdentity);
-
-  DEBUG_LOG("enigmailKeygen.js: fillIdentityListPopup: "+identities + "\n");
-
-  if (identities.length === 1) {
-    $('.oneIdentity').show();
-    $('.multipleIdentities').hide();
-  } else {
-    $('.oneIdentity').hide();
-    $('.multipleIdentities').show();
-  }
-
-  // Default identity
-  var defIdentity;
-  var defIdentities = gAccountManager.defaultAccount.identities;
-  try {
-    // Gecko >= 20
-    if (defIdentities.length >= 1) {
-      defIdentity = defIdentities.queryElementAt(0, Components.interfaces.nsIMsgIdentity);
-    } else {
-      defIdentity = identities[0];
-    }
-  }
-  catch (ex) {
-    // Gecko < 20
-    if (defIdentities.Count() >= 1) {
-      defIdentity = defIdentities.QueryElementAt(0, Components.interfaces.nsIMsgIdentity);
-    } else {
-      defIdentity = identities[0];
-    }
-  }
-
-  DEBUG_LOG("enigmailKeygen.js: fillIdentityListPopup: default="+defIdentity.key+"\n");
-
-  var selected = false;
-  for (var i=0; i<identities.length; i++) {
-    var identity = identities[i];
-
-    DEBUG_LOG("id.valid="+identity.valid+"\n");
-    if (!identity.valid || !identity.email)
-      continue;
-
-    var serverSupports, inServer;
-    try {
-      // Gecko >= 20
-      serverSupports = gAccountManager.getServersForIdentity(identity);
-      if (serverSupports.length > 0) {
-        inServer = serverSupports.queryElementAt(0, Components.interfaces.nsIMsgIncomingServer);
-      }
-    }
-    catch (ex) {
-      // Gecko < 20
-      serverSupports = gAccountManager.GetServersForIdentity(identity);
-      if (serverSupports.GetElementAt(0)) {
-        inServer = serverSupports.GetElementAt(0).QueryInterface(Components.interfaces.nsIMsgIncomingServer);
-      }
-    }
-
-    if (inServer) {
-      var accountName = " - "+inServer.prettyName;
-
-      DEBUG_LOG("enigmailKeygen.js: accountName="+accountName+"\n");
-      DEBUG_LOG("enigmailKeygen.js: email="+identity.email+"\n");
-
-      var item = document.createElement('menuitem');
-//      item.setAttribute('label', identity.identityName);
-      item.setAttribute('label', identity.identityName + accountName);
-      item.setAttribute('class', 'identity-popup-item');
-      item.setAttribute('accountname', accountName);
-      item.setAttribute('id', identity.key);
-      item.setAttribute('email', identity.email);
-
-      gUserIdentityListPopup.appendChild(item);
-      gUserIdentityField.value(item);
-
-      if (!selected)
-        gUserIdentityList.selectedItem = item;
-
-      if (identity.key == defIdentity.key) {
-        gUserIdentityList.selectedItem = item;
-        selected = true;
-      }
-    }
-  }
-
+/**
+ * Look up all the checkboxes and return the IDs of the selected identities
+ *
+ * @return List of Strings
+ */
+function getSelectedIdentitesIds() {
+    var ids = [];
+    $('#userIdentities checkbox').each(function() {
+        thisId = this.id.substring("checkbox-".length);
+        alert("id: " + thisId);
+        if (this.checked) {
+            ids.push(thisId);
+        }
+    });
+    return ids;
 }
+
+/** 
+ * Past all identities of the current user into a menu
+ *
+ * @param  jQuery-Object: userIdentityList  This object will be filled with menu items.
+ * @param  List: accountList  The list of all accounts of the current user.
+ * 
+ * @return void
+ */
+function fillIdentityList(userIdentityList, accountList) {
+    var accountInterator = accountList.nextAccount();
+    for (var account in accountInterator) {
+        var identityInterator = account.nextIdentity();
+        for (var identity in identityInterator) {
+            var checkbox = document.createElement('checkbox');
+            checkbox.setAttribute('checked', "true");
+            checkbox.setAttribute('id', "checkbox-" + identity.key);
+
+            var item = document.createElement('menuitem');
+            //      item.setAttribute('label', identity.identityName);
+            item.setAttribute('label', identity.identityName + " - " + account.getPrettyName());
+            item.setAttribute('class', 'identity-popup-item');
+            item.setAttribute('accountname', account.getPrettyName());
+            item.setAttribute('id', identity.key);
+            item.setAttribute('email', identity.email);
+
+            var listrow = document.createElement('richlistitem');
+            listrow.appendChild(checkbox);
+            listrow.appendChild(item);
+            userIdentityList.append(listrow);
+            
+            var singleIndentity = $("#userIdentityField");
+            singleIndentity.val(identity.identityName + " - " + account.getPrettyName());
+        }
+    }
+}
+

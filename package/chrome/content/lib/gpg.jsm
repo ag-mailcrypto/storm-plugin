@@ -27,12 +27,14 @@ function GPG() {}
 
 /**
  * Calls the GPG executable with the specified arguments.
- * @param {Array} arguments         An array of command line argument strings
- * @param {String|Function} input   Input passed to stdin (optional)
- * @returns {String}                The program output.
- * @throws {GPGError}               If gpg prints output to stderr.
+ * @param {Array} arguments          An array of command line argument strings
+ * @param {String|Function} input    Input passed to stdin (optional)
+ * @param {Function} stdout optional Function that handles console output from gpg.
+ *                                   Makes this function return immediately and asynchronous.
+ * @returns {String}                 The program output.
+ * @throws {GPGError}                If gpg prints output to stderr.
  */
-GPG.prototype.call = function(arguments, input) {
+GPG.prototype.call = function(arguments, input, stdout) {
     input = input || "";
 
     var result = {
@@ -44,7 +46,7 @@ GPG.prototype.call = function(arguments, input) {
     var GPG_AGENT_INFO = env.get("GPG_AGENT_INFO");
 
     try {
-        subprocess.call({
+        var p = subprocess.call({
             command:     storm.preferences.getCharPref("gpg.path"),
             arguments:   arguments,
             //charset: "UTF-8",
@@ -52,14 +54,18 @@ GPG.prototype.call = function(arguments, input) {
             //workdir: "/tmp",
             stdin: input,
             stderr: gpgStderrThrow,
-            stdout: function(data) {
+            stdout: stdout || function(data) {
                 result.output += data;
             },
             done: function(data) {
                 result.code = data.exitCode;
             },
             mergeStderr: false
-        }).wait();
+        });
+        // If no custom function is provided, wait for all the output.
+        if(!stdout) {
+            p.wait();
+        }
     } catch(err) {
         if(typeof(err) == "GPGError") {
             throw err;

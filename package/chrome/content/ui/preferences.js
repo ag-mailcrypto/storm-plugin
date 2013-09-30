@@ -15,7 +15,7 @@
 
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
-Components.utils.import("chrome://storm/content/lib/AccountList.jsm");
+Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 
 var keyListCache = [];
@@ -66,10 +66,6 @@ $(window).load(function() {
     });
     $("#import-clipboard").on("command", function() {
         storm.ui.dialogImportKeyFromClipboard(window);
-    });
-
-    $(".generate-key").on("command", function() {
-        storm.ui.dialogGenerateKey(window);
     });
 
     // controls inside key list
@@ -177,7 +173,7 @@ function filterKeyList() {
 /**
  * Builds the list of account mappings.
  */
-function buildAccountList() {
+function buildAccountList() {} /*
     var listbox = $("#account-list > treechildren");
     listbox.children().remove();
 
@@ -191,4 +187,4 @@ function buildAccountList() {
         item.find('[name="key"]').attr("label", account.key);
         listbox.append(item);
     });
-}
+}*/

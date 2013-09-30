@@ -149,6 +149,63 @@ Keyring.prototype.searchKeys = function(query) {
     });
 }
 
+/**
+ * Generates a key, using GPG
+ */
+Keyring.prototype.generateKey = function(parent, name, comment, email, expiryDate, keyLength, keyType, passphrase, listener) {
+
+//    if (gKeygenProcess) {
+//      throw Components.results.NS_ERROR_FAILURE;
+//    }
+
+    var args = [];
+    args.push("--gen-key");
+
+//    this.CONSOLE_LOG(this.printCmdLine(this.enigmailSvc.agentPath, args));
+
+    var inputData = "%echo Generating key\nKey-Type: ";
+
+    switch (keyType) {
+    case KEYTYPE_DSA:
+      inputData += "DSA\nKey-Length: "+keyLength+"\nSubkey-Type: 16\nSubkey-Length: ";
+      break;
+    case KEYTYPE_RSA:
+      inputData += "RSA\nKey-Usage: sign,auth\nKey-Length: "+keyLength;
+      inputData += "\nSubkey-Type: RSA\nSubkey-Usage: encrypt\nSubkey-Length: ";
+      break;
+    default:
+      return null;
+    }
+
+    inputData += keyLength+"\n";
+    inputData += "Name-Real: "+name+"\n";
+    if (comment) {
+      inputData += "Name-Comment: "+comment+"\n";
+    }
+    inputData += "Name-Email: "+email+"\n";
+    inputData += "Expire-Date: "+String(expiryDate)+"\n";
+
+//    this.CONSOLE_LOG(inputData+" \n");
+
+    if (passphrase.length) {
+      inputData += "Passphrase: "+passphrase+"\n";
+    }
+
+    inputData += "%commit\n%echo done\n";
+
+    var proc = null;
+    var gpg = new GPG();
+
+    proc = gpg.call(args, inputData, listener);        
+
+
+    this.DEBUG_LOG("enigmailCommon.jsm: generateKey: subprocess = "+proc+"\n");
+
+    return proc;
+}
+
+
+
 // Prepare the instance
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 storm.keyring = new Keyring();

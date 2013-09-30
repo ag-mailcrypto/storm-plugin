@@ -65,26 +65,25 @@
 <popupset id="aTooltipSet"/>
 <deck id="view-port" flex="1" selectedIndex="0">
 <box flex="1" class="view-pane">
-<tabbox flex="1">
+<tabbox id="keygen-tabbox" flex="1">
     <tabs>
         <tab label="Generate Key" />
-        <tab label="Advanced Options"       class="advances-options"/>
-        <tab label="Result" disabled="true" class="result"/>
+        <tab label="Advanced Options"       class="advanced-options"/>
+        <tab label="Result" disabled="true" id="result-tab"/>
     </tabs>
     <tabpanels flex="1">  <!-- Basic Tab -->
         <tabpanel flex="1">
         <vbox>
             <hbox class="multipleIdentities"><label>Please select the identities, for which you want to create an encryption key:</label></hbox>
-                    
+
             <groupbox id="userIdBox" orient="vertical">
               <hbox  orient="horizontal" align="center">
-                <label value="User Identity" control="userIdentity"/>
-                <richlistbox class="multipleIdentities" id="userIdentity" label="..." flex="1" minheight="50">
-                  <richlistitem id="userIdentityPopup" >
-                    <checkbox checked="true"/>
-                  </richlistitem>
+                <label value="User Identity" control="userIdentities"/>
+                <richlistbox class="multipleIdentities" id="userIdentities" label="..." flex="1" minheight="50">
+                    <!--checkbox id="checkbox-0" checked="true"><label>Marius Stübs 
+                    <checkbox id="checkbox-1" checked="true"-->
                 </richlistbox>
-                <textbox class="oneIdentity" id="userIdentityField" disabled="true">Marius Stübs &lt;marius@example.com&gt;</textbox>
+                <textbox class="oneIdentity" id="userIdentityField" disabled="true" size="61"></textbox>
               </hbox>
             </groupbox>
 
@@ -103,7 +102,7 @@
               <button label="generateKey"
                       class="dialog"
                       tooltip="aTooltip"
-                      tooltiptext="&enigmail.generateKey.tooltip;"
+                      tooltiptext="enigmail.generateKey.tooltip"
                       oncommand="enigmailKeygenStart();" />
 
               <button label="cancelKey"
@@ -117,7 +116,7 @@
 
 
         </tabpanel>
-        <tabpanel class="advances-options"> <!-- Advanced Tab -->
+        <tabpanel class="advanced-options"> <!-- Advanced Tab -->
           <vbox> 
             <grid>
               <columns>
@@ -189,8 +188,11 @@
         </grid>
     </vbox>
                 </tabpanel>
-                <tabpanel class="advances-options"> <!-- Advanced Tab -->
-  
+                <tabpanel id="result-tabpanel"> <!-- Result Tab -->
+<vbox id="result-output">
+    <hbox><label>Generating ...</label></hbox>
+</vbox>
+
                 </tabpanel>
             </tabpanels>
         </tabbox>
