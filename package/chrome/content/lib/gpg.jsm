@@ -45,6 +45,19 @@ GPG.prototype.call = function(arguments, input, stdout) {
     var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
     var GPG_AGENT_INFO = env.get("GPG_AGENT_INFO");
 
+    // Override gpg --homedir
+
+    if(arguments.indexOf("--homedir") !== -1) {
+        storm.log("ERROR: Argument '--homedir <dir>' is not allowed outside gpg.call()");
+        return;
+    }
+
+    var gpgHomedir = storm.preferences.getCharPref("gpg.homedir");
+    if(gpgHomedir) {
+        arguments.push("--homedir");
+        arguments.push(gpgHomedir);
+    }
+
     try {
         var p = subprocess.call({
             command:     storm.preferences.getCharPref("gpg.path"),

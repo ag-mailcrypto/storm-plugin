@@ -152,7 +152,7 @@ Key.prototype.matches = function(regex) {
  * Returns the primary uid.
  */
 Key.prototype.getPrimaryUserId = function() {
-    return this.userIDs && this.userIDs[0] || "No User-Id <none@example.com>";
+    return this.userIDs && this.userIDs[0] || new UserID("No User-Id <none@example.com>");
 }
 
 /**

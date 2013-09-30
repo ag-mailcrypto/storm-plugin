@@ -72,7 +72,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                             </menupopup>
                                         </button>
                                         <button class="generate-key" type="button" label="Generate key" icon="add"></button>
-                                        <button icon="refresh" label="Reload" />
+                                        <button id="button-list-refresh" icon="refresh" label="Reload" />
                                     </hbox>
                                     <hbox id="advanced-filter" align="baseline" hidden="true">
                                         <checkbox id="advanced-show-trusted" label="Show trusted keys" checked="true"/>
@@ -117,6 +117,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 <preference id="pref-gpg-path"              name="extensions.storm.gpg.path"                type="string"/>
                                 <preference id="pref-gpg-path-autodetect"   name="extensions.storm.gpg.pathAutodetect"      type="bool"/>
                                 <preference id="pref-receive-signed-action" name="extensions.storm.receive.signedAction"    type="string"/>
+                                <preference id="pref-gpg-homedir"           name="extensions.storm.gpg.homedir"             type="string"/>
                             </preferences>
 
                             <vbox class="settings-page">
@@ -139,6 +140,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                                 <label value="Sending mail" class="section" />
                                 <checkbox label="Encrypt for SENT folder" />
+
+                                <label value="GPG home directory, leave empty for default (~/.gnupg)" class="section" />
+                                <textbox preference="pref-gpg-homedir" />
                             </vbox>
                         </prefpane>
 
