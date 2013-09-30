@@ -111,8 +111,8 @@ function buildKeyList() {
     listbox.children().remove();
 
     // select which key list (secret/public) to use, and copy it (.slice)
-    var privateKeys = $("#tab-keys-own:selected").size() > 0;
-    if(privateKeys) {
+    var secretKeys = $("#tab-keys-own:selected").size() > 0;
+    if(secretKeys) {
         keyListCache = storm.keyring.secretKeys.slice(0);
     } else {
         keyListCache = storm.keyring.keys.slice(0);
@@ -122,16 +122,17 @@ function buildKeyList() {
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName.toLowerCase() > b.getPrimaryUserId().realName.toLowerCase(); });
 
     keyListCache.forEach(function(key, index) {
+        var publicKey = key.getPublicKey();
+
         var item = fromTemplate("key-list-template", "key-" + index);
         item.attr("data-keyid", key.id);
 
-        item.addClass(key.getValidity());
+        item.addClass(publicKey.getValidity());
+        item.find('.key-info').attr("tooltiptext", "Trust Status: " + publicKey.getValidityString());
 
         var primaryUid = key.getPrimaryUserId();
         item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
         item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
-
-        item.find('.key-info').attr("tooltiptext", "Trust Status: " + key.getValidityString());
 
         var useridsListbox = item.find('[name="user-ids"]');
         useridsListbox.children().remove();
@@ -164,7 +165,9 @@ function filterKeyList() {
     keyListCache.forEach(function(key, index) {
         var visible = true;
         if(query && !key.matches(query)) visible = false;
-        visible = visible && document.getElementById("advanced-show-" + key.getValidity()).checked;
+        var validityFilter = key.getValidity();
+        if(validityFilter == "marginal") validityFilter = "trusted";
+        visible = visible && document.getElementById("advanced-show-" + validityFilter).checked;
 
         $("#key-"+index).attr("hidden", !visible);
     });
@@ -177,7 +180,7 @@ function buildAccountList() {
     var listbox = $("#account-list > treechildren");
     listbox.children().remove();
 
-    var privateKeys = $("#tab-keys-own:selected").size() > 0;
+    var secretKeys = $("#tab-keys-own:selected").size() > 0;
 
     accountListCache = storm.accountList.accounts;
     accountListCache.sort(function(a, b) { return a.getEmail().toLowerCase() > b.getEmail().toLowerCase(); });

@@ -157,8 +157,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         <richlistitem id="key-list-template" class="key">
             <vbox flex="1">
                 <hbox flex="1" class="key-header">
-                    <image width="16" src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
-                    <image width="16" src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
+                    <image width="16" class="key-toggle" />
                     <vbox>
                         <spacer flex="1" />
                         <image class="key-info" />
