@@ -63,6 +63,7 @@ Key.prototype.isOwnerTrusted = function() {
 Key.prototype.getValidity = function() {
     switch(this.validity) {
         case "m":
+            return "marginal";
         case "f":
         case "u":
             return "trusted";
@@ -71,12 +72,28 @@ Key.prototype.getValidity = function() {
         case "-":
         case "q":
         case "":
-            return this.isOwnerTrusted() ? "trusted" : "untrusted";
+            return "untrusted";
         case "i":
         case "d":
         case "r":
         case "e":
             return "invalid";
+    }
+}
+
+/**
+ * Utility for sorting key by "best trust". Order is:
+ *     trusted - marginal - untrusted - invalid
+ * Best trust has lowest value here.
+ * @return {int} An index for sorting.
+ */
+Key.prototype.getTrustSortValue = function () {
+    switch(this.getValidity()) {
+        case "trusted": return 0;
+        case "marginal": return 1;
+        case "untrusted": return 2;
+        case "invalid": return 3;
+        default: return 4;
     }
 }
 

@@ -3,51 +3,46 @@ Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
 
 $(window).load(function() {
-
-	// AWESOME WORKAROUND EVENT INJECTION FOR CRAPPY EVENT DESIGN!
-	// TODO FIX BUG: A new Row is "copied" from the first Row on creation.
-	// It is copied with the (for the new empty(!) Line) visible and wrong Icon...
-
-	var oldOnInput = $(".textbox-addressingWidget").attr("oninput");
-
-	Application.console.log(oldOnInput);
-
-	$(".textbox-addressingWidget").attr("oninput", oldOnInput + "; stormComposeAddressOverlayOnInput(this);");
+    // AWESOME WORKAROUND EVENT INJECTION FOR CRAPPY EVENT DESIGN!
+    // Appends the onInput function to the onInput attribute, because it somehow
+    // does not work using $.on() -- doh!
+    var widget = $(".textbox-addressingWidget");
+    widget.attr("oninput", widget.attr("oninput" + "; stormComposeAddressOverlayOnInput(this);");
 });
 
+// Overwrite the awAppendNewRow function, calling the original first, then settings
+// some nice attributes. This is a stupid hack because thunderbird itself is one.
+var _original_awAppendNewRow = awAppendNewRow;
+awAppendNewRow = function(setFocus) {
+    _original_awAppendNewRow(setFocus);
+
+    // FIX ALL THE ROWS!
+    $(".textbox-addressingWidget").each(function() {
+        stormComposeAddressOverlayOnInput($(this)[0]);
+    });
+}
+
+/**
+ * Sets the trust icon for an address input box.
+ * @param  {DOMElement} input The input box.
+ */
 function stormComposeAddressOverlayOnInput(input) {
+    var currentInput = $(input).val();
+    var icon = $(input).find(".storm-trust-icon");
 
-	var currentInput = $(input).val();
-	var icon = $(input).find(".composeWindowTrustLevelIcon");
-
-    //parse email
+    // Parse email
     var m = currentInput.match(/^.*\<(.*)\>\s*$/);
-    var email;
-    if (m)
-    {
-    	email = m[1];
-    } else if (isEmail(currentInput))
-    {
-    	email = currentInput
-    }
+    var email = isEmail(currentInput) ? currentInput : (m ? m[1] : null);
 
-    if (email)
-    {
-    	if (storm.keyring.getKeysByEmail(email).some(function(key) {
-    		Application.console.log(key.getValidity());
-    		return key.getValidity() == "trusted";
-    	}))
-    	{
-    		icon.addClass("trusted").removeClass("invalid untrusted");
-    	}
-    	if (storm.keyring.getKeysByEmail(email).some(function(key) {
-    		return key.getValidity() == "untrusted";
-    	}))
-    	{
-    		icon.addClass("untrusted").removeClass("invalid trusted");
-    	}
+    // Find keys
+    var keys = email ? storm.keyring.getKeysByEmail(email) : [];
+    keys = keys.sort(function(a, b) { return a.getTrustSortValue() > b.getTrustSortValue(); });
 
-    } else {
-    	icon.addClass("invalid").removeClass("trusted untrusted")
-    }
+    var bestKey = keys ? keys[0] : null;
+    var cls = bestKey ? bestKey.getValidity() : "none";
+    var title = bestKey ? "Key validity: " + bestKey.getValidityString() : "No key found";
+
+    // Set class
+    icon.removeClass("marginal trusted untrusted invalid none").addClass(cls);
+    icon.attr("tooltiptext", title);
 };

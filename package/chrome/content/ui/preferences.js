@@ -164,7 +164,9 @@ function filterKeyList() {
     keyListCache.forEach(function(key, index) {
         var visible = true;
         if(query && !key.matches(query)) visible = false;
-        visible = visible && document.getElementById("advanced-show-" + key.getValidity()).checked;
+        var validityFilter = key.getValidity();
+        if(validityFilter == "marginal") validityFilter = "trusted";
+        visible = visible && document.getElementById("advanced-show-" + validityFilter).checked;
 
         $("#key-"+index).attr("hidden", !visible);
     });
