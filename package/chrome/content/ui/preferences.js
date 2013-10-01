@@ -68,17 +68,6 @@ $(window).load(function() {
         storm.ui.dialogImportKeyFromClipboard(window);
     });
 
-    // Controls inside key list
-    $("#key-list").on("click", ".key-header", function() {
-        $(this).parents(".key").toggleClass("open");
-    }).on("command", ".key-sign-button", function() {
-        var id = $(this).parents(".key").attr("data-keyid");
-        storm.ui.dialogSignKey(window, storm.keyring.getKey(id));
-    }).on("command", ".key-details-button", function() {
-        var id = $(this).parents(".key").attr("data-keyid");
-        storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
-    });
-
     // Preferences
     $("#textbox-gpg-pathAutodetect").on("command", updatePreferencesTab);
     updatePreferencesTab();
@@ -107,10 +96,7 @@ function fromTemplate(id, new_id) {
  * depending on the tab selected.
  */
 function buildKeyList() {
-    var listbox = $("#key-list");
-    listbox.children().remove();
-
-    // select which key list (secret/public) to use, and copy it (.slice)
+    // Select which key list (secret/public) to use, and copy it (.slice)
     var secretKeys = $("#tab-keys-own:selected").size() > 0;
     if(secretKeys) {
         keyListCache = storm.keyring.secretKeys.slice(0);
@@ -121,35 +107,23 @@ function buildKeyList() {
     // Sort by real name
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName.toLowerCase() > b.getPrimaryUserId().realName.toLowerCase(); });
 
+    // Get and clear listbox
+    var listbox = document.getElementById("key-list");
+    while(listbox.hasChildNodes()) {
+        listbox.removeChild(listbox.lastChild);
+    }
+
+    // Fill listbox with keys
     keyListCache.forEach(function(key, index) {
-        var publicKey = key.getPublicKey();
-
-        var item = fromTemplate("key-list-template", "key-" + index);
-        item.attr("data-keyid", key.id);
-
-        item.addClass(publicKey.getValidity());
-        item.find('.key-info').attr("tooltiptext", "Trust Status: " + publicKey.getValidityString());
-
-        var primaryUid = key.getPrimaryUserId();
-        item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
-        item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
-
-        var useridsListbox = item.find('[name="user-ids"]');
-        useridsListbox.children().remove();
-
-        key.userIDs.forEach(function(userID, index) {
-            var uid = fromTemplate("user-id", "key-" + key.id + "-uid-" + index);
-            uid.find('[name="name"]').attr("value", userID.realName);
-            uid.find('[name="comment"]').attr("value", userID.comment);
-            uid.find('[name="email"]').attr("value", userID.email);
-            useridsListbox.append(uid);
-        });
-
-        item.find('[name="key-id"]').attr("value", key.formatID());
-        listbox.append(item);
+        item = document.createElement("richlistitem");
+        item.setAttribute("class", "key-list-item");
+        item.setAttribute("id", "key-" + index);
+        listbox.appendChild(item);
+        item = listbox.lastChild;
+        item.key = key;
     });
 
-    // run the filter directly after building the list
+    // Run the filter directly after building the list
     filterKeyList();
 }
 
