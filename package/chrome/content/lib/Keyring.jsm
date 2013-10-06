@@ -158,8 +158,9 @@ Keyring.prototype.searchKeys = function(query) {
 /**
  * Generates a key, using GPG
  *
- * @param {window} parent
- * @param 
+ * @param  {window}  parent
+ * @param  {Object}  newKeyParams        Contains the details of the new key, like keySize and password
+ * @return {Object}  keygenRequest       An asynchronius request object. @TODO should get it's own class
  */
 Keyring.prototype.generateKey = function(parent, newKeyParams) {
     var keygenRequest = {
@@ -204,8 +205,15 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
 #        %pubring foo.pub\n\
 #        %secring foo.sec\n\
         %commit\n";
-
+    
+    if (!newKeyParams.comment) {
+        // Empty comment lines MUST be erased.
+        keyGenTemplate = keyGenTemplate.replace("Name-Comment: {comment}\n", '');
+    }
+    
+        // subKeyLength is the same as keyLength
     newKeyParams.subkeyLength = newKeyParams.keyLength;
+        // explicit the gpg default: the main key is for signing, the subkey is for encryption
     newKeyParams.keyUsage = "sign,auth";
     newKeyParams.subkeyUsage = "encrypt";
 
@@ -222,14 +230,10 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
           throw "Missing key type";
     }
 
-    inputString = convertFromUnicode(keyGenTemplate.assocFormat(newKeyParams));
-    // Empty comment lines MUST be erased.
-    inputString = inputString.replace("Name-Comment: \n", '');
-
-    storm.log(inputString);
-
+    // The GPG request is forked/detached so that the ui doesn't freeze.
     var gpg = new GPG();
     parent.setTimeout(function() {
+        inputString = convertFromUnicode(keyGenTemplate.assocFormat(newKeyParams));
         var exitcode = gpg.call(["--gen-key", "--batch", "-v", "-v"], inputString, keygenRequest.onDataAvailable, keygenRequest.onErrorAvailable);
         keygenRequest.finished = true;
         storm.log("Keyring.jsm(): The process has returned." + exitcode);
@@ -251,7 +255,13 @@ if (!String.prototype.assocFormat) {
 }
 
 
-
+/**
+ * Converts text from one charset into ISO8859-1
+ *
+ * @param   String  text
+ * @param   String  charset  Defaults to utf-8
+ * @return  String  The converted text
+ */
 convertFromUnicode = function (text, charset) {
     if (!text) {
       return "";
@@ -269,13 +279,11 @@ convertFromUnicode = function (text, charset) {
         var unicodeConv = Cc[SCRIPTABLEUNICODECONVERTER_CONTRACTID].getService(Ci.nsIScriptableUnicodeConverter);
 
         unicodeConv.charset = charset;
-        return unicodeConv.ConvertFromUnicode(text);
-
+        text = unicodeConv.ConvertFromUnicode(text);
     } catch (ex) {
         storm.log("convertFromUnicode: caught an exception\n");
-
-      return text;
     }
+    return text;
   },
 
 

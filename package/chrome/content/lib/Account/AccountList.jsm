@@ -26,6 +26,9 @@ function AccountList() {
 
 const STORM_ACCOUNT_MANAGER_CONTRACTID = "@mozilla.org/messenger/account-manager;1";
 
+/**
+ * Load the existing Thunderbird accounts
+ */
 AccountList.prototype.loadAccounts = function() {
     // Load the thunderbird Account Manager
     this.thunderbirdAccountManager = Components.classes[STORM_ACCOUNT_MANAGER_CONTRACTID].getService(Components.interfaces.nsIMsgAccountManager);
