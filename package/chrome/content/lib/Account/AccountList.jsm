@@ -28,9 +28,9 @@ const STORM_ACCOUNT_MANAGER_CONTRACTID = "@mozilla.org/messenger/account-manager
 
 AccountList.prototype.loadAccounts = function() {
     // Load the thunderbird Account Manager
-    var thunderbirdAccountManager = Components.classes[STORM_ACCOUNT_MANAGER_CONTRACTID].getService(Components.interfaces.nsIMsgAccountManager);
+    this.thunderbirdAccountManager = Components.classes[STORM_ACCOUNT_MANAGER_CONTRACTID].getService(Components.interfaces.nsIMsgAccountManager);
 
-    var tbAccountInterface = thunderbirdAccountManager.accounts; // "account1,account2,account4,account3"
+    var tbAccountInterface = this.thunderbirdAccountManager.accounts; // "account1,account2,account4,account3"
     var tbAccounts = queryISupArray(tbAccountInterface,
                                        Components.interfaces.nsIMsgAccount);
     for (var i = 0; i < tbAccounts.length; i++) {
@@ -79,6 +79,15 @@ AccountList.prototype.getIdentityCount = function() {
     return this.getAllIdentities().length;
 }
 
+
+/**
+ * Return the identity of given id
+ *
+ * @param {String}  identityKey  Something like "id2", "id4" or "id11"
+ */
+AccountList.prototype.getIdentityById = function(identityKey) {
+    return this.thunderbirdAccountManager.getIdentity(identityKey);
+}
 
 // Prepare the instance
 Components.utils.import("chrome://storm/content/lib/global.jsm");

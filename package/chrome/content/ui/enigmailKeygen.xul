@@ -126,14 +126,14 @@
               <rows>
                 <row>
                   <hbox align="center">
-                    <label value="keySize" control="keySize"/>
+                    <label value="keyLength" control="keyLength"/>
                   </hbox>
                   <hbox flex="0">
-                    <menulist id="keySize" label="2048" value="2048" >
-                      <menupopup id="keySizePopup">
-                        <menuitem id="keySize_1024" value="1024" label="1024"/>
-                        <menuitem id="keySize_2048" value="2048" label="2048"/>
-                        <menuitem id="keySize_4096" value="4096" label="4096" selected="true"/>
+                    <menulist id="keyLength" label="2048" value="2048" >
+                      <menupopup id="keyLengthPopup">
+                        <menuitem id="keyLength_1024" value="1024" label="1024" selected="true"/>
+                        <menuitem id="keyLength_2048" value="2048" label="2048"/>
+                        <menuitem id="keyLength_4096" value="4096" label="4096"/>
                       </menupopup>
                     </menulist>
                   </hbox>
@@ -145,7 +145,7 @@
                   <hbox flex="0">
                     <menulist id="keyType" label="&enigmail.keyGen.keyType.dsa;" value="1" >
                       <menupopup id="keyTypePopup">
-                        <menuitem id="keySize_rsa" value="2" label="keyType.rsa;" selected="true"/>
+                        <menuitem id="keyLength_rsa" value="2" label="keyType.rsa;" selected="true"/>
                         <menuitem id="keyType_dsa" value="1" label="keyType.dsa;"/>
                       </menupopup>
                     </menulist>
@@ -175,9 +175,10 @@
 
                   <menulist id="timeScale" label="years" value="365">
                     <menupopup id="timeScalePopup">
-                      <menuitem id="years" value="365" label="years"/>
-                      <menuitem id="months" value="30" label="months" selected="true"/>
-                      <menuitem id="days" value="1" label="days"/>
+                      <menuitem id="years" value="y" label="years"/>
+                      <menuitem id="months" value="m" label="months" selected="true"/>
+                      <menuitem id="weeks" value="w" label="weeks"/>
+                      <menuitem id="days" value="d" label="days"/>
                     </menupopup>
                   </menulist>
                 </row>
@@ -189,10 +190,32 @@
     </vbox>
                 </tabpanel>
                 <tabpanel id="result-tabpanel"> <!-- Result Tab -->
-<vbox id="result-output">
-    <hbox><label>Generating ...</label></hbox>
-</vbox>
 
+<groupbox id="keygenConsoleBox" orient="vertical" flex="1">
+
+  <caption label="&enigmail.keyGen.console.label;"/>
+
+  <description>&enigmail.keygen.desc;</description>
+
+  <groupbox>
+    <description>Collect randomness</description>
+    <progressmeter id="keygenProgress0" mode="determined" value="0"/>
+
+    <description>Generate main key</description>
+    <progressmeter id="keygenProgress1" mode="determined" value="0"/>
+
+    <description>Collect randomness</description>
+    <progressmeter id="keygenProgress2" mode="determined" value="0"/>
+
+    <description>Generate subkey</description>
+    <progressmeter id="keygenProgress3" mode="determined" value="0"/>
+
+    <description>Connect key to e-mail-address</description>
+    <progressmeter id="keygenProgress4" mode="determined" value="0"/>
+  </groupbox>
+
+    <description id="keygenDetails"></description>
+</groupbox>
                 </tabpanel>
             </tabpanels>
         </tabbox>

@@ -28,10 +28,16 @@ this.EXPORTED_SYMBOLS.push("Keyring");
  * important properties are the `keys` and `secretKeys` arrays.
  */
 function Keyring() {
+    this.messages = [];
     this.keys = [];
     this.secretKeys = [];
     this.loadKeys();
 }
+
+
+const KEYGEN_CANCELLED = "cancelled";
+const KEYTYPE_DSA = 1;
+const KEYTYPE_RSA = 2;
 
 /**
  * Loads all keys from GPG into the arrays `keys` and `secretKeys`.
@@ -151,59 +157,126 @@ Keyring.prototype.searchKeys = function(query) {
 
 /**
  * Generates a key, using GPG
+ *
+ * @param {window} parent
+ * @param 
  */
-Keyring.prototype.generateKey = function(parent, name, comment, email, expiryDate, keyLength, keyType, passphrase, listener) {
+Keyring.prototype.generateKey = function(parent, newKeyParams) {
+    var keygenRequest = {
+        messages: [],
+        exitcode: -1,
+        finished: false,
+        wait: function() {
+            while (finished === false) {}
+            return;
+        },
+        onErrorAvailable: function(data) {
+            // storm.log("stormKeygen.js: onErrorAvailable():" + data + "\n");
+            keygenRequest.messages.push(data);
+        },
+        onDataAvailable: function(data) {
+            // storm.log("enigmailKeygen.js: onDataAvailable() "+data+"\n");
+        },
+    };
+    
+    newKeyParams.nameReal = newKeyParams.identities[0].identityName;
+    newKeyParams.email = newKeyParams.identities[0].email;
 
 //    if (gKeygenProcess) {
-//      throw Components.results.NS_ERROR_FAILURE;
+//    throw Components.results.NS_ERROR_FAILURE;
 //    }
 
-    var args = [];
-    args.push("--gen-key");
+//    storm.log(this.printCmdLine(this.enigmailSvc.agentPath, args));
 
-//    this.CONSOLE_LOG(this.printCmdLine(this.enigmailSvc.agentPath, args));
+    var keyGenTemplate = "\
+        %echo Generating key\n\
+        Key-Type: {keyType}\n\
+        Key-Length: {keyLength}\n\
+        Key-Usage: {keyUsage}\n\
+        Subkey-Type: {subkeyType}\n\
+        Subkey-Length: {subkeyLength}\n\
+        Subkey-Usage: {subkeyUsage}\n\
+        Name-Real: {nameReal}\n\
+        Name-Comment: {comment}\n\
+        Name-Email: {email}\n\
+        Expire-Date: {expireInput}{timeScale}\n\
+        Passphrase: {passphrase}\n\
+#        %pubring foo.pub\n\
+#        %secring foo.sec\n\
+        %commit\n";
 
-    var inputData = "%echo Generating key\nKey-Type: ";
+    newKeyParams.subkeyLength = newKeyParams.keyLength;
+    newKeyParams.keyUsage = "sign,auth";
+    newKeyParams.subkeyUsage = "encrypt";
 
-    switch (keyType) {
-    case KEYTYPE_DSA:
-      inputData += "DSA\nKey-Length: "+keyLength+"\nSubkey-Type: 16\nSubkey-Length: ";
-      break;
-    case KEYTYPE_RSA:
-      inputData += "RSA\nKey-Usage: sign,auth\nKey-Length: "+keyLength;
-      inputData += "\nSubkey-Type: RSA\nSubkey-Usage: encrypt\nSubkey-Length: ";
-      break;
-    default:
-      return null;
+    switch (newKeyParams.keyType) {
+        case KEYTYPE_DSA:
+            newKeyParams.keyType = "DSA";
+            newKeyParams.subkeyType = "ELG-E"; // "16";
+            break;
+        case KEYTYPE_RSA:
+            newKeyParams.keyType = "RSA";
+            newKeyParams.subkeyType = "RSA"
+            break;
+        default:
+          throw "Missing key type";
     }
 
-    inputData += keyLength+"\n";
-    inputData += "Name-Real: "+name+"\n";
-    if (comment) {
-      inputData += "Name-Comment: "+comment+"\n";
-    }
-    inputData += "Name-Email: "+email+"\n";
-    inputData += "Expire-Date: "+String(expiryDate)+"\n";
+    inputString = convertFromUnicode(keyGenTemplate.assocFormat(newKeyParams));
+    // Empty comment lines MUST be erased.
+    inputString = inputString.replace("Name-Comment: \n", '');
 
-//    this.CONSOLE_LOG(inputData+" \n");
+    storm.log(inputString);
 
-    if (passphrase.length) {
-      inputData += "Passphrase: "+passphrase+"\n";
-    }
-
-    inputData += "%commit\n%echo done\n";
-
-    var proc = null;
     var gpg = new GPG();
-
-    proc = gpg.call(args, inputData, listener);        
-
-
-    this.DEBUG_LOG("enigmailCommon.jsm: generateKey: subprocess = "+proc+"\n");
-
-    return proc;
+    parent.setTimeout(function() {
+        var exitcode = gpg.call(["--gen-key", "--batch", "-v", "-v"], inputString, keygenRequest.onDataAvailable, keygenRequest.onErrorAvailable);
+        keygenRequest.finished = true;
+        storm.log("Keyring.jsm(): The process has returned." + exitcode);
+    }, 1);
+    
+    return keygenRequest;
 }
 
+// http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format/4673436#4673436
+if (!String.prototype.assocFormat) {
+  String.prototype.assocFormat = function(args) {
+    return this.replace(/{([^}{]+)}/g, function(match, key) { 
+      return typeof args[key] != 'undefined'
+        ? args[key]
+        : match
+      ;
+    });
+  };
+}
+
+
+
+convertFromUnicode = function (text, charset) {
+    if (!text) {
+      return "";
+    }
+    if (! charset) {
+        charset="utf-8";
+    }
+    storm.log("convertFromUnicode: "+charset+"\n");
+
+    // Encode plaintext
+    try {
+        const Cc = Components.classes;
+        const Ci = Components.interfaces;
+        const SCRIPTABLEUNICODECONVERTER_CONTRACTID = "@mozilla.org/intl/scriptableunicodeconverter";
+        var unicodeConv = Cc[SCRIPTABLEUNICODECONVERTER_CONTRACTID].getService(Ci.nsIScriptableUnicodeConverter);
+
+        unicodeConv.charset = charset;
+        return unicodeConv.ConvertFromUnicode(text);
+
+    } catch (ex) {
+        storm.log("convertFromUnicode: caught an exception\n");
+
+      return text;
+    }
+  },
 
 
 // Prepare the instance

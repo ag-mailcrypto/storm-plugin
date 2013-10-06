@@ -31,10 +31,13 @@ function GPG() {}
  * @param {String|Function} input    Input passed to stdin (optional)
  * @param {Function} stdout optional Function that handles console output from gpg.
  *                                   Makes this function return immediately and asynchronous.
+ * @param {Function} stderr optional Function that handles stderr output from gpg.
+ *                                   Makes this function return immediately and asynchronous.
+
  * @returns {String}                 The program output.
  * @throws {GPGError}                If gpg prints output to stderr.
  */
-GPG.prototype.call = function(arguments, input, stdout) {
+GPG.prototype.call = function(arguments, input, stdout, stderr) {
     input = input || "";
 
     var result = {
@@ -59,26 +62,25 @@ GPG.prototype.call = function(arguments, input, stdout) {
     }
 
     try {
-        var p = subprocess.call({
+         storm.log("gpg.jsm: call() " + arguments);
+         p = subprocess.call({
             command:     storm.preferences.getCharPref("gpg.path"),
             arguments:   arguments,
-            //charset: "UTF-8",
+            // charset: "UTF-8",
             environment: ["GPG_AGENT_INFO="+GPG_AGENT_INFO],
-            //workdir: "/tmp",
+            // workdir: "/tmp",
             stdin: input,
-            stderr: gpgStderrThrow,
+            stderr: stderr || gpgStderrThrow,
             stdout: stdout || function(data) {
                 result.output += data;
             },
             done: function(data) {
                 result.code = data.exitCode;
+                storm.log("gpg.jsm: call() terminated with exit code " + data.exitCode);
             },
             mergeStderr: false
         });
-        // If no custom function is provided, wait for all the output.
-        if(!stdout) {
-            p.wait();
-        }
+        p.wait();
     } catch(err) {
         if(typeof(err) == "GPGError") {
             throw err;
@@ -86,10 +88,6 @@ GPG.prototype.call = function(arguments, input, stdout) {
             // file not exists or something
             storm.log("Error during gpg.call: " + err);
         }
-    }
-
-    if(result.code) {
-        storm.log("GPG result code: " + result.code);
     }
 
     return result.output;

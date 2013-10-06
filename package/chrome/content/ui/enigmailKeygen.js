@@ -34,6 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
+Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
@@ -212,22 +213,18 @@ keygenValidation = {
     /**
      * @return Boolean: Is password valid?
      */
-    validatePassphrase: function() {
-        var passphraseElement = document.getElementById("passphrase");
-        var passphrase2Element = document.getElementById("passphraseRepeat");
-        var passphrase = passphraseElement.value;
-        var noPassphraseElement = document.getElementById("noPassphrase");
+    validatePassphrase: function(newKeyParams) {
 
-        if (!passphrase && !noPassphraseElement.checked) {
+        if (!newKeyParams.passphrase && !newKeyParams.noPassphraseChecked) {
             alert("Please set a password");
             return false;
-        } else if (passphrase != passphrase2Element.value) {
+        } else if (newKeyParams.passphrase != newKeyParams.passphrase2) {
            EnigAlert(EnigGetString("passNoMatch"));
            return false;
-        } else if (passphrase.search(/[\x80-\xFF]/)>=0) {
+        } else if (newKeyParams.passphrase.search(/[\x80-\xFF]/)>=0) {
             EnigAlert(EnigGetString("passCharProblem"));
             return false;
-        } else if ((passphrase.search(/^\s/)==0) || (passphrase.search(/\s$/)>=0)) {
+        } else if ((newKeyParams.passphrase.search(/^\s/)==0) || (newKeyParams.passphrase.search(/\s$/)>=0)) {
             EnigAlert(EnigGetString("passSpaceProblem"));
             return false;
         }
@@ -236,7 +233,7 @@ keygenValidation = {
     /**
      * @return Boolean:  no parallel key generate process is running?
      */
-    validateNoProcessPending: function () {    
+    validateNoProcessPending: function () {
         if (gKeygenRequest) {
           let req = gKeygenRequest.QueryInterface(Components.interfaces.nsIRequest);
           if (req.isPending()) {
@@ -246,14 +243,17 @@ keygenValidation = {
         }
         return true;
     }, 
-    validateKeyExpiryDate: function() {
-        var noExpiry = $("#noExpiry");
-        var expireInput = $("#expireInput");
-        var timeScale = $("#timeScale");
-
-        var expiryTime = 0;
-        if (! noExpiry.checked) {
-            expiryTime = Number(expireInput.val()) * Number(timeScale.val());
+    validateKeyExpiryDate: function(newKeyParams) {
+        var multiplier = 0;
+        switch (newKeyParams.timeScale) {
+            case 'd': multiplier = 1; break;
+            case 'w': multiplier = 7; break;
+            case 'm': multiplier = 30; break;
+            case 'y': multiplier = 365; break;
+        }
+        
+        var expiryTime = Number(newKeyParams.expireInput) * multiplier;
+        if (! newKeyParams.noExpiry) {
             if (expiryTime > 36500) {
                 EnigAlert(EnigGetString("expiryTooLong"));
                 return false;
@@ -264,13 +264,10 @@ keygenValidation = {
         }
         return true;
     },
-    validateKeySize: function() {
-        var keySize = Number(document.getElementById("keySize").value);
-        var keyType = Number(document.getElementById("keyType").value);
-
-        if ((keyType==KEYTYPE_DSA) && (keySize>3072)){
-           EnigAlert(EnigGetString("dsaSizeLimit"));
-           keySize = 3072;
+    validateKeySize: function(newKeyParams) {
+        if ((newKeyParams.keyType==KEYTYPE_DSA) && (newKeyParams.keySize>3072)){
+            EnigAlert(EnigGetString("dsaSizeLimit"));
+            newKeyParams.keySize = 3072;
             return false;
         }
         return true;
@@ -281,14 +278,16 @@ keygenValidation = {
 /**
  * Do all the validations on the Key-Generate form
  *
+ * @param  {Object}  newKeyParams  All the values from the input form
+ *
  * @return True: Form is ok. False: Stop processing!
  */
-function validateKeygenForm() {
+function validateKeygenForm(newKeyParams) {
     switch (false) {
-        case keygenValidation.validatePassphrase():
-        case keygenValidation.validateNoProcessPending():
-        case keygenValidation.validateKeyExpiryDate():
-        case keygenValidation.validateKeySize():
+        case keygenValidation.validatePassphrase(newKeyParams):
+        case keygenValidation.validateNoProcessPending(newKeyParams):
+        case keygenValidation.validateKeyExpiryDate(newKeyParams):
+        case keygenValidation.validateKeySize(newKeyParams):
             return false;
             break;
         default:
@@ -297,16 +296,23 @@ function validateKeygenForm() {
     }
 }
 
+/**
+ * Read the values from the XUL centralized
+ */
 function getKeygenFormValues() {
-    var keySize = Number(document.getElementById("keySize").value);
-    var keyType = Number(document.getElementById("keyType").value);
-    var passphraseElement = document.getElementById("passphrase");
-    var passphrase2Element = document.getElementById("passphraseRepeat");
-    var passphrase = passphraseElement.value;
-    var noPassphraseElement = document.getElementById("noPassphrase");
-    
-    getSelectedIdentitesIds();
-
+    var formValues = {
+            keyLength: Number(document.getElementById("keyLength").value),
+            keyType: Number(document.getElementById("keyType").value),
+            passphrase: document.getElementById("passphrase").value,
+            passphrase2: document.getElementById("passphraseRepeat").value,
+            noPassphraseChecked: document.getElementById("noPassphrase").checked,
+            identities: getSelectedIdentites(),
+            noExpiry: $("#noExpiry").attr('checked'),
+            expireInput: $("#expireInput").val(),
+            timeScale: $("#timeScale").val(),
+            comment: document.getElementById("keyComment").value,
+    };
+    return formValues;
 }
 
 /**
@@ -315,11 +321,10 @@ function getKeygenFormValues() {
  * First check the form inputs. Only if "true" returns from there, continue;
  */ 
 function enigmailKeygenStart() {
-    getKeygenFormValues();
-    if (validateKeygenForm()) {
-
-        var newKeyParams = getKeygenFormValues();        
-        alert(newKeyParams);
+    var newKeyParams = getKeygenFormValues();
+    
+    var confirmMsg = "Are you sure?";
+    if (validateKeygenForm(newKeyParams) && confirm(confirmMsg, EnigGetString("keyMan.button.generateKey"))) {
         
         // Disable all tabs.
         var allTabs = $('tab');
@@ -344,60 +349,49 @@ function enigmailKeygenStart() {
           return;
        }
 
-       var commentElement = document.getElementById("keyComment");
-       var comment = commentElement.value;
        
-       var confirmMsg = "Are you sure?";
-       if (!confirm(confirmMsg, EnigGetString("keyMan.button.generateKey"))) {
-         return;
-       }
-
-       var proc = null;
-
-       var listener = {
-          onStartRequest: function () {},
-          onStopRequest: function(status) {
-            enigmailKeygenTerminate(status);
-          },
-          onDataAvailable: function(data) {
-            DEBUG_LOG("enigmailKeygen.js: onDataAvailable() "+data+"\n");
-            
-            var l = document.createElement('label');
-            l.innerHTML = data;
-            $('#result-output').append(l);
-
-            gAllData += data;
-            var keyCreatedIndex = gAllData.indexOf("[GNUPG:] KEY_CREATED");
-            if (keyCreatedIndex >0) {
-              gGeneratedKey = gAllData.substr(keyCreatedIndex);
-              gGeneratedKey = gGeneratedKey.replace(/(.*\[GNUPG:\] KEY_CREATED . )([a-fA-F0-9]+)([\n\r].*)*/, "$2");
-              gAllData = gAllData.replace(/\[GNUPG:\] KEY_CREATED . [a-fA-F0-9]+[\n\r]/, "");
+        var keygenRequest = storm.keyring.generateKey(window, newKeyParams);
+        var messagesAreBeingProcessed = false;
+        setInterval(function() {
+            if (messagesAreBeingProcessed === false) {
+                messagesAreBeingProcessed = true;
+                while (keygenRequest.messages.length > 0) {
+                    var data = keygenRequest.messages.shift();
+                    displayGpgMessages(data);
+                };
+                messagesAreBeingProcessed = false;
             }
-            gAllData = gAllData.replace(/[\r\n]*\[GNUPG:\] GOOD_PASSPHRASE/g, "").replace(/([\r\n]*\[GNUPG:\] PROGRESS primegen )(.)( \d+ \d+)/g, "$2");
-            var progMeter = document.getElementById("keygenProgress");
-            var progValue = Number(progMeter.value);
-            progValue += (1+(100-progValue)/200);
-            if (progValue >= 95) progValue=10;
-            progMeter.setAttribute("value", progValue);
-          }
-       };
+        }, 50);
+        keygenRequest.wait();
 
-        keyring = new Keyring();
-        gKeygenRequest = keyring.generateKey(window,
-                             Ec.convertFromUnicode(userName),
-                             Ec.convertFromUnicode(comment),
-                             userEmail,
-                             expiryTime,
-                             keySize,
-                             keyType,
-                             passphrase,
-                             listener);
-
+       
        if (!gKeygenRequest) {
           alert(EnigGetString("keyGenFailed"));
        }
     }
 }
+
+var progressMeterInterval;
+function displayGpgMessages(data) {
+    var l = $("#keygenConsoleBox description#keygenDetails");
+    l.get(0).appendChild(document.createTextNode(data));
+    
+    if (progressMeterInterval) {
+        clearInterval(progressMeterInterval); 
+    }
+    
+    if (data.indexOf("Generating key") >= 0) {
+        var progressMeterInterval = setInterval(function() {setProgressMeter("0", '+20');}, 100);
+    } else if (data == '+' || data == '.') {
+        setProgressMeter(0, '99');
+        var progressMeterInterval = setInterval(function() {setProgressMeter("1", '+20');}, 100);
+    } else if (data.match(/Need \d+ more bytes/)) {
+        var progressMeterInterval = setInterval(function() {setProgressMeter("0", '+20');}, 100);
+    } else {
+        setProgressMeter(1, '99');
+    }
+}
+
 
 function abortKeyGeneration() {
   gGeneratedKey = KEYGEN_CANCELLED;
@@ -446,13 +440,21 @@ function getCurrentIdentity()
 function getSelectedIdentitesIds() {
     var ids = [];
     $('#userIdentities checkbox').each(function() {
-        thisId = this.id.substring("checkbox-".length);
-        alert("id: " + thisId);
         if (this.checked) {
+            thisId = this.id.substring("checkbox-".length);
             ids.push(thisId);
         }
     });
     return ids;
+}
+
+function getSelectedIdentites() {
+    var identities = [];
+    accountList = new AccountList();
+    getSelectedIdentitesIds().forEach(function (uid) {
+        identities.push(accountList.getIdentityById(uid));
+    });
+    return identities;
 }
 
 /** 
@@ -491,3 +493,18 @@ function fillIdentityList(userIdentityList, accountList) {
     }
 }
 
+function setProgressMeter(id, newValue) {
+    id = id || 0;
+    var progMeter = document.getElementById("keygenProgress" + id);
+    var progValue = Number(progMeter.newValue);
+    if (newValue.substring(0,1) == '+') {
+        progValue += Number(newValue.substring(1));  
+        if (progValue >= 95) {
+            progValue=10;
+        }
+    } else {
+        progValue = Number(newValue);
+    }
+    
+    progMeter.setAttribute("value", progValue);
+}
