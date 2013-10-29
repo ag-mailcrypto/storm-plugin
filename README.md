@@ -1,6 +1,6 @@
 # STORM Thunderbird Plugin
 
-**S**ecurity **T**rough **O**pporunistic enc<strong>R</strong>yption **M**ethods
+**S**ecurity **T**hrough **O**pportunistic enc<strong>R</strong>yption **M**ethods
 
 This is, of course, a WIP title.
 
