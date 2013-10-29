@@ -320,7 +320,7 @@ function getKeygenFormValues() {
  *
  * First check the form inputs. Only if "true" returns from there, continue;
  */ 
-function enigmailKeygenStart() {
+function stormKeygenStart() {
     var newKeyParams = getKeygenFormValues();
     
     var confirmMsg = "Are you sure?";
@@ -340,16 +340,18 @@ function enigmailKeygenStart() {
         tabBox[0].selectedPanel = resultTabPanel[0];
         tabBox[0].selectedTab   = resultTab[0];
 
-       gGeneratedKey = null;
-       gAllData = "";
+        gGeneratedKey = null;
+        gAllData = "";
 
-       var enigmailSvc = GetEnigmailSvc();
-       if (!enigmailSvc) {
-          EnigAlert(EnigGetString("accessError"));
-          return;
-       }
+        var enigmailSvc = GetEnigmailSvc();
+        if (!enigmailSvc) {
+            EnigAlert(EnigGetString("accessError"));
+            return;
+        }
 
-       
+        /**
+         * IMPORTANT
+         */ 
         var keygenRequest = storm.keyring.generateKey(window, newKeyParams);
         var messagesAreBeingProcessed = false;
         setInterval(function() {
@@ -364,6 +366,7 @@ function enigmailKeygenStart() {
         }, 50);
         keygenRequest.wait();
 
+
        
        if (!gKeygenRequest) {
           alert(EnigGetString("keyGenFailed"));
@@ -371,24 +374,44 @@ function enigmailKeygenStart() {
     }
 }
 
+/**
+ * This function shows the progress of the key generating action.
+ * 
+ * @param  String  data: Contains the return text from calling the GPG command
+ * @return Void
+ *
+ * STATE 0 - Main Key, collection Randomness
+ * STATE 0.1 - Not enough entropy
+ * STATE 1 - Main Key, generating
+ * STATE 2 - Sub Key, collection Randomness
+ * STATE 2.1 - Not enough entropy
+ * STATE 3 - Sub Key, generating
+ */
 var progressMeterInterval;
+var state = -1;
 function displayGpgMessages(data) {
     var l = $("#keygenConsoleBox description#keygenDetails");
     l.get(0).appendChild(document.createTextNode(data));
     
-    if (progressMeterInterval) {
-        clearInterval(progressMeterInterval); 
+    if (data.indexOf("Generating key") >= 0) {
+        state = 0;
+        setProgressMeter("" + state, '5');
+    } else if (data.indexOf("gpg:") >= 0) {
+        if (progressMeterInterval) {
+            clearInterval(progressMeterInterval); 
+        }
+        setProgressMeter(state, '100');
+        state = state + 1;
+        setProgressMeter(state, '5');
     }
     
+    progressMeterInterval = setInterval(function() {setProgressMeter(state, '+1');}, 100);
+    
+    
     if (data.indexOf("Generating key") >= 0) {
-        var progressMeterInterval = setInterval(function() {setProgressMeter("0", '+20');}, 100);
-    } else if (data == '+' || data == '.') {
-        setProgressMeter(0, '99');
-        var progressMeterInterval = setInterval(function() {setProgressMeter("1", '+20');}, 100);
+    } else if (data.substring(0,1) == '+' || data.substring(0,1) == '.') {
     } else if (data.match(/Need \d+ more bytes/)) {
-        var progressMeterInterval = setInterval(function() {setProgressMeter("0", '+20');}, 100);
     } else {
-        setProgressMeter(1, '99');
     }
 }
 
@@ -493,10 +516,14 @@ function fillIdentityList(userIdentityList, accountList) {
     }
 }
 
+/**
+ *
+ */
 function setProgressMeter(id, newValue) {
-    id = id || 0;
+    id = id || "0";
     var progMeter = document.getElementById("keygenProgress" + id);
-    var progValue = Number(progMeter.newValue);
+    if (!progMeter) { return; }
+    var progValue = Number(progMeter.value);
     if (newValue.substring(0,1) == '+') {
         progValue += Number(newValue.substring(1));  
         if (progValue >= 95) {

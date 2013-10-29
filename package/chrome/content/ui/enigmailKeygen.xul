@@ -103,7 +103,7 @@
                       class="dialog"
                       tooltip="aTooltip"
                       tooltiptext="enigmail.generateKey.tooltip"
-                      oncommand="enigmailKeygenStart();" />
+                      oncommand="stormKeygenStart();" />
 
               <button label="cancelKey"
                       class="dialog"
