@@ -19,6 +19,8 @@ following symlink:
 For production, zip up the `package/` folder, rename extension to `xpi` and
 use addon manager in thunderbird to install.
 
+Also check out our [development guide](https://github.com/ag-mailcrypto/storm-plugin/wiki/Development-guide).
+
 ## License (GPLv3)
 
 See `LICENSE` file for full license text.
