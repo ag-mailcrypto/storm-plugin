@@ -132,7 +132,13 @@ function buildKeyList() {
 
         var primaryUid = key.getPrimaryUserId();
         item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
-        item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
+        var tmpPrimaryComment;
+        if ( primaryUid.comment && primaryUid.comment.length > 100 ) {
+            tmpPrimaryComment = primaryUid.comment.substring(0,100) + "[..]"; 
+        } else {
+            tmpPrimaryComment = primaryUid.comment; 
+        }
+        item.find('[name="primary-uid-comment"]').attr("value", tmpPrimaryComment);
 
         var useridsListbox = item.find('[name="user-ids"]');
         useridsListbox.children().remove();
@@ -140,7 +146,13 @@ function buildKeyList() {
         key.userIDs.forEach(function(userID, index) {
             var uid = fromTemplate("user-id", "key-" + key.id + "-uid-" + index);
             uid.find('[name="name"]').attr("value", userID.realName);
-            uid.find('[name="comment"]').attr("value", userID.comment);
+            var tmpUIDComment;
+            if ( userID.comment && userID.comment.length > 100 ) {
+                tmpUIDComment = userID.comment.substring(0,100) + "[..]"; 
+            } else {
+                tmpUIDComment = userID.comment; 
+            }
+            uid.find('[name="comment"]').attr("value", tmpUIDComment);
             uid.find('[name="email"]').attr("value", userID.email);
             useridsListbox.append(uid);
         });
