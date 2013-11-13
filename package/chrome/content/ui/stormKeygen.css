@@ -1,0 +1,10 @@
+#progressBarGroup {
+    background-color: red;
+    width: 200px;
+}
+
+
+#progressBarGroup progressmeter {
+    width: 200px;
+    
+}
