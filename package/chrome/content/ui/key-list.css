@@ -1,0 +1,82 @@
+.key-list-item {
+    -moz-binding: url('chrome://storm/content/bindings/key-list-item.xml#key-list-item');
+    background: #FFF;
+    color: #000;
+    padding: 0;
+    border-bottom: 1px solid #CCC;
+}
+
+.key-list-item[selected] {
+    color: inherit;
+}
+
+/* Layout parts */
+
+.key-list-item .key-header {
+    padding: 5px;
+}
+
+.key-list-item .key-details {
+    background: #FFF;
+    border-top: 1px dotted #CCC;
+    padding: 5px;
+    visibility: collapse;
+}
+
+.key-list-item[trust="invalid"] .key-header {
+    color: #CCC;
+}
+
+/* Content elements */
+.key-list-item .realname {
+    font-weight: bold;
+}
+
+.key-list-item .key-id {
+    color: #777;
+}
+
+.key-list-item .identities-header {
+    font-weight: bold;
+}
+
+/* Toggle arrow */
+.key-list-item .toggle-arrow {
+    transform: scale(0.6);
+    list-style-image: url("chrome://storm/skin/icons/arrow-right.png");
+}
+
+.key-list-item[open] .toggle-arrow {
+    list-style-image: url("chrome://storm/skin/icons/arrow-down.png");
+}
+
+.key-list-item .trust-level-icon {
+    transform: scale(0.8);
+}
+
+/* Conditional hide/show */
+.key-list-item .show-when-open,
+.key-list-item .show-when-closed,
+.key-list-item .show-when-untrusted,
+.key-list-item .show-when-trusted,
+.key-list-item .show-when-invalid {
+    visibility: collapse;
+}
+
+.key-list-item[open]                .show-when-open         { visibility: visible; }
+.key-list-item:not([open])          .show-when-closed       { visibility: visible; }
+.key-list-item[trust="untrusted"]   .show-when-untrusted    { visibility: visible; }
+.key-list-item[trust="trusted"]     .show-when-trusted      { visibility: visible; }
+.key-list-item[trust="invalid"]     .show-when-invalid      { visibility: visible; }
+
+/* Trust icons */
+.key-list-item[trust="trusted"]     .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/trusted.png"); }
+.key-list-item[trust="untrusted"]   .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/untrusted.png"); }
+.key-list-item[trust="marginal"]    .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/marginal.png"); }
+.key-list-item[trust="invalid"]     .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png"); }
+.key-list-item[trust="none"]        .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/none.png"); }
+
+/* Identities */
+.key-list-item-identity {
+    -moz-binding: url('chrome://storm/content/bindings/key-list-item-identity.xml#key-list-item-identity');
+}

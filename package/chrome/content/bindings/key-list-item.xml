@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2013
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+ -->
+<xbl:bindings
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <xbl:script src="chrome://storm/content/lib/utils.jsm" />
+
+    <xbl:binding id="key-list-item">
+        <xbl:content>
+            <vbox flex="1">
+                <hbox flex="1" class="key-header" onclick="parentNode.parentNode.toggleOpen();">
+                    <image width="16" class="toggle-arrow" />
+                    <vbox>
+                        <spacer flex="1" />
+                        <image class="trust-level-icon" />
+                        <spacer flex="1" />
+                    </vbox>
+
+                    <label class="realname" />
+                    <label class="comment" />
+
+                    <spacer flex="1" />
+
+                    <label class="key-id" name="key-id" />
+                </hbox>
+                <hbox class="key-details show-when-open">
+                    <vbox>
+                        <label value="Identities" class="identities-header" />
+                        <vbox name="user-ids"></vbox>
+                    </vbox>
+                    <spacer flex="1" />
+                    <vbox>
+                        <spacer flex="1" />
+                        <hbox>
+                            <button label="Verify and sign"
+                                class="show-when-untrusted key-sign-button"
+                                oncommand="storm.ui.dialogSignKey(window, parentNode.parentNode.parentNode.parentNode.parentNode.key);" />
+                            <button label="Details"
+                                class="key-details-button"
+                                oncommand="storm.ui.dialogKeyDetails(window, parentNode.parentNode.parentNode.parentNode.parentNode.key);" />
+                        </hbox>
+                    </vbox>
+                </hbox>
+            </vbox>
+        </xbl:content>
+
+        <xbl:implementation>
+            <xbl:field name="_open" />
+            <xbl:field name="_trust" />
+            <xbl:field name="_key" />
+
+            <xbl:property name="key">
+                <xbl:setter>
+                    var key = val;
+                    var publicKey = key.getPublicKey();
+                    var primaryUid = key.getPrimaryUserId();
+
+                    var vbox = document.getAnonymousNodes(this)[0];
+                    var header = vbox.childNodes[0];
+
+                    this.trust = publicKey.getValidity();
+
+                    header.childNodes[1].childNodes[1].setAttribute("tooltiptext", "Trust Status: " + publicKey.getValidityString());
+
+                    header.childNodes[2].value = primaryUid.realName;
+                    header.childNodes[3].value = cutString(primaryUid.comment, 100);
+                    header.childNodes[5].value = key.formatID();
+
+                    this._key = val;
+                </xbl:setter>
+                <xbl:getter>
+                    return this._key;
+                </xbl:getter>
+            </xbl:property>
+
+            <xbl:property name="trust">
+                <xbl:setter>
+                    this._trust = val;
+                    this.setAttribute("trust", this._trust);
+                </xbl:setter>
+                <xbl:getter>
+                    return this._trust;
+                </xbl:getter>
+            </xbl:property>
+
+            <xbl:property name="open">
+                <xbl:setter>
+                    this._open = val;
+                    if(this._open) {
+                        // lazy-load the user IDs
+                        this.insertDetails();
+                        this.setAttribute("open", true);
+                    } else {
+                        this.removeAttribute("open");
+                    }
+                </xbl:setter>
+                <xbl:getter>
+                    return this._open;
+                </xbl:getter>bl:inherits="label=previoustext"
+            </xbl:property>
+
+            <xbl:method name="toggleOpen">
+                <xbl:body>
+                    this.open = !this.open;
+                </xbl:body>
+            </xbl:method>
+
+            <xbl:method name="insertDetails">
+                <xbl:body>
+                    var vbox = document.getAnonymousNodes(this)[0];
+                    var details = vbox.childNodes[1];
+                    var listbox = details.childNodes[0].childNodes[1];
+                    while(listbox.hasChildNodes()) {
+                        listbox.removeChild(listbox.lastChild);
+                    }
+                    this.key.userIDs.forEach(function(userID, index) {
+                        var item = document.createElement("hbox");
+                        item.setAttribute("class", "key-list-item-identity");
+                        listbox.appendChild(item);
+                        item = listbox.lastChild;
+                        item.userID = userID;
+                    });
+                </xbl:body>
+            </xbl:method>
+        </xbl:implementation>
+    </xbl:binding>
+</xbl:bindings>

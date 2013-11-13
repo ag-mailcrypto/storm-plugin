@@ -83,7 +83,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         <checkbox id="advanced-show-invalid" label="Show invalid keys" />
                                     </hbox>
 
-                                    <richlistbox id="key-list" flex="1" class="key-list" />
+                                    <richlistbox id="key-list" flex="1" />
                                     <!-- TODO: Modify content to contain actually helpful information -->
                                     <!-- TODO: Style this tutorial thingy to look better and consistent with the rest of the UI -->
                                     <label value="This is a demo tutorial text. It will explain what the different colored dots mean." />
@@ -169,55 +169,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     </hbox>
 
     <box class="template-area">
-
-        <richlistitem id="key-list-template" class="key">
-            <vbox flex="1">
-                <hbox flex="1" class="key-header">
-                    <image width="16" class="key-toggle" />
-                    <vbox>
-                        <spacer flex="1" />
-                        <image class="key-info" />
-                        <spacer flex="1" />
-                    </vbox>
-
-
-                    <label class="realname" name="primary-uid-name" />
-                    <label class="comment" name="primary-uid-comment" />
-
-                    <spacer flex="1" />
-
-                    <label class="key-id" name="key-id" />
-                </hbox>
-                <hbox class="key-details show-when-open">
-                    <vbox>
-                        <label value="Identities" class="bold" />
-                        <vbox name="user-ids"></vbox>
-                    </vbox>
-                    <spacer flex="1" />
-                    <vbox>
-                        <spacer flex="1" />
-                        <hbox>
-                            <button label="Verify and sign" class="show-when-untrusted key-sign-button"/>
-                            <button label="Details" class="key-details-button" />
-                        </hbox>
-                    </vbox>
-                </hbox>
-            </vbox>
-        </richlistitem>
-
-        <hbox id="user-id" class="user-id" flex="1">
-            <label class="email" name="email" />
-            <!-- <label class="realname" name="name" /> -->
-            <label class="comment" name="comment" />
-        </hbox>
-
         <treeitem id="account-list-template">
             <treerow>
                 <treecell class="email" name="email"/>
                 <treecell class="key" name="key"/>
             </treerow>
         </treeitem>
-
     </box>
-
 </window>

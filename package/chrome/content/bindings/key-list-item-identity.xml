@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2013
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+ -->
+<xbl:bindings
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <xbl:script src="chrome://storm/content/lib/utils.jsm" />
+
+    <xbl:binding id="key-list-item-identity">
+        <xbl:content flex="1">
+            <label class="email"    name="email"    xbl:inherits="value=email"/>
+            <!-- <label class="realname" name="name"     xbl:inherits="value=realname"/>  -->
+            <label class="comment"  name="comment"  xbl:inherits="value=comment" />
+        </xbl:content>
+
+        <xbl:implementation>
+            <xbl:field name="_userID" />
+
+            <xbl:property name="userID">
+                <xbl:setter>
+                    this._userID = val;
+                    this.setAttribute("email", this._userID.email);
+                    this.setAttribute("comment", cutString(this._userID.comment, 70));
+                    this.setAttribute("realname", this._userID.realname);
+                </xbl:setter>
+                <xbl:getter>
+                    return this._userID;
+                </xbl:getter>
+            </xbl:property>
+
+        </xbl:implementation>
+    </xbl:binding>
+</xbl:bindings>
