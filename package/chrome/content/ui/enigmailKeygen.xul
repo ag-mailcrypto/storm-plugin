@@ -44,36 +44,55 @@
 
 <!DOCTYPE window SYSTEM "chrome://enigmail/locale/enigmail.dtd" >
 
-<window
-     id="enigmailKeygen"
-     title="enigmail.keygenTitle.label;"
-     windowtype="enigmail:keygen"
-     width="600" height="280"
-     orient="vertical"
-     onload="enigmailKeygenLoad()"
-     onclose="return enigmailOnClose();"
-     xmlns:html="http://www.w3.org/1999/xhtml"
-     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://global/content/dialogOverlay.js" />
+<!--
+onload: see http://forum.jquery.com/topic/jquery-1-4-and-xul-wizard
+-->
+<wizard
+    id="stormKeygen"
+    title="enigmail.keygenTitle.label;"
+    onload="enigmailKeygenLoad()"
+    onclose="return enigmailOnClose();"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
-<script type="application/x-javascript" src="chrome://storm/content/ui/keygenDialog.js"/>
+<script>
+      var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
 
-<script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
-<script type="application/x-javascript" src="chrome://storm/content/ui/enigmailKeygen.js"/>
+      loader.loadSubScript("chrome://storm/content/ext/jquery-2.0.3.js");
+      //var jQuery = window.jQuery.noConflict(true);
+</script>
 
-<popupset id="aTooltipSet"/>
-<deck id="view-port" flex="1" selectedIndex="0">
-<box flex="1" class="view-pane">
-<tabbox id="keygen-tabbox" flex="1">
-    <tabs>
-        <tab label="Generate Key" />
-        <tab label="Advanced Options"       class="advanced-options"/>
-        <tab label="Result" disabled="true" id="result-tab"/>
-    </tabs>
-    <tabpanels flex="1">  <!-- Basic Tab -->
-        <tabpanel flex="1">
+<!--   <script type="application/x-javascript;version=1.8" src="chrome://messenger/content/jquery.js"/> -->
+
+<!--    <script type="application/x-javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"/>-->
+    <script type="application/x-javascript" src="chrome://storm/content/ui/stormKeygen.js"/>
+    <script type="application/x-javascript" src="chrome://storm/content/ui/keygenDialog.js"/>
+
+    <script type="application/x-javascript" src="chrome://global/content/dialogOverlay.js" />
+    
+    
+
+    <script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
+    <script type="application/x-javascript" src="chrome://storm/content/ui/enigmailKeygen.js"/>
+    
+    
+        <popupset id="aTooltipSet"/>
+        <wizardpage>
+        <description>
+      This wizard will help you select the type of dog that is best for you."
+    </description>
+    <label value="Why do you want a dog?"/>
+    <menulist>
+      <menupopup>
+        <menuitem label="To scare people away"/>
+        <menuitem label="To get rid of a cat"/>
+        <menuitem label="I need a best friend"/>
+      </menupopup>
+    </menulist>
+        </wizardpage>
+        <wizardpage>
         <vbox>
             <hbox class="multipleIdentities"><label>Please select the identities, for which you want to create an encryption key:</label></hbox>
 
@@ -116,8 +135,8 @@
           </vbox>
 
 
-        </tabpanel>
-        <tabpanel class="advanced-options"> <!-- Advanced Tab -->
+        <description class="advanced-options">Expertenoptionen</description>
+        <section class="advanced-options"> <!-- Advanced Tab -->
           <vbox> 
             <grid>
               <columns>
@@ -189,8 +208,9 @@
             </rows>
         </grid>
     </vbox>
-                </tabpanel>
-                <tabpanel id="result-tabpanel"> <!-- Result Tab -->
+                </section>
+                </wizardpage>
+                <wizardpage id="result-wizardpage"> <!-- Result Tab -->
 
 <groupbox id="keygenConsoleBox" orient="vertical" flex="1">
 
@@ -217,10 +237,6 @@
   </hbox>
       <description id="keygenDetails"></description>
 </groupbox>
-                </tabpanel>
-            </tabpanels>
-        </tabbox>
-    </box>
-</deck>
+                </wizardpage>
 
-</window>
+</wizard>

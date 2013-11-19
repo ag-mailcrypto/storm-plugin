@@ -8,3 +8,7 @@
     width: 200px;
     
 }
+
+section.advanced-options {
+    display: none;
+}
