@@ -44,7 +44,7 @@ storm.ui = {
     },
 
     dialogGenerateKey: function(window) {
-        window.openDialog("chrome://storm/content/ui/enigmailKeygen.xul", "", "", "");
+        window.openDialog("chrome://storm/content/ui/stormKeygen.xul", "", "", "");
     },
 
 };
