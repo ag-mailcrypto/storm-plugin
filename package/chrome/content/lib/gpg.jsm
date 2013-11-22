@@ -52,8 +52,10 @@ GPG.prototype.call = function(arguments, input) {
 
     var gpgHomedir = storm.preferences.getCharPref("gpg.homedir");
     if(gpgHomedir) {
-        arguments.push("--homedir");
-        arguments.push(gpgHomedir);
+        // add to beginning (for queries like --search-keys the end needs to be clean)
+        // Push them in reverse order!
+        arguments.unshift(gpgHomedir);
+        arguments.unshift("--homedir");
     }
 
     try {
@@ -64,7 +66,9 @@ GPG.prototype.call = function(arguments, input) {
             environment: ["GPG_AGENT_INFO="+GPG_AGENT_INFO],
             //workdir: "/tmp",
             stdin: input,
-            stderr: gpgStderrThrow,
+            stderr: function(data) {
+                storm.log("GPG Error: " + data);
+            },
             stdout: function(data) {
                 result.output += data;
             },
