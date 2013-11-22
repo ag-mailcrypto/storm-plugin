@@ -202,3 +202,21 @@ function cutString (str, length) {
     }
     return result;
 }
+
+this.EXPORTED_SYMBOLS.push("urldecode");
+/**
+ * Decodes URL stuff from keyserver, using different methods.
+ * @param  {string} msg Encoded input.
+ * @return {string}     Decoded output.
+ */
+function urldecode(msg) {
+    try {
+        msg = decodeURI(msg);
+    } catch(e) {}
+
+    try {
+        msg = unescape(msg);
+    } catch(e) {}
+
+    return msg;
+}

@@ -50,17 +50,7 @@ $(window).ready(function() {
     $("#fingerprint-qr").html(qr.createImgTag(3).replace("<img", "<image"));
 
     // get the keys this user trusts
-    var trustedKeys = storm.keyring.keys.filter(function(k) {
-        return k.userIDs.some(function(uid) {
-            return uid.signatures.some(function(uid) {
-                return compareKeyIDs(uid.issuingKeyId, key.id);
-            });
-        });
-    });
-
-    storm.log(trustedKeys);
-
-    trustedKeys.forEach(function(k) {
+    key.getSignedKeys(storm.keyring).forEach(function(k) {
         addTreeItem(document, "trusted-keys-children", [
             k.getPrimaryUserId().realName,
             k.getPrimaryUserId().email,

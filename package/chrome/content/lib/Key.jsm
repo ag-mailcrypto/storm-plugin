@@ -218,3 +218,17 @@ Key.prototype.getPrimaryUserId = function() {
 Key.prototype.formatID = function() {
     return "0x" + this.id.substr(-8);
 }
+
+/**
+ * Returns all keys in the keyring that this key has signed.
+ * @return {Array} All keys that this key has signed.
+ */
+Key.prototype.getSignedKeys = function(keyring) {
+    return keyring.keys.filter(function(k) {
+        return k.userIDs.some(function(uid) {
+            return uid.signatures.some(function(uid) {
+                return compareKeyIDs(uid.issuingKeyId, this.id);
+            });
+        });
+    });
+}

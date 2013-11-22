@@ -112,7 +112,7 @@ function parseKeys(keyList) {
                 key.subKeys.push(subkey);
                 break;
             case "uid":
-                userID = new UserID(user_id);
+                userID = new UserID(urldecode(user_id));
                 key.userIDs.push(userID);
                 break;
             case "fpr":
@@ -168,7 +168,7 @@ function parseKeysFromKeyserver(keyList) {
                 keys.push(key);
                 break;
             case "uid": // uid:<escaped uid string>:<creationdate>:<expirationdate>:<flags>
-                userID = new UserID(unescape(values[1]));
+                userID = new UserID(urldecode(values[1]));
                 key.userIDs.push(userID);
                 break;
             default:
@@ -256,7 +256,7 @@ function createKeyFromValues(values) {
 
     // Create primary user-id entry, which is contained in the "pub" record in
     // some gpg versions when there is only one uid available
-    if(values[9]) key.userIDs.push(new UserID(values[9]));
+    if(values[9]) key.userIDs.push(new UserID(urldecode(values[9])));
 
     return key;
 }
@@ -271,7 +271,7 @@ function createSignatureFromValues(values) {
     var sig = new Signature();
     sig.issuingKeyId        = values[4];
     sig.creationDate        = values[5];
-    sig.userID              = new UserID(values[9]);
+    sig.userID              = new UserID(urldecode(values[9]));
     sig.signatureType       = values[10];
     sig.signatureAlgorithm  = values[15];
     return sig;
