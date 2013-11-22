@@ -164,11 +164,10 @@ function onNoPassphrase() {
  */
 function getMainIdentity() {
     var item = $('#mainIdentity');
-    var identityKey = item.attr('selectedItem');
+    var identityKey = $(item.get(0).selectedItem).attr('value');
     if (!identityKey) { // if none is selected, use the first entry
         identityKey = item.find('menuitem:first-child').eq(0).attr('value');
     }
-
     var accountList = new AccountList();
     var identity = accountList.getIdentityById(identityKey);
 
@@ -224,13 +223,9 @@ function stormKeygenTrigger() {
 }
 
 function stormKeygenStart(newKeyParams) {
-    gGeneratedKey = null;
-    gAllData = "";
 
-    /**
-     * IMPORTANT
-     */ 
-    var globalKeygenRequest = storm.keyring.generateKey(window, newKeyParams);
+
+    var keygenRequest = storm.keyring.generateKey(window, newKeyParams);
     var messagesAreBeingProcessed = false;
     setInterval(function() {
         if (messagesAreBeingProcessed === false) {
@@ -246,7 +241,7 @@ function stormKeygenStart(newKeyParams) {
 
 
 
-    if (!globalKeygenRequest) {
+    if (!keygenRequest) {
       alert("keyGenFailed");
     }
 }
@@ -295,5 +290,32 @@ function getKeygenFormValues() {
             comment: document.getElementById("keyComment").value,
     };
     return formValues;
+}
+
+
+function displayGpgMessages(data) {
+    var l = $("#keygenConsoleBox description#keygenDetails");
+    l.get(0).appendChild(document.createTextNode(data));
+    
+    if (data.indexOf("Generating key") >= 0) {
+        state = 0;
+        setProgressMeter("" + state, '5');
+    } else if (data.indexOf("gpg:") >= 0) {
+        if (progressMeterInterval) {
+            clearInterval(progressMeterInterval); 
+        }
+        setProgressMeter(state, '100');
+        state = state + 1;
+        setProgressMeter(state, '5');
+    }
+    
+    progressMeterInterval = setInterval(function() {setProgressMeter(state, '+1');}, 100);
+    
+    
+    if (data.indexOf("Generating key") >= 0) {
+    } else if (data.substring(0,1) == '+' || data.substring(0,1) == '.') {
+    } else if (data.match(/Need \d+ more bytes/)) {
+    } else {
+    }
 }
 

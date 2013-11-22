@@ -183,7 +183,8 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
         },
     };
     
-    newKeyParams.nameReal = newKeyParams.mainIdentity.identityName;
+    // nameReal contains something like "Johann Wolfgang von Goethe <jwgoethe@example.com>"
+    newKeyParams.nameReal = newKeyParams.mainIdentity.identityName.replace(/\s*<.*$/,'');
     newKeyParams.email = newKeyParams.mainIdentity.email;
 
 //    if (gKeygenProcess) {
@@ -213,6 +214,10 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
         // Empty comment lines MUST be erased.
         keyGenTemplate = keyGenTemplate.replace("Name-Comment: {comment}\n", '');
     }
+    if (!newKeyParams.comment) {
+        // Empty password lines MUST be replaced with "%no-protection".
+        keyGenTemplate = keyGenTemplate.replace("Passphrase: {passphrase}\n", '%no-protection\n');
+    }
     
         // subKeyLength is the same as keyLength
     newKeyParams.subkeyLength = newKeyParams.keyLength;
@@ -237,6 +242,7 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
     var gpg = new GPG();
     parent.setTimeout(function() {
         inputString = convertFromUnicode(keyGenTemplate.assocFormat(newKeyParams));
+        parent.alert(inputString);
         var exitcode = gpg.call(["--gen-key", "--batch", "-v", "-v"], inputString, keygenRequest.onDataAvailable, keygenRequest.onErrorAvailable);
         keygenRequest.finished = true;
         storm.log("Keyring.jsm(): The process has returned." + exitcode);

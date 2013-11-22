@@ -6,7 +6,7 @@
 <window
     id="stormKeygenResult"
     title="Storm Key Generated"
-    onload="alert(window.arguments[0]);stormKeygenStart(window.arguments[0]);"
+    onload="stormKeygenStart(window.arguments[1]);"
     xmlns:html="http://www.w3.org/1999/xhtml"
     width="700"
     height="600"
