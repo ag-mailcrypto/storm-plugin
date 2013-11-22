@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://storm/content/ui/preferences.css" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/keyDetails.css" type="text/css"?>
 
 <!-- Copyright (C) 2013
 
@@ -19,45 +19,134 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
  -->
 
-<window id="storm-key-details" title="Key Details" width="600"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<window id="storm-key-details" title="Key Details" width="600" height="400"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml">
 
+    <script type="application/javascript" src="chrome://storm/content/ext/qrcode.js"></script>
     <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
     <script type="application/javascript" src="chrome://storm/content/ui/keyDetails.js"/>
 
-    <vbox flex="1">
-        <!--
-            * type
-            * validity
-            * owner trust
-            * expiration date
-            * fingerprint
-            * user IDs
-            * signatures
-            * subkeys
-        -->
-        <label value="This key is valid for the following addresses:" class="section" />
-        <tree flex="1" id="user-ids" seltype="single">
-            <treecols>
-                <treecol id="realName" label="Real name" flex="1"/>
-                <treecol id="address" label="Mail address" flex="1"/>
-                <treecol id="comment" label="Comment" flex="1"/>
-            </treecols>
-            <treechildren id="user-ids-children" />
-        </tree>
+    <tabbox id="tablist" flex="1">
+        <tabs>
+            <tab label="Key information" />
+            <tab label="Signatures" />
+            <tab label="Web of Trust" />
+        </tabs>
+        <tabpanels flex="1">
+            <tabpanel id="tab-info">
+                <hbox flex="1">
+                    <vbox>
+                        <image width="120" src="chrome://storm/skin/photo-dummy.png" class="key-photo" />
 
-        <label value="Signatures for selected address" class="section" />
-        <tree flex="1" id="signatures">
-            <treecols>
-                <treecol flex="1" label="Issuer" />
-                <treecol flex="1" label="Issuer key" />
-                <treecol flex="1" label="Trust level" />
-            </treecols>
-            <treechildren id="signatures-children" />
-        </tree>
-    </vbox>
+                        <html:div id="fingerprint-qr"></html:div>
+                    </vbox>
+                    <spacer width="10" />
+                    <vbox flex="1">
+                        <hbox flex="1">
+                            <label id="realname" class="page-title" value="Firstname Lastname" />
+                            <spacer flex="1" />
+                            <vbox>
+                                <image class="trust-level-icon" />
+                            </vbox>
+                        </hbox>
+
+                        <hbox flex="1">
+                            <vbox flex="1">
+                                <label class="section" value="Mail address" />
+                                <label id="email" value="firstname@lastname.com" />
+
+                                <label class="section" value="Comment" />
+                                <label id="comment" value="key comment, please ignore"/>
+                            </vbox>
+                            <spacer width="10" />
+                            <vbox flex="1">
+                                <label class="section" value="Created" />
+                                <label id="created" value="never" />
+
+                                <label class="section" value="Expiry" />
+                                <label id="expiry" value="someday"/>
+                            </vbox>
+                        </hbox>
+
+                        <label class="section" value="Also known as" />
+                        <tree class="user-ids" seltype="single" id="user-ids" rows="3">
+                            <treecols>
+                                <treecol id="realName" label="Real name" flex="1"/>
+                                <treecol id="address" label="Mail address" flex="1"/>
+                                <treecol id="comment" label="Comment" flex="1"/>
+                            </treecols>
+                            <treechildren id="user-ids-children" />
+                        </tree>
+
+                        <label class="section" value="Fingerprint" />
+                        <label class="fingerprint" id="fingerprint" value="A041 4225 12CD C9AD A041 4A00 AADA C00A" />
+                    </vbox>
+                </hbox>
+
+                    <!--
+                        * validity
+                        * expiration date
+                        * subkeys
+                    -->
+            </tabpanel>
+            <tabpanel id="tab-signatures" flex="1">
+                <vbox flex="1">
+                    <label value="This key is valid for the following addresses:" class="section" />
+                    <tree flex="1" class="user-ids" seltype="single" id="user-ids-sigs">
+                        <treecols>
+                            <treecol id="realName" label="Real name" flex="1"/>
+                            <treecol id="address" label="Mail address" flex="1"/>
+                            <treecol id="comment" label="Comment" flex="1"/>
+                        </treecols>
+                        <treechildren id="user-ids-children-sigs" />
+                    </tree>
+
+                    <label value="Signatures for selected address" class="section" />
+                    <tree flex="1" id="signatures">
+                        <treecols>
+                            <treecol flex="1" label="Issuer" />
+                            <treecol flex="1" label="Issuer key" />
+                            <treecol flex="1" label="Trust level" />
+                        </treecols>
+                        <treechildren id="signatures-children" />
+                    </tree>
+                </vbox>
+
+            </tabpanel>
+            <tabpanel id="tab-web-of-trust">
+                <vbox flex="1">
+                    <label class="section" value="Owner trust" />
+                    <menulist>
+                        <menupopup>
+                            <menuitem label="none" value="0"/>
+                            <menuitem label="do NOT trust" value="1"/>
+                            <menuitem label="marginal" value="2"/>
+                            <menuitem label="full" value="3"/>
+                        </menupopup>
+                    </menulist>
+
+                    <label class="section" value="Trusted keys in your keyring" />
+                    <tree flex="1" id="trusted-keys">
+                        <treecols>
+                            <treecol flex="1" label="Name" />
+                            <treecol flex="1" label="Mail address" />
+                            <treecol flex="1" label="Key ID" />
+                            <treecol flex="1" label="Trust level" />
+                        </treecols>
+                        <treechildren id="trusted-keys-children" />
+                    </tree>
+                </vbox>
+            </tabpanel>
+        </tabpanels>
+    </tabbox>
+
+    <spacer height="10" />
+
     <hbox>
         <spacer flex="1" />
+        <button id="button-close" icon="" label="Edit" />
+        <button id="button-close" icon="" label="Sign" />
         <button id="button-close" icon="yes" label="Close" />
     </hbox>
 </window>

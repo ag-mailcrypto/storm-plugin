@@ -36,8 +36,34 @@ window {
     margin-bottom: 0.3em;
 }
 
+.section {
+    font-weight: bold;
+    margin-top: 1em;
+}
+
+
 hr {
     border: none;
     border-bottom: 1px solid #888;
     margin: 0.5em;
 }
+
+.fingerprint {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 0.9em;
+    background: #5D5;
+    background: #555;
+    color: #FFF;
+    padding: 0.3em 0.5em 0.2em 0.5em;
+}
+
+#fingerprint-qr {
+    margin-top: 5px;
+}
+
+[trust="trusted"]     .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/trusted.png"); }
+[trust="untrusted"]   .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/untrusted.png"); }
+[trust="marginal"]    .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/marginal.png"); }
+[trust="invalid"]     .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png"); }
+[trust="none"]        .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/none.png"); }

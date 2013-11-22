@@ -32,6 +32,24 @@ function objectValues(obj) {
     return vals;
 }
 
+this.EXPORTED_SYMBOLS.push("cleanKeyID");
+function cleanKeyID(id, length) {
+    id = id.toUpperCase();
+    if(id.startsWith("0x")) id = id.substring(2);
+    if(length) {
+        id = id.substring(id.length - length);
+    }
+    return id;
+}
+
+this.EXPORTED_SYMBOLS.push("compareKeyIDs");
+function compareKeyIDs(a, b) {
+    a = cleanKeyID(a);
+    b = cleanKeyID(b);
+    var minlen = Math.min(a.length, b.length);
+    return a.substring(a.length - minlen) == b.substring(b.length - minlen);
+}
+
 this.EXPORTED_SYMBOLS.push("signContent");
 // TODO: Move to GPG.
 function signContent(content, passphrase) {
@@ -170,7 +188,7 @@ time = function(callback, msg) {
 this.EXPORTED_SYMBOLS.push("cutString");
 /**
  * Cuts a string to a given length when it's longer,
- * else returns the string.  
+ * else returns the string.
  * @param  {String}  str    String that is to be cut
  * @param  {Integer} length Length of the result
  * @return {String}         The string that was cut
