@@ -14,6 +14,10 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+window {
+    padding: 1.5em;
+}
+
 .spinner {
     width: 32px;
     height: 32px;
@@ -24,4 +28,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     width: 32px;
     height: 32px;
     list-style-image: url("chrome://storm/skin/icons/empty.png");
+}
+
+.page-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+}
+
+hr {
+    border: none;
+    border-bottom: 1px solid #888;
+    margin: 0.5em;
 }

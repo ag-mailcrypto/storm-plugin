@@ -20,17 +20,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
  -->
 
 <window id="storm-keyserver-search" title="Online Key Search" width="600" height="600"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml">
 
     <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
     <script type="application/javascript" src="chrome://storm/content/ui/keyserverSearch.js"/>
 
     <stack flex="1">
         <vbox flex="1">
+            <label class="page-title" value="Search online for keys" />
             <hbox id="search-box" align="baseline" class="toolbar search-box">
                 <textbox placeholder="Type to search..." id="input-search" flex="1"/>
                 <button id="button-search" icon="refresh" label="Search" />
             </hbox>
+            <html:hr />
             <richlistbox id="search-results-list" flex="1" class="key-list" />
             <hbox>
                 <spacer flex="1" />

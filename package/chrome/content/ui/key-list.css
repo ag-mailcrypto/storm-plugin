@@ -80,3 +80,12 @@
 .key-list-item-identity {
     -moz-binding: url('chrome://storm/content/bindings/key-list-item-identity.xml#key-list-item-identity');
 }
+
+.mode-import .key-sign-button {
+    visibility: collapse !important;
+}
+
+.mode-public .key-import-button,
+.mode-secret .key-import-button {
+    visibility: collapse !important;
+}

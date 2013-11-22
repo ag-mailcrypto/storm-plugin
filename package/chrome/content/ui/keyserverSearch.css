@@ -17,10 +17,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 @import url("chrome://storm/content/ui/common.css");
 @import url("chrome://storm/content/ui/key-list.css");
 
-window {
-    padding: 1em;
-}
-
 #loading-icon image, #empty-icon image {
     margin-bottom: 0.5em;
     width: 32px;

@@ -72,13 +72,15 @@ Key.prototype.getValidity = function() {
         case "o":
         case "-":
         case "q":
-        case "":
             return "untrusted";
         case "i":
         case "d":
         case "r":
         case "e":
             return "invalid";
+        case "":
+        default:
+            return "none";
     }
 }
 
@@ -123,7 +125,8 @@ Key.prototype.getValidityString = function() {
             return "revoked";
         case "e":
             return "expired";
-        return "unknown";
+        default:
+            return "unknown";
     }
 }
 

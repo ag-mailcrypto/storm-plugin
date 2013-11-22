@@ -30,6 +30,12 @@ $(window).load(function() {
     });
 });
 
+function onImport(key) {
+    storm.keyring.receiveKey(key.id);
+    storm.keyring.loadKeys();
+    return storm.keyring.getKey(key.id);
+}
+
 function searchKeys(query) {
     $("#loading-icon").show();
     $("#empty-icon").hide();
@@ -48,6 +54,8 @@ function searchKeys(query) {
         item.setAttribute("id", "key-" + index);
         listbox.appendChild(item);
         item = listbox.lastChild;
+        item.mode = "import";
+        item.onImport = onImport;
         item.key = key;
     });
 

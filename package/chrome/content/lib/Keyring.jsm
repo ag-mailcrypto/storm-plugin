@@ -46,12 +46,33 @@ Keyring.prototype.loadKeys = function() {
 
 /**
  * Fetches key information from the keyserver using a search query. Returns as list.
+ * @param {String}  query       The search term.
+ * @param {String}  keyserver   The server to search on (optional).
  * @return {Array}  The array of Key objects.
  */
 Keyring.prototype.searchKeyserver = function(query, keyserver) {
     if(!keyserver) keyserver = storm.preferences.getCharPref("gpg.keyserver");
     var output = storm.gpg.call(["--keyserver", keyserver, "--yes", "--with-colons", "--batch", "--search-keys", query]);
-    return parseKeysFromKeyserver(output.split("\n"));
+    var keys = parseKeysFromKeyserver(output.split("\n"));
+
+    for(var i = 0; i < keys.length; ++i) {
+        var fullKey = this.getKey(keys[i].id);
+        if(fullKey) {
+            keys[i] = fullKey;
+        }
+    }
+    return keys;
+}
+
+/**
+ * Imports a key from the keyserver.
+ * @param {String}  id          The key ID to import.
+ * @param {String}  keyserver   The server to import from (optional).
+ */
+Keyring.prototype.receiveKey = function(id, keyserver) {
+    if(!keyserver) keyserver = storm.preferences.getCharPref("gpg.keyserver");
+    var output = storm.gpg.call(["--keyserver", keyserver, "--recv-keys", id]);
+    // return parseKeysFromKeyserver(output.split("\n"));
 }
 
 /**

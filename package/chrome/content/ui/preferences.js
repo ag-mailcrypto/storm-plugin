@@ -120,6 +120,7 @@ function buildKeyList() {
         item.setAttribute("id", "key-" + index);
         listbox.appendChild(item);
         item = listbox.lastChild;
+        item.mode = (secretKeys ? "secret" : "public");
         item.key = key;
     });
 
