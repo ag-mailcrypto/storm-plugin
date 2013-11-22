@@ -215,34 +215,3 @@ Key.prototype.getPrimaryUserId = function() {
 Key.prototype.formatID = function() {
     return "0x" + this.id.substr(-8);
 }
-
-// ============================================================================
-// Helper functions
-// ============================================================================
-
-this.EXPORTED_SYMBOLS.push("createKeyFromValues");
-/**
- * Creates a key object from the input of "gpg --list-keys --with-colons",
- * already split at the colons. See /usr/share/doc/gnupg/DETAILS for format
- * info.
- */
-function createKeyFromValues(values) {
-    var key = new Key(values[4]);
-
-    key.recordType      = values[0];
-    key.validity        = values[1];
-    key.length          = values[2];
-    key.algorithm       = values[3];
-    key.creationDate    = values[5];
-    key.expirationDate  = values[6];
-    key.ownerTrust      = values[8];
-    //key.userId          = values[9];
-    //key.signatureClass  = values[10];
-    key.capabilities    = values[11];
-
-    // Create primary user-id entry, which is contained in the "pub" record in
-    // some gpg versions when there is only one uid available
-    if(values[9]) key.userIDs.push(new UserID(values[9]));
-
-    return key;
-}

@@ -32,7 +32,7 @@ storm.ui = {
     },
 
     dialogKeyserver: function(window) {
-        window.alert("Keyserver dialog");
+        window.openDialog("chrome://storm/content/ui/keyserverSearch.xul", "", "", "");
     },
 
     dialogImportKeyFromFile: function(window) {

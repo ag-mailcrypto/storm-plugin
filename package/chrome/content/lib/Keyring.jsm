@@ -45,6 +45,16 @@ Keyring.prototype.loadKeys = function() {
 }
 
 /**
+ * Fetches key information from the keyserver using a search query. Returns as list.
+ * @return {Array}  The array of Key objects.
+ */
+Keyring.prototype.searchKeyserver = function(query, keyserver) {
+    if(!keyserver) keyserver = storm.preferences.getCharPref("gpg.keyserver");
+    var output = storm.gpg.call(["--keyserver", keyserver, "--yes", "--with-colons", "--batch", "--search-keys", query]);
+    return parseKeysFromKeyserver(output.split("\n"));
+}
+
+/**
  * Parses a list of record lines (from GPG --with-colons) into keys and their
  * respective subrecords.
  * @param {Array} keyList   An array of lines with records, separated by colons (`:`), as
@@ -94,6 +104,54 @@ function parseKeys(keyList) {
                 userID.signatures.push(signature);
                 break;
             default:
+                // others are unhandled
+                break;
+        }
+    });
+
+    return keys;
+}
+
+/**
+ * Parses a list of record lines from the keyserver (see /usr/share/doc/gnupg/KEYSERVER).
+ * @param {Array} keyList   An array of lines with records, separated by colons (`:`), as
+ *                          described in /usr/share/doc/gnupg/KEYSERVER
+ * @return {Array}          An array of keys that reference their subrecords.
+ */
+function parseKeysFromKeyserver(keyList) {
+    var keys = [];
+    var key = null, userID = null, version = null, keyCount = null;
+
+    keyList.forEach(function(keyLine) {
+        if(keyLine == "") return;
+        var values = keyLine.split(":");
+
+        var record_type = values[0];
+
+        switch(record_type) {
+            case "info":
+                version = values[1];
+                keyCount = values[2];
+                storm.log("Reading " + keyCount + " from keyserver.");
+                if(version != "1") throw "Keyserver version incompatible.";
+                break;
+            case "pub": // pub:<fingerprint>:<algo>:<keylen>:<creationdate>:<expirationdate>:<flags>
+                key = new Key(values[1]);
+                key.recordType      = "pub";
+                key.validity        = values[6];
+                key.length          = values[3];
+                key.algorithm       = values[2];
+                key.creationDate    = values[4];
+                key.expirationDate  = values[5];
+                key.fingerprint     = values[1];
+                keys.push(key);
+                break;
+            case "uid": // uid:<escaped uid string>:<creationdate>:<expirationdate>:<flags>
+                userID = new UserID(unescape(values[1]));
+                key.userIDs.push(userID);
+                break;
+            default:
+                // storm.log("Unknown record type from keyserver: \"" + record_type + "\". Skipping.");
                 // others are unhandled
                 break;
         }
@@ -155,3 +213,45 @@ Keyring.prototype.searchKeys = function(query, findSecret) {
 // Prepare the instance
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 storm.keyring = new Keyring();
+
+/**
+ * Creates a key object from the input of "gpg --list-keys --with-colons",
+ * already split at the colons. See /usr/share/doc/gnupg/DETAILS for format
+ * info.
+ */
+function createKeyFromValues(values) {
+    var key = new Key(values[4]);
+
+    key.recordType      = values[0];
+    key.validity        = values[1];
+    key.length          = values[2];
+    key.algorithm       = values[3];
+    key.creationDate    = values[5];
+    key.expirationDate  = values[6];
+    key.ownerTrust      = values[8];
+    //key.userId          = values[9];
+    //key.signatureClass  = values[10];
+    key.capabilities    = values[11];
+
+    // Create primary user-id entry, which is contained in the "pub" record in
+    // some gpg versions when there is only one uid available
+    if(values[9]) key.userIDs.push(new UserID(values[9]));
+
+    return key;
+}
+
+/**
+ * Creates a new signature object from --with-colons values, similar to
+ * `createKeyFromValues`.
+ * @param {Array} values    Array of values split at the colons.
+ * @return {Signature}      The newly created signature object.
+ */
+function createSignatureFromValues(values) {
+    var sig = new Signature();
+    sig.issuingKeyId        = values[4];
+    sig.creationDate        = values[5];
+    sig.userID              = new UserID(values[9]);
+    sig.signatureType       = values[10];
+    sig.signatureAlgorithm  = values[15];
+    return sig;
+}
