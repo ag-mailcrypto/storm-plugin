@@ -15,13 +15,14 @@
 
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/UserID.jsm");
+Components.utils.import("chrome://storm/content/lib/global.jsm");
 
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("Key");
 /**
  * A Key object represents one record in the keyring, either a public key,
- * private key, or subkey. It can have multiple userIDs and subKeys.
+ * secret key, or subkey. It can have multiple userIDs and subKeys.
  */
 function Key(id) {
     this.id = id.toUpperCase();
@@ -63,6 +64,7 @@ Key.prototype.isOwnerTrusted = function() {
 Key.prototype.getValidity = function() {
     switch(this.validity) {
         case "m":
+            return "marginal";
         case "f":
         case "u":
             return "trusted";
@@ -71,12 +73,28 @@ Key.prototype.getValidity = function() {
         case "-":
         case "q":
         case "":
-            return this.isOwnerTrusted() ? "trusted" : "untrusted";
+            return "untrusted";
         case "i":
         case "d":
         case "r":
         case "e":
             return "invalid";
+    }
+}
+
+/**
+ * Utility for sorting key by "best trust". Order is:
+ *     trusted - marginal - untrusted - invalid
+ * Best trust has lowest value here.
+ * @return {int} An index for sorting.
+ */
+Key.prototype.getTrustSortValue = function () {
+    switch(this.getValidity()) {
+        case "trusted": return 0;
+        case "marginal": return 1;
+        case "untrusted": return 2;
+        case "invalid": return 3;
+        default: return 4;
     }
 }
 
@@ -111,17 +129,53 @@ Key.prototype.getValidityString = function() {
 
 /**
  * Returns whether this key is of primary type, i.e. public ("pub") or
- * private/secret ("sec") record.
+ * secret ("sec") record.
  */
 Key.prototype.isPrimary = function() {
     return this.recordType == "pub" || this.recordType == "sec";
 }
 
 /**
- * Returns whether this key is of private type, i.e. "sec" or "ssb" record.
+ * Returns whether this key is of secret type, i.e. "sec" or "ssb" record.
  */
-Key.prototype.isPrivate = function() {
+Key.prototype.isSecret = function() {
     return this.recordType == "sec" || this.recordType == "ssb";
+}
+
+/**
+ * Returns the pair of this key, if any.
+ * @return {Object} Object with properties "secret" and "public".
+ */
+Key.prototype.getKeypair = function() {
+    if(this.isSecret()) {
+        return { public: this.getOtherKey(), secret: this };
+    } else {
+        return { public: this, secret: this.getOtherKey() };
+    }
+}
+
+/**
+ * Returns the secret key to a public key and vice versa.
+ * @return {Key} The matching other key.
+ */
+Key.prototype.getOtherKey = function() {
+    return storm.keyring.getKey(this.id, !this.isSecret());
+}
+
+/**
+ * Returns the public key to this key, if available, or this key itself, if public.
+ * @return {Key} The matching public key.
+ */
+Key.prototype.getPublicKey = function() {
+    return this.isSecret() ? this.getOtherKey() : this;
+}
+
+/**
+ * Returns the secret key to this key, if available, or this key itself, if secret.
+ * @return {Key} The matching secret key.
+ */
+Key.prototype.getSecretKey = function() {
+    return this.isSecret() ? this : this.getOtherKey();
 }
 
 /**

@@ -17,6 +17,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 @import url("chrome://global/skin/inContentUI.css");
 @import url("chrome://mozapps/skin/extensions/extensions.css");
 
+@import url("chrome://storm/content/ui/key-list.css");
+
 .template-area { display: none; }
 
 #storm-preferences {
@@ -31,88 +33,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     padding: 5px 10px;
 }
 
-.key-list .key {
-    border-bottom: 1px solid #CCC;
-    padding: 0;
-}
-
-.key-list .key > * > * {
-    padding: 5px;
-}
-
-.key-list .key[selected] {
-    color: inherit;
-}
-
-.key-list .key-details {
-/*    background: -moz-Dialog; */
-    border-top: 1px dotted #CCC;
-    padding: 5px;
-}
-
-.bold,
-.key-list .realname {
-    font-weight: bold;
-}
-
-.key-list .comment {
-}
-
-.key-list .key-id {
-    color: #777;
-}
-
-.key-list > .key .show-when-open { visibility: collapse; }
-.key-list > .key.open .show-when-open { visibility: visible; }
-.key-list > .key.open .show-when-closed { visibility: collapse; }
-
-.key-list .key image {
-    transform: scale(0.6);
-}
-
 toolbarbutton > .toolbarbutton-text {
     display: inline-block;
     padding-top: 2px;
-}
-
-.key-list > .key.trusted   {
-    background: #FFF;
-    color: #000;
-}
-.key-list > .key.invalid   {
-    background: #FFF;
-    color: #CCC;
-}
-.key-list > .key.untrusted {
-    background: #FFF;
-    color: #000;
-}
-.key-list > .key.trusted   .show-when-open.key-details {background: #FFF; }
-.key-list > .key.untrusted .show-when-open.key-details {background: #FFF; }
-.key-list > .key.invalid   .show-when-open.key-details {background: #FFF; }
-
-/*.key-list .key .key-info {
-    list-style-image: url("chrome://storm/skin/icons/32/key.png");
-    width: 16px;
-    height: 16px;
-    transform: scale(1.3);
-}*/
-
-.key-list .key .show-when-untrusted, .key-list .key .show-when-trusted, .key-list .key .show-when-invalid { visibility: collapse; }
-.key-list .key.untrusted .show-when-untrusted { visibility: visible; }
-.key-list .key.trusted .show-when-trusted { visibility: visible; }
-.key-list .key.invalid .show-when-invalid { visibility: visible; }
-
-.key-list .key.trusted .key-info {
-    list-style-image: url("chrome://storm/skin/icons/trust-level/trusted.png");
-}
-
-.key-list .key.untrusted .key-info {
-    list-style-image: url("chrome://storm/skin/icons/trust-level/untrusted.png");
-}
-
-.key-list .key.invalid .key-info {
-    list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png");
 }
 
 .settings-page {

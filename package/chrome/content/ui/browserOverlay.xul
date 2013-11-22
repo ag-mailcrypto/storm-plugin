@@ -22,26 +22,42 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
   <script type="application/javascript" src="chrome://storm/content/ui/browserOverlay.js"/>
 
-  <menubar id="mail-menubar">
-    <menu id="menu_Storm"
-      insertafter="messageMenu"
-      accesskey="c"
-      label="Mail-Encryption">
-      <menupopup>
-        <menuitem id="Storm_OpenTab"
-             accesskey="O"
-             oncommand="openStormConfiguration()"
-             label="Options" />
-        <menuitem id="Storm_ClearPassphrase"
-             accesskey="c"
-             label="Clear Passphrase" />
-        <menuitem id="Storm_About"
-             accesskey="a"
-             label="About Storm 0.1" />
+<!-- It's not very nice to duplicate the menu, but all other addons are doing the same... -->
 
+  <!-- thunderbird main menu bar integration -->
+  <menubar id="mail-menubar">
+    <menu id="menu-storm-bar" label="Mail-Encryption" insertafter="messageMenu" accesskey="c">
+      <menupopup>
+        <menuitem id="storm-open-tab"
+        accesskey="O"
+        oncommand="openStormConfiguration()"
+        label="Options" />
+        <menuitem id="storm-clear-passphrase"
+        accesskey="c"
+        label="Clear Passphrase" />
+        <menuitem id="storm-about"
+        accesskey="a"
+        label="About Storm 0.1" />
       </menupopup>
     </menu>
   </menubar>
 
-
+<!-- thunderbird three stripes menu button integration -->
+  <popup id="appmenuSecondaryPane">
+    <splitmenu id="menu-storm-app" label="Mail-Encryption" insertafter="appmenu_customize" accesskey="c">
+      <menupopup id="menupopup_Storm">
+        <menuitem id="storm-open-tab"
+        accesskey="O"
+        oncommand="openStormConfiguration()"
+        label="Options" />
+        <menuitem id="storm-clear-passphrase"
+        accesskey="c"
+        label="Clear Passphrase" />
+        <menuitem id="storm-about"
+        accesskey="a"
+        label="About Storm 0.1" />
+      </menupopup>
+    </splitmenu>
+  </popup>
+  
 </overlay>

@@ -167,3 +167,20 @@ time = function(callback, msg) {
     return result;
 }
 
+this.EXPORTED_SYMBOLS.push("cutString");
+/**
+ * Cuts a string to a given length when it's longer,
+ * else returns the string.  
+ * @param  {String}  str    String that is to be cut
+ * @param  {Integer} length Length of the result
+ * @return {String}         The string that was cut
+ */
+function cutString (str, length) {
+    var result;
+    if ( str && str.length > length ) {
+        result = str.substring(0, length) + "[...]";
+    } else {
+        result = str;
+    }
+    return result;
+}

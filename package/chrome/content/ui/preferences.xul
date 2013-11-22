@@ -60,6 +60,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         <tabpanels flex="1">
                             <tabpanel flex="1">
                                 <vbox flex="1">
+                                    <!-- TODO: Modify content to contain actually helpful information -->
+                                    <!-- TODO: Style this tutorial thingy to look better and consistent with the rest of the UI -->
+                                    <label value="This is a demo tutorial text. It will explain what can be done in this tab. In the end, it will probably span more than one line and look better." />
                                     <hbox id="filter" align="baseline" class="toolbar">
                                         <textbox placeholder="Type to search..." id="filter-string" flex="2"/>
                                         <toolbarbutton id="advanced-filter-button" image="moz-icon://stock/gtk-preferences?size=menu" type="checkbox" label="Advanced" />
@@ -80,18 +83,31 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         <checkbox id="advanced-show-invalid" label="Show invalid keys" />
                                     </hbox>
 
-                                    <richlistbox id="key-list" flex="1" class="key-list" />
+                                    <richlistbox id="key-list" flex="1" />
+                                    <!-- TODO: Modify content to contain actually helpful information -->
+                                    <!-- TODO: Style this tutorial thingy to look better and consistent with the rest of the UI -->
+                                    <label value="This is a demo tutorial text. It will explain what the different colored dots mean." />
                                 </vbox>
                             </tabpanel>
                             <tabpanel flex="1">
-                                <tree id="account-list" flex="1" rows="2" class="account-list">
-                                    <treecols>
-                                        <treecol id="email" label="E-Mail" flex="1"/>
-                                        <treecol id="key" label="Key" flex="1"/>
-                                    </treecols>
-                                      <treechildren>
-                                      </treechildren>
-                                </tree>
+                                <vbox flex="1">
+                                    <!-- TODO: Modify content to be helpful -->
+                                    <!-- TODO: Style this label to be consistent with the remaining UI -->
+                                    <label value="This is a demo tutorial text. It will explain details about what you can do in this tab. In the end, it will span more than one line and look better." />
+                                    <hbox flex="1" >
+                                        <tree id="account-list" flex="1" rows="2" class="account-list">
+                                            <treecols>
+                                                <treecol id="email" label="E-Mail" flex="1"/>
+                                                <treecol id="key" label="Key" flex="1"/>
+                                            </treecols>
+                                            <treechildren>
+                                            </treechildren>
+                                        </tree>
+                                    </hbox>
+                                    <!-- TODO: Modify content to be helpful -->
+                                    <!-- TODO: Style this label to be consistent with the remaining UI -->
+                                    <label value="This is a demo tutorial text. It will explain details about the list." />
+                                </vbox>
                             </tabpanel>
                         </tabpanels>
                     </tabbox>
@@ -153,56 +169,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     </hbox>
 
     <box class="template-area">
-
-        <richlistitem id="key-list-template" class="key">
-            <vbox flex="1">
-                <hbox flex="1" class="key-header">
-                    <image width="16" src="chrome://storm/skin/icons/arrow-right.png" class="show-when-closed" />
-                    <image width="16" src="chrome://storm/skin/icons/arrow-down.png" class="show-when-open" />
-                    <vbox>
-                        <spacer flex="1" />
-                        <image class="key-info" />
-                        <spacer flex="1" />
-                    </vbox>
-
-
-                    <label class="realname" name="primary-uid-name" />
-                    <label class="comment" name="primary-uid-comment" />
-
-                    <spacer flex="1" />
-
-                    <label class="key-id" name="key-id" />
-                </hbox>
-                <hbox class="key-details show-when-open">
-                    <vbox>
-                        <label value="Identities" class="bold" />
-                        <vbox name="user-ids"></vbox>
-                    </vbox>
-                    <spacer flex="1" />
-                    <vbox>
-                        <spacer flex="1" />
-                        <hbox>
-                            <button label="Verify and sign" class="show-when-untrusted key-sign-button"/>
-                            <button label="Details" class="key-details-button" />
-                        </hbox>
-                    </vbox>
-                </hbox>
-            </vbox>
-        </richlistitem>
-
-        <hbox id="user-id" class="user-id" flex="1">
-            <label class="email" name="email" />
-            <!-- <label class="realname" name="name" /> -->
-            <label class="comment" name="comment" />
-        </hbox>
-
         <treeitem id="account-list-template">
             <treerow>
                 <treecell class="email" name="email"/>
                 <treecell class="key" name="key"/>
             </treerow>
         </treeitem>
-
     </box>
-
 </window>

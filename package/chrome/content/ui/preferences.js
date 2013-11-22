@@ -68,17 +68,6 @@ $(window).load(function() {
         storm.ui.dialogImportKeyFromClipboard(window);
     });
 
-    // controls inside key list
-    $("#key-list").on("click", ".key-header", function() {
-        $(this).parents(".key").toggleClass("open");
-    }).on("command", ".key-sign-button", function() {
-        var id = $(this).parents(".key").attr("data-keyid");
-        storm.ui.dialogSignKey(window, storm.keyring.getKey(id));
-    }).on("command", ".key-details-button", function() {
-        var id = $(this).parents(".key").attr("data-keyid");
-        storm.ui.dialogKeyDetails(window, storm.keyring.getKey(id));
-    });
-
     // Preferences
     $("#textbox-gpg-pathAutodetect").on("command", updatePreferencesTab);
     updatePreferencesTab();
@@ -107,12 +96,9 @@ function fromTemplate(id, new_id) {
  * depending on the tab selected.
  */
 function buildKeyList() {
-    var listbox = $("#key-list");
-    listbox.children().remove();
-
-    // select which key list (secret/public) to use, and copy it (.slice)
-    var privateKeys = $("#tab-keys-own:selected").size() > 0;
-    if(privateKeys) {
+    // Select which key list (secret/public) to use, and copy it (.slice)
+    var secretKeys = $("#tab-keys-own:selected").size() > 0;
+    if(secretKeys) {
         keyListCache = storm.keyring.secretKeys.slice(0);
     } else {
         keyListCache = storm.keyring.keys.slice(0);
@@ -120,35 +106,24 @@ function buildKeyList() {
 
     // Sort by real name
     keyListCache.sort(function(a, b) { return a.getPrimaryUserId().realName.toLowerCase() > b.getPrimaryUserId().realName.toLowerCase(); });
+
+    // Get and clear listbox
+    var listbox = document.getElementById("key-list");
+    while(listbox.hasChildNodes()) {
+        listbox.removeChild(listbox.lastChild);
+    }
+
+    // Fill listbox with keys
     keyListCache.forEach(function(key, index) {
-        var item = fromTemplate("key-list-template", "key-" + index);
-        item.attr("data-keyid", key.id);
-
-        item.addClass(key.getValidity());
-
-        var primaryUid = key.getPrimaryUserId();
-        item.find('[name="primary-uid-name"]').attr("value", primaryUid.realName);
-        item.find('[name="primary-uid-comment"]').attr("value", primaryUid.comment);
-
-        item.find('.key-info').attr("tooltiptext", "Trust Status: " + key.getValidityString());
-
-        var useridsListbox = item.find('[name="user-ids"]');
-        useridsListbox.children().remove();
-
-        key.userIDs.forEach(function(userID, index) {
-            var uid = fromTemplate("user-id", "key-" + key.id + "-uid-" + index);
-            uid.find('[name="name"]').attr("value", userID.realName);
-            uid.find('[name="comment"]').attr("value", userID.comment);
-            uid.find('[name="email"]').attr("value", userID.email);
-            useridsListbox.append(uid);
-        });
-
-      item.find('[name="key-id"]').attr("value", key.formatID());
-      listbox.append(item);
-              
+        item = document.createElement("richlistitem");
+        item.setAttribute("class", "key-list-item");
+        item.setAttribute("id", "key-" + index);
+        listbox.appendChild(item);
+        item = listbox.lastChild;
+        item.key = key;
     });
 
-    // run the filter directly after building the list
+    // Run the filter directly after building the list
     filterKeyList();
 }
 
@@ -164,7 +139,9 @@ function filterKeyList() {
     keyListCache.forEach(function(key, index) {
         var visible = true;
         if(query && !key.matches(query)) visible = false;
-        visible = visible && document.getElementById("advanced-show-" + key.getValidity()).checked;
+        var validityFilter = key.getValidity();
+        if(validityFilter == "marginal") validityFilter = "trusted";
+        visible = visible && document.getElementById("advanced-show-" + validityFilter).checked;
 
         $("#key-"+index).attr("hidden", !visible);
     });
@@ -177,7 +154,7 @@ function buildAccountList() {} /*
     var listbox = $("#account-list > treechildren");
     listbox.children().remove();
 
-    var privateKeys = $("#tab-keys-own:selected").size() > 0;
+    var secretKeys = $("#tab-keys-own:selected").size() > 0;
 
     accountListCache = storm.accountList.accounts;
     accountListCache.sort(function(a, b) { return a.getEmail().toLowerCase() > b.getEmail().toLowerCase(); });

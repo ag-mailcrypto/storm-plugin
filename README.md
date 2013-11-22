@@ -1,6 +1,6 @@
 # STORM Thunderbird Plugin
 
-**S**ecurity **T**rough **O**pporunistic enc<strong>R</strong>yption **M**ethods
+**S**ecurity **T**hrough **O**pportunistic enc<strong>R</strong>yption **M**ethods
 
 This is, of course, a WIP title.
 
@@ -18,6 +18,8 @@ following symlink:
 
 For production, zip up the `package/` folder, rename extension to `xpi` and
 use addon manager in thunderbird to install.
+
+Also check out our [development guide](https://github.com/ag-mailcrypto/storm-plugin/wiki/Development-guide).
 
 ## License (GPLv3)
 

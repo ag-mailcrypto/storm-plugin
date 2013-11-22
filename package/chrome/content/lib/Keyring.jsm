@@ -111,17 +111,18 @@ function parseKeys(keyList) {
 /**
  * Returns a Key object from the keyring, matching the given id.
  *
- * @param  {String} id  The requested keyId, beginning with 0x or not, it must
- *                      end with 8 or 16 hex digits.
- * @return {Key}        Return the first key ending with the given id string.
+ * @param   {String}  id            The requested keyId, beginning with 0x or not, it must
+ *                                  end with 8 or 16 hex digits.
+ * @param   {bool}    findSecret    True if a secret key is searched.
+ * @return  {Key}                   Return the first key ending with the given id string.
  */
-Keyring.prototype.getKey = function(id) {
+Keyring.prototype.getKey = function(id, findSecret) {
     id = id.toUpperCase();
     if(id.startsWith("0X")) id = id.substr(2);
 
     if(id.length != 8 && id.length != 16) return null;
 
-    return this.keys.filter(function(key) {
+    return (findSecret ? this.secretKeys : this.keys).filter(function(key) {
         return key.id.endsWith(id);
     })[0];
 }
@@ -130,13 +131,14 @@ Keyring.prototype.getKey = function(id) {
  * Returns all keys that contain at least one UserID with the given mail address
  * (case insensitive).
  *
- * @param  {String} email   The email to search for.
- * @return {Array}          Array of matching keys.
+ * @param  {String} email       The email to search for.
+ * @param  {bool}   findSecret  True if a secret key is searched.
+ * @return {Array}              Array of matching keys.
  */
-Keyring.prototype.getKeysByEmail = function(email) {
+Keyring.prototype.getKeysByEmail = function(email, findSecret) {
     email = email.toLowerCase();
 
-    return this.keys.filter(function(key) {
+    return (findSecret ? this.secretKeys : this.keys).filter(function(key) {
         return key.userIDs.some(function(userID) {
             return userID.parsed && userID.email.toLowerCase() == email;
         });
@@ -146,11 +148,12 @@ Keyring.prototype.getKeysByEmail = function(email) {
 /**
  * Searches for a query (or regex) in all keys. See `Key.matches` for more
  * description on matching.
- * @param  {String} query  The query string, as regex.
- * @return {Array}         An array of all matching keys.
+ * @param  {String} query       The query string, as regex.
+ * @param  {bool}   findSecret  True if a secret key is searched.
+ * @return {Array}              An array of all matching keys.
  */
-Keyring.prototype.searchKeys = function(query) {
-    return this.keys.filter(function(key) {
+Keyring.prototype.searchKeys = function(query, findSecret) {
+    return (findSecret ? this.secretKeys : this.keys).filter(function(key) {
         return key.matches(query);
     });
 }

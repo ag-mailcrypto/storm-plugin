@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
     <script type="application/javascript" src="chrome://storm/content/ui/keyDetails.js"/>
 
-    <vbox>
+    <vbox flex="1">
         <!--
             * type
             * validity
@@ -37,7 +37,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
             * subkeys
         -->
         <label value="This key is valid for the following addresses:" class="section" />
-        <tree rows="5" id="user-ids" seltype="single">
+        <tree flex="1" id="user-ids" seltype="single">
             <treecols>
                 <treecol id="realName" label="Real name" flex="1"/>
                 <treecol id="address" label="Mail address" flex="1"/>
@@ -47,7 +47,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         </tree>
 
         <label value="Signatures for selected address" class="section" />
-        <tree rows="5" id="signatures">
+        <tree flex="1" id="signatures">
             <treecols>
                 <treecol flex="1" label="Issuer" />
                 <treecol flex="1" label="Issuer key" />
