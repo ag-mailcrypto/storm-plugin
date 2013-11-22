@@ -48,35 +48,42 @@
 <!--
 onload: see http://forum.jquery.com/topic/jquery-1-4-and-xul-wizard
 -->
-<wizard
+<window
     id="stormKeygen"
     title="enigmail.keygenTitle.label;"
-    onload="enigmailKeygenLoad()"
+    onload="loadjQuery()"
     onclose="return enigmailOnClose();"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 <script>
+ <![CDATA[
+    loadjQuery = function() {
       var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                         .getService(Components.interfaces.mozIJSSubScriptLoader);
 
       loader.loadSubScript("chrome://storm/content/ext/jquery-2.0.3.js");
       //var jQuery = window.jQuery.noConflict(true);
+
+        jsScriptFiles = [
+            "chrome://storm/content/ui/stormKeygen.js",
+            "chrome://storm/content/ui/keygenDialog.js",
+            "chrome://global/content/dialogOverlay.js",
+            "chrome://enigmail/content/enigmailCommon.js",
+            "chrome://storm/content/ui/enigmailKeygen.js"
+        ];
+        var i;
+        for (i=0; i < jsScriptFiles.length; i++) {
+            loader.loadSubScript(jsScriptFiles[i]);
+        } 
+        alert($);
+    }
+ ]]>
 </script>
 
 <!--   <script type="application/x-javascript;version=1.8" src="chrome://messenger/content/jquery.js"/> -->
-
 <!--    <script type="application/x-javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"/>-->
-    <script type="application/x-javascript" src="chrome://storm/content/ui/stormKeygen.js"/>
-    <script type="application/x-javascript" src="chrome://storm/content/ui/keygenDialog.js"/>
 
-    <script type="application/x-javascript" src="chrome://global/content/dialogOverlay.js" />
-    
-    
-
-    <script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
-    <script type="application/x-javascript" src="chrome://storm/content/ui/enigmailKeygen.js"/>
-    
     
         <popupset id="aTooltipSet"/>
         <wizardpage>
@@ -239,4 +246,4 @@ onload: see http://forum.jquery.com/topic/jquery-1-4-and-xul-wizard
 </groupbox>
                 </wizardpage>
 
-</wizard>
+</window>

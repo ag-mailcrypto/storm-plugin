@@ -9,6 +9,13 @@
     
 }
 
-section.advanced-options {
-    display: none;
+
+vbox#selectIdentities {
+    width: 300px;
+}
+
+
+#passphraseFirst label,
+#passphraseSecond label {
+    width: 200px;
 }

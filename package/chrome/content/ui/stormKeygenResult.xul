@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/stormKeygenWizard.css" type="text/css"?>
+
+<window
+    id="stormKeygenResult"
+    title="Storm Key Generated"
+    onload="alert(window.arguments[0]);stormKeygenStart(window.arguments[0]);"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    width="700"
+    height="600"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"/>
+    <script type="application/x-javascript" src="chrome://storm/content/ui/stormKeygenWizard.js"/>
+    <script type="application/x-javascript" src="chrome://storm/content/ui/stormKeygenWizardValidation.js"/>
+
+<groupbox id="keygenConsoleBox" orient="vertical" flex="1">
+
+  <caption label=".keyGen.console.label;"/>
+
+  <description>.keygen.desc;</description>
+
+  <hbox>
+      <groupbox id="progressBarGroup">
+        <description>1. Collect randomness</description>
+        <progressmeter id="keygenProgress0" mode="determined" value="0"/>
+
+        <description>2. Generate main key</description>
+        <progressmeter id="keygenProgress1" mode="determined" value="0"/>
+
+        <description>3. Generate subkey</description>
+        <progressmeter id="keygenProgress3" mode="determined" value="0"/>
+
+        <description>4. Connect key to e-mail-address(es)</description>
+        <progressmeter id="keygenProgress4" mode="determined" value="0"/>
+      </groupbox>
+
+
+  </hbox>
+      <description id="keygenDetails"></description>
+</groupbox>
+
+</window>

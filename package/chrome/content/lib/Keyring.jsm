@@ -180,8 +180,8 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
         },
     };
     
-    newKeyParams.nameReal = newKeyParams.identities[0].identityName;
-    newKeyParams.email = newKeyParams.identities[0].email;
+    newKeyParams.nameReal = newKeyParams.mainIdentity.identityName;
+    newKeyParams.email = newKeyParams.mainIdentity.email;
 
 //    if (gKeygenProcess) {
 //    throw Components.results.NS_ERROR_FAILURE;
