@@ -48,13 +48,13 @@ toolbarbutton > .toolbarbutton-text {
     margin-top: 1em;
 }
 
-.view-pane .create-key  {    display: none;  }
+.view-pane button#generate-key  {    display: none;  }
 
 .view-pane.tab-keys-own .import-menu {    display: none;   }
-.view-pane.tab-keys-own .generate-key  {    display: block;  }
+.view-pane.tab-keys-own #generate-key  {    display: block;  }
 
 .view-pane.tab-keys-others .import-menu {  display: block; }
-.view-pane.tab-keys-others .generate-key  {  display: none;  }
+.view-pane.tab-keys-others #generate-key  {  display: none;  }
 
 .key-photo {
     border: 2px solid #FFF;

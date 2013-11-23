@@ -52,7 +52,7 @@ $(window).load(function() {
     });
 
     // Generate key button
-    $(".generate-key").on("command", function() {
+    $("button#generate-key").on("command", function() {
         storm.ui.dialogGenerateKey(window);
     });
 
