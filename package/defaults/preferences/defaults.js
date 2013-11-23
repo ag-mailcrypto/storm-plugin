@@ -17,6 +17,9 @@
 pref("extensions.storm.gpg.pathAutodetect",         true);
 pref("extensions.storm.gpg.path",                   "/usr/bin/gpg");
 
+// Default keyserver, in case none is chosen
+pref("extensions.storm.gpg.keyserver",              "hkp://pgp.mit.edu");
+
 // Replacement directory for gpg files, defaults to "~/.gnupg" if empty. This
 // is the place where the gpg keyrings/trustdb and settings are stored. Useful
 // for debugging.
@@ -25,3 +28,4 @@ pref("extensions.storm.gpg.homedir", "");
 // Upon receiving a signed mail from an unknown key, perform this action:
 // Accepted values: nothing|ask|marginal-owner|marginal-sign
 pref("extensions.storm.receive.signedAction",       "marginal-owner");
+

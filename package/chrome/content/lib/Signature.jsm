@@ -88,20 +88,3 @@ Signature.prototype.getCheckLevelString = function() {
         default: return "invalid";
     }
 }
-
-this.EXPORTED_SYMBOLS.push("createSignatureFromValues");
-/**
- * Creates a new signature object from --with-colons values, similar to
- * `createKeyFromValues`.
- * @param {Array} values    Array of values split at the colons.
- * @return {Signature}      The newly created signature object.
- */
-function createSignatureFromValues(values) {
-    var sig = new Signature();
-    sig.issuingKeyId        = values[4];
-    sig.creationDate        = values[5];
-    sig.userID              = new UserID(values[9]);
-    sig.signatureType       = values[10];
-    sig.signatureAlgorithm  = values[15];
-    return sig;
-}

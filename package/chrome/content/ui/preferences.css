@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 @import url("chrome://global/skin/inContentUI.css");
 @import url("chrome://mozapps/skin/extensions/extensions.css");
 
+@import url("chrome://storm/content/ui/common.css");
 @import url("chrome://storm/content/ui/key-list.css");
 
 .template-area { display: none; }
@@ -55,6 +56,6 @@ toolbarbutton > .toolbarbutton-text {
 .view-pane.tab-keys-others .import-menu {  display: block; }
 .view-pane.tab-keys-others .generate-key  {  display: none;  }
 
-
-
-
+.key-photo {
+    border: 2px solid #FFF;
+}

@@ -134,6 +134,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 <preference id="pref-gpg-path-autodetect"   name="extensions.storm.gpg.pathAutodetect"      type="bool"/>
                                 <preference id="pref-receive-signed-action" name="extensions.storm.receive.signedAction"    type="string"/>
                                 <preference id="pref-gpg-homedir"           name="extensions.storm.gpg.homedir"             type="string"/>
+                                <preference id="pref-gpg-keyserver"         name="extensions.storm.gpg.keyserver"           type="string"/>
                             </preferences>
 
                             <vbox class="settings-page">
@@ -159,6 +160,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                                 <label value="GPG home directory, leave empty for default (~/.gnupg)" class="section" />
                                 <textbox preference="pref-gpg-homedir" />
+
+                                <label value="GPG keyserver URL" class="section" />
+                                <textbox preference="pref-gpg-keyserver" />
                             </vbox>
                         </prefpane>
 
