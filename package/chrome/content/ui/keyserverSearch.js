@@ -15,7 +15,7 @@
 
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
-Components.utils.import("chrome://storm/content/lib/AccountList.jsm");
+Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 
 $(window).load(function() {

@@ -223,8 +223,6 @@ function stormKeygenTrigger() {
 }
 
 function stormKeygenStart(newKeyParams) {
-
-
     var keygenRequest = storm.keyring.generateKey(window, newKeyParams);
     var messagesAreBeingProcessed = false;
     setInterval(function() {
@@ -237,13 +235,25 @@ function stormKeygenStart(newKeyParams) {
             messagesAreBeingProcessed = false;
         }
     }, 50);
-    keygenRequest.wait();
 
+    /**
+     * Callback function, to be called after key generation is complete.
+     */    
+    onFinish = function() {
+        if (keygenRequest && keygenRequest.newKeyId) {
+            storm.keyring.loadKeys();
+            var keyObject = storm.keyring.getKey(keygenRequest.newKeyId);
+            window.openDialog("chrome://storm/content/ui/keyDetails.xul", "", "", keyObject);
 
-
-    if (!keygenRequest) {
-      alert("keyGenFailed");
-    }
+            if ($("#close-result-window-after-finish").prop('checked')) {
+                window.close();
+            }
+        }
+        else {
+            alert("keyGenFailed");
+        }
+    };
+    keygenRequest.onFinish = onFinish;
 }
 
 
@@ -294,28 +304,6 @@ function getKeygenFormValues() {
 
 
 function displayGpgMessages(data) {
-    var l = $("#keygenConsoleBox description#keygenDetails");
-    l.get(0).appendChild(document.createTextNode(data));
-    
-    if (data.indexOf("Generating key") >= 0) {
-        state = 0;
-        setProgressMeter("" + state, '5');
-    } else if (data.indexOf("gpg:") >= 0) {
-        if (progressMeterInterval) {
-            clearInterval(progressMeterInterval); 
-        }
-        setProgressMeter(state, '100');
-        state = state + 1;
-        setProgressMeter(state, '5');
-    }
-    
-    progressMeterInterval = setInterval(function() {setProgressMeter(state, '+1');}, 100);
-    
-    
-    if (data.indexOf("Generating key") >= 0) {
-    } else if (data.substring(0,1) == '+' || data.substring(0,1) == '.') {
-    } else if (data.match(/Need \d+ more bytes/)) {
-    } else {
-    }
+    var l = $("#keygenDetails");
+    l.get(0).appendChild(document.createElement('p').appendChild(document.createTextNode(data)));   
 }
-

@@ -1,20 +1,3 @@
-#progressBarGroup {
-    background-color: red;
-    width: 200px;
-}
-
-
-#progressBarGroup progressmeter {
-    width: 200px;
-    
-}
-
-
-vbox#selectIdentities {
-    width: 300px;
-}
-
-
 #passphraseFirst label,
 #passphraseSecond label {
     width: 200px;

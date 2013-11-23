@@ -249,13 +249,21 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
         messages: [],
         exitcode: -1,
         finished: false,
+        newKeyId: false,
         wait: function() {
-            while (finished === false) {}
+            while (keygenRequest.finished === false) {}
             return;
         },
         onErrorAvailable: function(data) {
             // storm.log("stormKeygen.js: onErrorAvailable():" + data + "\n");
             keygenRequest.messages.push(data);
+            // The ID of the new key is ...
+            if (!keygenRequest.newKeyId) {
+                if (data.indexOf("signature from:") !== -1 ) {
+                    var pos = data.indexOf("signature from:") + "signature from:".length + 2;
+                    keygenRequest.newKeyId = data.substring(pos, pos+8);
+                } 
+            }
         },
         onDataAvailable: function(data) {
             // storm.log("enigmailKeygen.js: onDataAvailable() "+data+"\n");
@@ -321,10 +329,14 @@ Keyring.prototype.generateKey = function(parent, newKeyParams) {
     var gpg = new GPG();
     parent.setTimeout(function() {
         inputString = convertFromUnicode(keyGenTemplate.assocFormat(newKeyParams));
-        parent.alert(inputString);
         var exitcode = gpg.call(["--gen-key", "--batch", "-v", "-v"], inputString, keygenRequest.onDataAvailable, keygenRequest.onErrorAvailable);
         keygenRequest.finished = true;
         storm.log("Keyring.jsm(): The process has returned." + exitcode);
+
+        if (typeof(keygenRequest.onFinish) == "function") {
+            storm.log("Keyring.jsm(): Call 'onFinish' function.");
+            keygenRequest.onFinish();
+        }
     }, 1);
     
     return keygenRequest;
