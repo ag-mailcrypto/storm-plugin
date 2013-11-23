@@ -26,13 +26,12 @@ $(window).load(function() {
     $("#categories").select(function() {
         var selected = $(this).find(":selected");
         $("#view-port").attr("selectedIndex", (selected.attr("data-deck-index")));
+        $("#view-port .view-pane").attr("class", "view-pane").addClass(selected.attr("id"));
 
         // rebuild key list if switching to a key list viewport
         if(selected.attr("id").startsWith("tab-keys-")) {
             buildKeyList();
         }
-
-        $("#view-port .view-pane").attr("class", "view-pane").addClass(selected.attr("id"));
     });
 
     // Refresh the key list
