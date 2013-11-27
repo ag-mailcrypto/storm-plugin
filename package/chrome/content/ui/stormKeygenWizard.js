@@ -4,6 +4,7 @@ Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
 Components.utils.import("chrome://storm/content/lib/gpg.jsm");
 
 var globalKeygenRequest;
+var startTime = (new Date()).getTime();
 
 /**
  * Pre-enter the right values into the wizard window
@@ -11,6 +12,7 @@ var globalKeygenRequest;
 function stormPrepareWizardWindow() {
     gUserIdentityList  = document.getElementById("userIdentity");
     gUseForSigning     = document.getElementById("useForSigning");
+
 
     /**
      * Fill the user identities
@@ -232,17 +234,45 @@ function stormKeygenStart(newKeyParams) {
     }, 50);
 
     /**
+     * After ten seconds, demand more randomness!
+     */ 
+    demands = {
+        count: 0,
+        messages: [
+            "... waiting for entropy ...", 
+            "Please move your mouse and browse the internet to create randomness!",
+            "Randomness is empty. Please deliver entropy!",
+            "Did you know, that entropy is essential to cryptography? We need more!",
+            "/dev/random is empty. Please refill!",
+        ]};
+/*    setInterval(function() {
+        var demandEntropy = document.createElement('label');
+        demandEntropy.setAttribute('value', demands.messages[demands.count]);
+        $('#keygenStatus').append(demandEntropy);
+        demands.count = ((demands.count + 1) % demands.messages.length);
+    }, 10000);
+*/
+
+    /**
      * Callback function, to be called after key generation is complete.
      */    
     onFinish = function() {
         if (keygenRequest && keygenRequest.newKeyId) {
-            storm.keyring.loadKeys();
-            var keyObject = storm.keyring.getKey(keygenRequest.newKeyId);
-            window.openDialog("chrome://storm/content/ui/keyDetails.xul", "", "", keyObject);
+            waitTimeMin = 10000; // the dialog must be open at least ten seconds 
+            waitTime = Math.max(100, waitTimeMin - ((new Date()).getTime() - startTime));
+            setTimeout(function() {
+                storm.keyring.loadKeys();
+                displayGpgMessages("New Key was successfully generated!");
+                
+                var keyObject = storm.keyring.getKey(keygenRequest.newKeyId);
+                if ($("#open-details-window").prop('checked')) {
+                    window.openDialog("chrome://storm/content/ui/keyDetails.xul", "", "", keyObject);
+                }
 
-            if ($("#close-result-window-after-finish").prop('checked')) {
-                window.close();
-            }
+                if ($("#close-result-window").prop('checked')) {
+                    window.close();
+                }
+            }, waitTime); // wait ten seconds
         }
         else {
             alert("keyGenFailed");

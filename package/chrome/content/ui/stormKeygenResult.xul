@@ -19,10 +19,13 @@
 
     <stack flex="1">
         <vbox flex="1">
-            <hbox>
-                <label class="page-title" value="Key is being generated ..." />
-                <image class="spinner" />
-            </hbox>
+            <vbox id="keygenStatus">
+                <hbox>
+                    <label class="page-title" value="Key is being generated ..." />
+                    <spacer flex="1" />
+                    <image class="spinner" />
+                </hbox>
+            </vbox>
 
             <html:hr />
             
