@@ -10,13 +10,13 @@
 
 <wizard
     id="stormKeygen"
-    title="enigmail.keygenTitle.label;"
+    title="keygenTitle.label;"
     onload="loadStormKeygenJs(); stormPrepareWizardWindow();"
     onclose=""
     
     onwizardfinish="return stormKeygenTrigger();"
     xmlns:html="http://www.w3.org/1999/xhtml"
-    width="700"
+    width="800"
     height="600"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -37,46 +37,48 @@
             <label value="Please select the identities, for which you want to create an encryption key:" />
           <hbox  orient="horizontal" align="center">
             <label value="User Identity" control="userIdentities"/>
-            <richlistbox class="multipleIdentities" id="userIdentities" label="..." flex="1" minheight="50">
+            <vbox class="multipleIdentities" id="userIdentities" label="..." flex="1" minheight="50">
                 <!--checkbox id="checkbox-id0" checked="true"><label>Marius Stübs 
                 <checkbox id="checkbox-id1" checked="true"-->
-            </richlistbox>
+            </vbox>
             <textbox class="oneIdentity" id="userIdentityField" disabled="true" size="61"></textbox>
           </hbox>
         </groupbox>
         </vbox>
     </wizardpage>
     <wizardpage>
-        <description>
-            Select main identity
-        </description>
-        <menulist id="mainIdentity">
-            <menupopup>
-                <menuitem label="Car" />
-                <menuitem label="Taxi" />
-                <menuitem label="Bus" selected="true" />
-                <menuitem label="Train" />
-            </menupopup>
-        </menulist>
-    
-            <vbox id="passphraseBox" align="left">
-                <hbox id="passphraseFirst">
-                    <label control="passphrase" value="key Passphrase" />
-                    <textbox id="passphrase" type="password" />
-                    <checkbox id="noPassphrase" label="key No Passphrase" oncommand="onNoPassphrase();" /> 
-                </hbox>
-                <hbox id="passphraseSecond">
-                    <label control="passphraseRepeat" value="key Passphrase Repeat" />
-                    <textbox id="passphraseRepeat" type="password" />
-                </hbox>
-            </vbox>
+        <vbox id="mainIdentity2">
+            <description>
+                Select main identity
+            </description>
             
-            <spacer flex="1" />
+            <menulist id="mainIdentity">
+                <menupopup>
+                    <menuitem label="Car" />
+                    <menuitem label="Taxi" />
+                    <menuitem label="Bus" selected="true" />
+                    <menuitem label="Train" />
+                </menupopup>
+            </menulist>
+        </vbox>    
+        <vbox id="passphraseBox" align="left">
+            <hbox id="passphraseFirst">
+                <label control="passphrase" value="key Passphrase" />
+                <textbox id="passphrase" type="password" />
+                <checkbox id="noPassphrase" label="key No Passphrase" oncommand="onNoPassphrase();" /> 
+            </hbox>
+            <hbox id="passphraseSecond">
+                <label control="passphraseRepeat" value="key Passphrase Repeat" />
+                <textbox id="passphraseRepeat" type="password" />
+            </hbox>
+        </vbox>
+        
+        <spacer flex="1" />
 
-            
+        
 
-
-            <label value="Expertenoptionen" id="advanced-options-toggle" context="advanced-options"/>
+        <groupbox>
+            <caption label="Expertenoptionen" id="advanced-options-toggle" context="advanced-options"/>
             <section id="advanced-options" hidden="true"> <!-- Advanced Tab -->
               <vbox> 
                 <grid>
@@ -90,11 +92,11 @@
                         <label value="keyLength" control="keyLength"/>
                       </hbox>
                       <hbox flex="0">
-                        <menulist id="keyLength" label="2048" value="2048" >
+                        <menulist id="keyLength" label="xxx" value="xxx" >
                           <menupopup id="keyLengthPopup">
-                            <menuitem id="keyLength_1024" value="1024" label="1024" selected="true"/>
+                            <menuitem id="keyLength_1024" value="1024" label="1024"/>
                             <menuitem id="keyLength_2048" value="2048" label="2048"/>
-                            <menuitem id="keyLength_4096" value="4096" label="4096"/>
+                            <menuitem id="keyLength_4096" value="4096" label="4096" selected="true"/>
                           </menupopup>
                         </menulist>
                       </hbox>
@@ -144,8 +146,9 @@
                       </menulist>
                     </row>
                     </rows>
-            </grid>
-        </vbox>
-    </section>
+                    </grid>
+                </vbox>
+            </section>
+        </groupbox>
     </wizardpage>
 </wizard>

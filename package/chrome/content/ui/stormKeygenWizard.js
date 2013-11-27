@@ -32,19 +32,22 @@ function stormPrepareWizardWindow() {
     /**
      * Enable/Disable the selection of single identities for this (to be generated) key
      */
-    $('richlistbox.multipleIdentities, richlistbox.multipleIdentities checkbox').attr('disabled', 'true');
+    $('.multipleIdentities checkbox').attr('disabled', 'true'); 
+    $('.multipleIdentities').addClass('disabled');
     $('#selectIdentities').on('command', function(){
         if ($('#selectIdentities').val() == 'all') {
-            $('richlistbox.multipleIdentities, richlistbox.multipleIdentities checkbox').attr('disabled', 'true');
+            $('.multipleIdentities checkbox').attr('disabled', 'true');
+            $('.multipleIdentities').addClass('disabled');
         } else if ($('#selectIdentities').val() == 'selected') {
-            $('richlistbox.multipleIdentities, richlistbox.multipleIdentities checkbox').removeAttr('disabled');
+            $('.multipleIdentities checkbox').removeAttr('disabled');
+            $('.multipleIdentities').removeClass('disabled');
         }
     });
 
     /**
      * On changing the selected identities ...
      */
-    $('#selectIdentities, richlistbox.multipleIdentities').on('command', function(){
+    $('#selectIdentities, .multipleIdentities').on('command', function(){
         fillMainIdentityDom();
     });    
     fillMainIdentityDom();    
@@ -112,19 +115,11 @@ function fillIdentityList(userIdentityList, accountList, options) {
             var checkbox = document.createElement('checkbox');
             checkbox.setAttribute('checked', "true");
             checkbox.setAttribute('id', "checkbox-" + identity.key);
+            checkbox.setAttribute('label', identityCaption);
+            checkbox.setAttribute('accountname', account.getPrettyName());
+            checkbox.setAttribute('email', identity.email);
 
-            var item = document.createElement('menuitem');
-            //      item.setAttribute('label', identity.identityName);
-            item.setAttribute('label', identityCaption);
-            item.setAttribute('class', 'identity-popup-item');
-            item.setAttribute('accountname', account.getPrettyName());
-            item.setAttribute('id', identity.key);
-            item.setAttribute('email', identity.email);
-
-            var listrow = document.createElement('richlistitem');
-            listrow.appendChild(checkbox);
-            listrow.appendChild(item);
-            userIdentityList.append(listrow);
+            userIdentityList.append(checkbox);
 
 
             var singleIndentity = $("#userIdentityField");
@@ -305,5 +300,5 @@ function getKeygenFormValues() {
 
 function displayGpgMessages(data) {
     var l = $("#keygenDetails");
-    l.get(0).appendChild(document.createElement('p').appendChild(document.createTextNode(data)));   
+    l.val(l.val() + data);
 }

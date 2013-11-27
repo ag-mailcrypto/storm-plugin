@@ -2,3 +2,12 @@
 #passphraseSecond label {
     width: 200px;
 }
+
+vbox#userIdentities.disabled {
+    background: #DDD;
+    border: 1px solid black;
+}
+vbox#userIdentities {
+    background: white;
+    border: 1px solid black;
+}

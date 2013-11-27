@@ -27,14 +27,20 @@
             <html:hr />
             
             <label>Details</label>
-            <richlistbox id="keygenDetails" style="height: 400px;"></richlistbox>
+            <textbox id="keygenDetails" style="height: 400px;" multiline="true"></textbox>
             
             <html:hr />
             
-            <hbox>
-                <checkbox id="close-result-window-after-finish" checked="true"/>
-                <label control="close-result-window-after-finish" value="Close window and show new key after generating" />
-            </hbox>
+            <groupbox>
+                <caption label="After finish"/>
+                <hbox>
+                    <!-- TODO store these in the user preferences -->
+                    <checkbox id="close-result-window" checked="true" label="Close window" />
+                </hbox>
+                <hbox>
+                    <checkbox id="open-details-window" checked="true" label="Show new key"/>
+                </hbox>
+            </groupbox>
         </vbox>
     </stack>
 </window>
