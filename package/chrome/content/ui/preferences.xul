@@ -76,6 +76,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         </button>
                                         <button id="generate-key"        icon="add"     label="Generate key" accesskey="k"></button>
                                         <button id="button-list-refresh" icon="refresh" label="Reload" />
+                                        <button icon="refresh" label="Reload" />
                                     </hbox>
                                     <hbox id="advanced-filter" align="baseline" hidden="true">
                                         <checkbox id="advanced-show-trusted" label="Show trusted keys" checked="true"/>
