@@ -25,3 +25,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 .key-photo {
     border: 2px solid #FFF;
 }
+
+textbox.userValueReadOnly {
+    -moz-appearance: none;
+    border:none;
+    background: transparent;
+    padding: none;
+}

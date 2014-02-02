@@ -25,7 +25,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
     <script type="application/javascript" src="chrome://storm/content/ext/qrcode.js"></script>
     <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/ui/copy-paste.js"></script>
     <script type="application/javascript" src="chrome://storm/content/ui/keyDetails.js"/>
+
+    <html:div id="copyOnlyDiv">
+    <popupset>
+        <menupopup id="copyOnly" onpopupshowing="copyShowHide(this);" value="123">
+            <menuitem label="Copy Selection"  oncommand="copySelection()" id="context-copySelection"  disabled="true"/>
+            <menuitem label="Copy All"        oncommand="copyAll()"       id="context-copyAll"/>
+        </menupopup>
+    </popupset>
+    </html:div>
 
     <tabbox id="tablist" flex="1">
         <tabs>
@@ -44,7 +54,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                     <spacer width="10" />
                     <vbox flex="1">
                         <hbox flex="1">
-                            <label id="realname" class="page-title" value="Firstname Lastname" />
+                            <vbox>
+                                <textbox context="copyOnly" id="realname" class="userValueReadOnly page-title" value="Firstname Lastname" />
+                            </vbox>
                             <spacer flex="1" />
                             <vbox>
                                 <image class="trust-level-icon" />
@@ -52,20 +64,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         </hbox>
 
                         <hbox flex="1">
-                            <vbox flex="1">
-                                <label class="section" value="Mail address" />
-                                <label id="email" value="firstname@lastname.com" />
+                            <vbox flex="1" style="-moz-user-select: text">
+                                <label class="section">Mail address</label>
+                                <textbox context="copyOnly" class="userValueReadOnly" id="email" value="firstname@lastname.com"/>
 
-                                <label class="section" value="Comment" />
-                                <label id="comment" value="key comment, please ignore"/>
+                                <label class="section" value="Comment ?" />
+                                <textbox context="copyOnly" class="userValueReadOnly" id="comment" value="key comment, please ignore"/>
                             </vbox>
                             <spacer width="10" />
                             <vbox flex="1">
                                 <label class="section" value="Created" />
-                                <label id="created" value="never" />
+                                <textbox context="copyOnly" class="userValueReadOnly" id="created" value="never" />
 
                                 <label class="section" value="Expiry" />
-                                <label id="expiry" value="someday"/>
+                                <textbox context="copyOnly" class="userValueReadOnly" id="expiry" value="someday"/>
                             </vbox>
                         </hbox>
 
@@ -145,8 +157,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
     <hbox>
         <spacer flex="1" />
-        <button id="button-close" icon="" label="Edit" />
-        <button id="button-close" icon="" label="Sign" />
+        <button id="button-edit" icon="" label="Edit" />
+        <button id="button-sign" icon="" label="Sign" />
         <button id="button-close" icon="yes" label="Close" />
     </hbox>
 </window>

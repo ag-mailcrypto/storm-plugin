@@ -17,74 +17,108 @@ Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
 
-var key = window.arguments[0];
 
-$(window).ready(function() {
-    // Insert user IDs
-    key.userIDs.forEach(function(userID, index) {
-        addTreeItem(document, "user-ids-children-sigs", [userID.realName, userID.email, userID.getPureComment()]);
-        addTreeItem(document, "user-ids-children", [userID.realName, userID.email, userID.getPureComment()]);
-    });
 
-    // Update signatures when another user ID is selected
-    $("#user-ids-sigs").select(function(e) {
-        updateSignatures($(this)[0].currentIndex);
-    });
+var keyDetailsWindowFunctions = {
+    key: window.arguments[0],
+    init: function() {
+        if (keyDetailsWindowFunctions.key === null) {
+            storm.log("Open keyDetails.xul without specifying the key ID");
+            window.close();
+        }
+        // Close on <Escape>
+        $(window).keypress(function(e) {
+            if(e.keyCode == 27) closeWindow();
+        });
+        // Close button
+        $('#button-close').on('command', function() {
+            keyDetailsWindowFunctions.closeWindow();
+        });
+        
+        // Set the textboxes readonly
+        // Textboxes are necessary from a user experience point-of-view, to make
+        // the values selectable and copyable.
+        $('textbox.userValueReadOnly').attr('readonly', 'readonly');
+        $('textbox.userValueReadOnly').prop('readonly', true);
+    },
+    closeWindow: function() {
+        window.close();
+    },
+    /**
+     * Updates the signatures list to the signatures of the selected user ID.
+     * @param  {int} index  The index of the selected user ID. The list is cleared
+     *                      for index < 0.
+     */
+    updateSignatures: function(index) {
+        $("#signatures-children").empty();
 
-    var uid = key.getPrimaryUserId();
-    $("#email").attr("value", uid.email);
-    $("#realname").attr("value", uid.realName);
-    $("#comment").attr("value", uid.comment || "no comment");
+        if(index >= 0) {
+            // Insert signatures
+            keyDetailsWindowFunctions.key.userIDs[index].signatures.forEach(function(signature) {
+                addTreeItem(document, "signatures-children", [
+                    signature.userID.realName,
+                    signature.issuingKeyId,
+                    signature.getCheckLevelString()
+                ]);
+            });
+        }
+    },
+    displayUserIDs: function() {
+        // Insert user IDs
+        keyDetailsWindowFunctions.key.userIDs.forEach(function(userID, index) {
+            addTreeItem(document, "user-ids-children-sigs", [userID.realName, userID.email, userID.getPureComment()]);
+            addTreeItem(document, "user-ids-children", [userID.realName, userID.email, userID.getPureComment()]);
+        });
+        
+        // Update signatures when another user ID is selected
+        $("#user-ids-sigs").select(function(e) {
+            keyDetailsWindowFunctions.updateSignatures($(this)[0].currentIndex);
+        });
+    },
+    /**
+     * Override the dummy data, insert the user's values into the XUL
+     */
+    displayUserData: function() {
+        var uid = keyDetailsWindowFunctions.key.getPrimaryUserId();
+        $("#email").attr("value", uid.email);
+        $("#realname").attr("value", uid.realName);
+        $("#comment").attr("value", uid.comment || "no comment");
 
-    $("#fingerprint").attr("value", key.fingerprint.replace(/(.{4})/g, function(match) { return match + " "; }));
-
-    // Close button
-    $("#button-close").on("command", closeWindow);
-
-    $("window").attr("trust", key.getValidity()).attr("title", "Key details: 0x" + key.id + " (" + uid.realName + ")");
-
-    // generate qrcode
-    var qr = qrcode(4, 'M');
-    qr.addData(key.fingerprint);
-    qr.make();
-    $("#fingerprint-qr").html(qr.createImgTag(3).replace("<img", "<image"));
-
-    // get the keys this user trusts
-    key.getSignedKeys(storm.keyring).forEach(function(k) {
-        addTreeItem(document, "trusted-keys-children", [
-            k.getPrimaryUserId().realName,
-            k.getPrimaryUserId().email,
-            k.id,
-            "unknown" // TODO
-        ]);
-    });
-});
-
-/**
- * Updates the signatures list to the signatures of the selected user ID.
- * @param  {int} index  The index of the selected user ID. The list is cleared
- *                      for index < 0.
- */
-function updateSignatures(index) {
-    $("#signatures-children").empty();
-
-    if(index >= 0) {
-        // Insert signatures
-        key.userIDs[index].signatures.forEach(function(signature) {
-            addTreeItem(document, "signatures-children", [
-                signature.userID.realName,
-                signature.issuingKeyId,
-                signature.getCheckLevelString()
+        $("#fingerprint").attr("value", keyDetailsWindowFunctions.key.fingerprint.replace(/(.{4})/g, function(match) { return match + " "; }));
+        var newTitle = "Key details: 0x" + keyDetailsWindowFunctions.key.id + " (" + uid.realName + ")";
+        $("window").attr("trust", keyDetailsWindowFunctions.key.getValidity()).attr("title", newTitle);
+    },
+    displayQrCode: function () {
+        // generate qrcode
+        var qr = qrcode(4, 'M');
+        qr.addData(keyDetailsWindowFunctions.key.fingerprint);
+        qr.make();
+        $("#fingerprint-qr").html(qr.createImgTag(3).replace("<img", "<image"));
+        
+            
+    },
+    displayUserTrust: function () {
+        // get the keys this user trusts
+        keyDetailsWindowFunctions.key.getSignedKeys(storm.keyring).forEach(function(k) {
+            addTreeItem(document, "trusted-keys-children", [
+                k.getPrimaryUserId().realName,
+                k.getPrimaryUserId().email,
+                k.id,
+                "unknown" // TODO
             ]);
         });
+
     }
 }
 
-// Close on <Escape>
-$(window).keypress(function(e) {
-    if(e.keyCode == 27) closeWindow();
+
+$(window).ready(function() {
+    keyDetailsWindowFunctions.init();
+    keyDetailsWindowFunctions.displayUserIDs();
+    keyDetailsWindowFunctions.displayUserData();
+    keyDetailsWindowFunctions.displayQrCode();
+    keyDetailsWindowFunctions.displayUserTrust();
 });
 
-function closeWindow() {
-    window.close();
-}
+
+

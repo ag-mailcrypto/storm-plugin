@@ -33,7 +33,16 @@ function objectValues(obj) {
 }
 
 this.EXPORTED_SYMBOLS.push("cleanKeyID");
+/**
+ * Return the last chars of the key ID in a length of "length"
+ *
+ * @param {String} keyID
+ * @param {int} length
+ */
 function cleanKeyID(id, length) {
+    if (!id) {
+        id = "";
+    }
     id = id.toUpperCase();
     if(id.startsWith("0x")) id = id.substring(2);
     if(length) {
