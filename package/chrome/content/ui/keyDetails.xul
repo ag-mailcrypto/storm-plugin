@@ -68,7 +68,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 <label class="section">Mail address</label>
                                 <textbox context="copyOnly" class="userValueReadOnly" id="email" value="firstname@lastname.com"/>
 
-                                <label class="section" value="Comment ?" />
+                                <label class="section" value="Comment" />
                                 <textbox context="copyOnly" class="userValueReadOnly" id="comment" value="key comment, please ignore"/>
                             </vbox>
                             <spacer width="10" />

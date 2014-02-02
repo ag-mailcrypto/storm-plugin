@@ -82,7 +82,9 @@ var keyDetailsWindowFunctions = {
         var uid = keyDetailsWindowFunctions.key.getPrimaryUserId();
         $("#email").attr("value", uid.email);
         $("#realname").attr("value", uid.realName);
-        $("#comment").attr("value", uid.comment || "no comment");
+        $("#comment").attr("value",  uid.comment || "[No comment]");
+        $("#created").attr("value",  keyDetailsWindowFunctions.key.creationDate);
+        $("#expiry").attr("value",   keyDetailsWindowFunctions.key.expirationDate || "[never]");
 
         $("#fingerprint").attr("value", keyDetailsWindowFunctions.key.fingerprint.replace(/(.{4})/g, function(match) { return match + " "; }));
         var newTitle = "Key details: 0x" + keyDetailsWindowFunctions.key.id + " (" + uid.realName + ")";
