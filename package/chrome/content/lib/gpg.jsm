@@ -97,5 +97,43 @@ GPG.prototype.call = function(arguments, input, stdout, stderr) {
     return result.output;
 }
 
+/**
+ * Encrypts or signs the content for the specified key. By default, an armored ASCII block
+ * is generated.
+ * @param {String}  content         The string to encrypt.
+ * @param {Key}     signingKey      A key to sign with, if desired. This should
+ *                                  rather be a private key.
+ * @param {Key}     encryptionKey   A key to encrypt with, if desired. Should
+ *                                  obviously be a public key.
+ */
+GPG.prototype.signEncryptContent = function(content, signingKey, encryptionKey) {
+    var args = ["--armor"];
+
+    if(encryptionKey == null && signingKey == null) {
+        storm.log("Warning: neither encryption nor signing key specified for signEncryptContent(). Returning input content.");
+        return content;
+    }
+
+    var signatureType = "clearsign";
+
+    if(encryptionKey != null) {
+        args.push("--encrypt");
+        args.push("--recipient");
+        args.push(encryptionKey.id);
+        signatureType = "sign";
+    }
+
+    if(signingKey != null) {
+        args.push("--" + signatureType);
+        args.push("--local-user");
+        args.push(signingKey.id);
+    }
+
+    return storm.gpg.call(args, function(pipe) {
+        pipe.write(content);
+        pipe.close();
+    });
+};
+
 // Prepare the instance
 storm.gpg = new GPG();
