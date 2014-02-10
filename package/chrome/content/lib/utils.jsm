@@ -229,3 +229,13 @@ function urldecode(msg) {
 
     return msg;
 }
+
+this.EXPORTED_SYMBOLS.push("formatFingerprint");
+/**
+ * Formats a fingerprint with spaces in between groups of four.
+ * @param  {String} fpr The fingerprint without spaces.
+ * @return {String}     The fingerprint with spaces.
+ */
+function formatFingerprint(fpr) {
+    return fpr.replace(/(.{4})/g, function(match) { return match + " "; });
+}

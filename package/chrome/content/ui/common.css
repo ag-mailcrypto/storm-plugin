@@ -52,8 +52,7 @@ hr {
     font-family: monospace;
     font-weight: bold;
     font-size: 0.9em;
-    background: #5D5;
-    background: #555;
+    background: #555 !important;
     color: #FFF;
     padding: 0.3em 0.5em 0.2em 0.5em;
 }
@@ -67,3 +66,14 @@ hr {
 [trust="marginal"]    .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/marginal.png"); }
 [trust="invalid"]     .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/invalid.png"); }
 [trust="none"]        .trust-level-icon { list-style-image: url("chrome://storm/skin/icons/trust-level/none.png"); }
+
+.key-photo {
+    border: 2px solid #FFF;
+}
+
+textbox.userValueReadOnly {
+    -moz-appearance: none;
+    border:none;
+    background: transparent;
+    padding: none;
+}

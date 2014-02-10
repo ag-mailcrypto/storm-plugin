@@ -17,8 +17,6 @@ Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
 
-
-
 var keyDetailsWindowFunctions = {
     key: window.arguments[0],
     init: function() {
@@ -86,7 +84,7 @@ var keyDetailsWindowFunctions = {
         $("#created").attr("value",  keyDetailsWindowFunctions.key.creationDate);
         $("#expiry").attr("value",   keyDetailsWindowFunctions.key.expirationDate || "[never]");
 
-        $("#fingerprint").attr("value", keyDetailsWindowFunctions.key.fingerprint.replace(/(.{4})/g, function(match) { return match + " "; }));
+        $("#fingerprint").attr("value", formatFingerprint(keyDetailsWindowFunctions.key.fingerprint));
         var newTitle = "Key details: 0x" + keyDetailsWindowFunctions.key.id + " (" + uid.realName + ")";
         $("window").attr("trust", keyDetailsWindowFunctions.key.getValidity()).attr("title", newTitle);
     },
@@ -113,7 +111,6 @@ var keyDetailsWindowFunctions = {
     }
 }
 
-
 $(window).ready(function() {
     keyDetailsWindowFunctions.init();
     keyDetailsWindowFunctions.displayUserIDs();
@@ -121,6 +118,3 @@ $(window).ready(function() {
     keyDetailsWindowFunctions.displayQrCode();
     keyDetailsWindowFunctions.displayUserTrust();
 });
-
-
-

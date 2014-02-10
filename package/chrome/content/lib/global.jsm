@@ -30,7 +30,7 @@ storm.config = new Config();
 // TODO: this should be somewhere else, at some point
 storm.ui = {
     dialogSignKey: function(window, key) {
-        window.alert("Signing key of " + key.getPrimaryUserId().realName);
+        window.openDialog("chrome://storm/content/ui/keySigning.xul", "", "", key);
     },
 
     dialogKeyDetails: function(window, key) {
