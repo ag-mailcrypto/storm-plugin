@@ -18,3 +18,10 @@ Components.utils.import("chrome://storm/content/lib/utils.jsm");
 function openStormConfiguration() {
     openBrowserTab(window, "chrome://storm/content/ui/preferences.xul");
 }
+
+/**
+ * @author Lennart Braun <lenerd@posteo.de>
+ */
+function openStormWelcomeWizard() {
+    window.openDialog("chrome://storm/content/ui/stormWelcomeWizard.xul");
+}

@@ -28,6 +28,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
   <menubar id="mail-menubar">
     <menu id="menu-storm-bar" label="Mail-Encryption" insertafter="messageMenu" accesskey="c">
       <menupopup>
+        <menuitem id="storm-open-welcome"
+        accesskey="w"
+        oncommand="openStormWelcomeWizard()"
+        label="Welcome Wizard" />
         <menuitem id="storm-open-tab"
         accesskey="O"
         oncommand="openStormConfiguration()"
