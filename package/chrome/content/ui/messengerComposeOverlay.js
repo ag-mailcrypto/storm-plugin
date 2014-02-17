@@ -46,7 +46,6 @@ $(window).load(function() {
         event.preventDefault();
         event.stopPropagation();
     }, true);
->>>>>>> c322f8c2b682c681cfe650441d5814d110a44141
 });
 
 /**
