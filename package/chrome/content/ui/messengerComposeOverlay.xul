@@ -6,6 +6,7 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/lib/ComposeMessage/composeMessageFunctions.js"/>
     <script type="application/javascript" src="chrome://storm/content/ui/messengerComposeOverlay.js"/>
 
     <textbox id="addressCol2#1">
