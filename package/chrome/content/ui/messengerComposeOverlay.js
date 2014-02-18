@@ -12,14 +12,29 @@ $(window).load(function() {
     var widget = $(".textbox-addressingWidget");
     widget.attr("oninput", widget.attr("oninput") + "; stormComposeAddressOverlayOnInput(this);");
 
-
-    storm.log("preparing stuff");
-    window.addEventListener('compose-send-message', function (event) {
+    window.addEventListener('compose-send-message',
+    function (event) {
+        // messageType could be "send" or "save"
+        // If "save" encrypt to yourself.
         var messageType = resolveMessageTypeString();
-        
+        var message     = getMessage();
+        var subject     = document.getElementById("msgSubject");
+        var sender      = getSender();
+        var receipients = getReceipients();
+
+        storm.log("============================================");
+        storm.log("messageType:     " + messageType);
+        storm.log("messageText:     " + message);
+        storm.log("sender:          " + sender);
+        storm.log("receipients:    [" + $.each(receipients, function(key) {
+              return "                " + key.id + ", \n";
+            }) + "]");
+        storm.log("============================================");
+
+
         // TODO: get message body
         // TODO: check if subject should be merged into body?
-        // 
+        //
         // TODO: handle attatchments
         // TODO: check if attatchments should be merged into body?
 
@@ -30,19 +45,6 @@ $(window).load(function() {
         //       
         // TODO: attatch own public key?
 
-        var subject   = document.getElementById("msgSubject");
-        var message   = getMessage();
-        var senderKey = getSenderKey();
-        var receipientKeys = getReceipientKeys();
-        
-        storm.log("============================================");
-        storm.log("messageType:    " + messageType);
-        storm.log("senderKeyId:    " + senderKey.id);
-        storm.log("messageText:    " + message);
-        storm.log("receipientKeys: [\n" + receipientKeys.each(function(key) {
-            return "                " + key.id + ", \n";
-        }) + "                ]");
-        storm.log("============================================");
 
         event.preventDefault();
         event.stopPropagation();
@@ -79,13 +81,22 @@ function resolveMessageTypeString() {
     }
 }
 
-function getSenderKey() {
+
+function getSender() {
     var msgIdentity = document.getElementById("msgIdentity"); //whereSelected();
 
     // 'accountkey' contains the accountkey which might be better to resolve the actual email... 
     // but for now the description only contains the email 
     var selectedEmail = msgIdentity.getAttribute("description");
 
+    return selectedEmail;
+}
+
+/**
+ *
+ * @return the key of the sender or NULL
+ */
+function getKeyByEmail(selectedEmail) {
     var key = null;
     var keys = storm.keyring.getKeysByEmail(selectedEmail, true);
     
@@ -96,13 +107,27 @@ function getSenderKey() {
     return key;
 }
 
-function getReceipientKeys() {
-    var receipientKeys = [];
-
+/**
+ * @return Array: The Receipients of this email
+ */
+function getReceipients() {
+    var receipients = [];
     $(".textbox-addressingWidget").each(function() {
         var input = $(this)[0];
         var currentInput = $(input).val();
+        receipients.push(currentInput);
+    });
+    return receipients;
+}
 
+function getReceipientKeys(receipients) {
+    if( Object.prototype.toString.call( someVar ) !== '[object Array]' ) {
+        receipients = [];
+        storm.log('Error: Array expected.');
+    }
+
+    var receipientKeys;
+    receipientKeys.each(function() {
         var bestKey = getBestKeyForEmail(currentInput);
         if(bestKey) {
             receipientKeys.push(bestKey);
