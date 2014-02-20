@@ -18,13 +18,19 @@ $(window).load(function() {
      */
     window.addEventListener('compose-send-message',
         function (event) {
-            event.preventDefault();
-            event.stopPropagation();
             try {
                 handleEmailSending();
             } catch (err) {
                 storm.log("An error occured: " + err);
             }
+
+            var question = "Storm asks: Do you really want to send this email?";
+            var answer = confirm(question);
+            if (answer == false) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
         }, 
         true
     );

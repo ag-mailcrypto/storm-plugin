@@ -11,25 +11,20 @@ function handleEmailSending() {
     var sender      = getSender();
     var listOfRecipients  = getRecipients();
 
-    storm.log("============================================");
-    storm.log("messageType:     " + messageType);
-    storm.log("messageText:     " + message);
-    storm.log("sender:          " + sender);
-    try {
-        storm.log("recipients:    [" + $.each(listOfRecipients, function(key) {
-              return "" + key.id + ",";
-            }) + "]");
-        storm.log("Yeah it is possible to list all recipients");
-    } catch(err) {
-        storm.log("So sad! It is not possible to list all recipients");
+    if (messageType == 'save') {
+        // @TODO Saved messages are to be encrypted with the owner's public key.
+        return;
     }
 
-    // Sign Message if Valid Key can be found
-    var signedMessage = message;
-    if (null != getBestKeyForEmail(sender)) {
-        signedMessage = signMessage(text, sender);
-    }
-    storm.log("signedMessage: " + signedMessage);
+    storm.log("============================================");
+    storm.log("| messageType:     " + messageType);
+    storm.log("| messageText:     " + message);
+    storm.log("| sender:          " + sender);
+    storm.log("| recipients:    [" + $.each(listOfRecipients, function(key) {
+          return "" + key.id + ",";
+        }) + "]");
+
+    var signedMessage = signMessage(message, sender);
     
 
     // Get a list of all the recipients, that have no valid key
@@ -49,7 +44,7 @@ function handleEmailSending() {
         encryptedMessage = encryptMessage(signedMessage, listOfRecipients);
     }
     
-    storm.log("encryptedMessageText: " + encryptedMessage);
+    storm.log("| encryptedMessageText: " + encryptedMessage);
     storm.log("============================================");
 
 
@@ -66,7 +61,52 @@ function handleEmailSending() {
     //       
     // TODO: attatch own public key?
 
+    setMessage(signedMessage);
+    alert("[Storm] Look into the logs for more info.");
+
+    var question = "[Storm] Shall Storm replace your email with an armored encrypted openPGP block?"
+    if (confirm(question)) {
+        setMessage(encryptedMessage);
+//    } else {
+//        setMessage(message);
+    }
 }
+
+/**
+ * @TODO Currently only the first recipient's key is used
+ */
+function encryptMessage(message, listOfRecipients) {
+    storm.log("function encryptMessage(): BEGIN");
+    var encryptedMessage = message;
+//    $.each(listOfRecipients, function(recipient) {
+        var encryptKey = getBestKeyForEmail(listOfRecipients[0]);
+        if (null != encryptKey) {
+            encryptedMessage = storm.gpg.signEncryptContent(message, null, encryptKey);
+        }
+//    });
+    storm.log("function encryptMessage(): END");
+    return encryptedMessage;
+}
+
+/**
+ * Sign Message if Valid Key can be found
+ *
+ * @TODO We don't want inline signatures. We want PGP/MIME.
+ * @TODO Control Flow
+ *
+ * @return Wrapped Text
+ */
+function signMessage(message, sender) {
+    storm.log("function signMessage(): BEGIN");
+    signKey = getBestKeyForEmail(sender);
+    var signedMessage = message;
+    if (null != signKey) {
+       signedMessage = storm.gpg.signEncryptContent(message, signKey);
+    }
+    storm.log("function signMessage(): END");
+    return signedMessage;
+}
+
 /**
  * resolves if the message should be encrypted with the recipient key or the own
  * @return {string} send|save
@@ -97,18 +137,29 @@ function resolveMessageTypeString() {
     }
 }
 
-
+/**
+ * Get the sending identity's email address 
+ *
+ *  for(var key in msgIdentity){
+ *    storm.log("msgIdentity[" + key + "] = "  +  msgIdentity[key]);
+ *  }
+ * log: msgIdentity[value] = id2
+ * log: msgIdentity[label] = Marius Stübs <marius.stuebs@posteo.de>
+ * log: msgIdentity[description] = Posteo-Account
+ */
 function getSender() {
+//    storm.log("function getSender(): BEGIN");
     var msgIdentity = document.getElementById("msgIdentity"); //whereSelected();
+    var accountKey = msgIdentity.getAttribute("value");
+    var identity = gAccountManager.getIdentity(accountKey);
 
-    // 'accountkey' contains the accountkey which might be better to resolve the actual email... 
-    // but for now the description only contains the email 
-    var selectedEmail = msgIdentity.getAttribute("description");
-
-    return selectedEmail;
+//    storm.log("function getSender(): END");
+    return identity.email;
 }
 
 /**
+ *
+ * Returns a Private Key
  *
  * @return the key of the sender or NULL
  */
@@ -127,12 +178,14 @@ function getKeyByEmail(selectedEmail) {
  * @return Array: The Recipients of this email
  */
 function getRecipients() {
+    storm.log("function getRecipients(): BEGIN");
     var recipients = [];
     $(".textbox-addressingWidget").each(function() {
         var input = $(this)[0];
         var currentInput = $(input).val();
         recipients.push(currentInput);
     });
+    storm.log("function getRecipients(): END");
     return recipients;
 }
 
@@ -155,8 +208,24 @@ function getRecipientKeys(recipients) {
     return recipientKeys;
 }
 
+function setMessage(message) {
+    var editor = GetCurrentEditor();
+    // https://developer.mozilla.org/en-US/docs/User:groovecoder/Compose_New_Message
+    try {
+        editor.beginTransaction();  
+        editor.beginningOfDocument();   
+        editor.selectAll();
+        editor.insertText(message);  
+        editor.insertLineBreak();  
+        editor.endTransaction();  
+    } catch(ex) {  
+        Components.utils.reportError(ex);  
+        return false;  
+    }
+}
+
 function getMessage() {
-    var editor = GetCurrentEditor();  
+    var editor = GetCurrentEditor();
     var OutputRaw = 4;
 
     var message = editor.outputToString('text/plain', OutputRaw);
@@ -219,23 +288,3 @@ function getBestKeyForEmail(currentInput) {
     return bestKey;
 }
 
-
-function signMessage(text, sender) {
-    storm.log("function signMessage(): BEGIN");
-    var signedMessage = "-- signed by " + sender + " BEGIN --";
-    signedMessage += "-- used key: " + getBestKeyForEmail(sender) + "";
-    signedMessage += text;
-    signedMessage += "-- signed by " + sender + " END SIGNATURE --";
-    storm.log("function signMessage(): END");
-    return signedMessage;
-}
-
-function encryptMessage(text, recipient) {
-    storm.log("function encryptMessage(): BEGIN");
-    var encryptedMessage = "-- encrypted for " + recipient + " BEGIN --";
-    encryptedMessage += "-- used key: " + getBestKeyForEmail(recipient) + "";
-    encryptedMessage += text;
-    encryptedMessage += "-- encrypted for " + recipient + " END SIGNATURE --";
-    storm.log("function encryptMessage(): END");
-    return encryptedMessage;
-}
