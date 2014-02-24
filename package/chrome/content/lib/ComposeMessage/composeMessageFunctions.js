@@ -151,7 +151,7 @@ function getSender() {
 //    storm.log("function getSender(): BEGIN");
     var msgIdentity = document.getElementById("msgIdentity"); //whereSelected();
     var accountKey = msgIdentity.getAttribute("value");
-    var identity = gAccountManager.getIdentity(accountKey);
+     var identity = storm.accountList.getIdentityById(accountKey);
 
 //    storm.log("function getSender(): END");
     return identity.email;
