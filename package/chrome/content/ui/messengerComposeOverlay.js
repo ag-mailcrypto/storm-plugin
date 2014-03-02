@@ -2,6 +2,7 @@ Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
+Components.utils.import("chrome://storm/content/lib/MessageDraft.jsm");
 
 /**
  * Process the receivers email address, as soon as it changes
@@ -19,19 +20,17 @@ $(window).load(function() {
      */
     window.addEventListener('compose-send-message',
         function (event) {
+            var sendMail = false;
             try {
-                handleEmailSending();
+                sendMail = handleEmailSending();
             } catch (err) {
                 storm.log("An error occured: " + err);
             }
 
-            var question = "Storm asks: Do you really want to send this email?";
-            var answer = confirm(question);
-            if (answer == false) {
+            if (sendMail === false) {
                 event.preventDefault();
                 event.stopPropagation();
             }
-
         }, 
         true
     );

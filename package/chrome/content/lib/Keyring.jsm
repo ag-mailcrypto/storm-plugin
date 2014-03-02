@@ -215,6 +215,11 @@ Keyring.prototype.getKey = function(id, findSecret) {
  * @return {Array}              Array of matching keys.
  */
 Keyring.prototype.getKeysByEmail = function(email, findSecret) {
+    if (typeof email !== 'string') {
+        storm.log("ERROR: function getKeysByEmail() received a non string argument");
+        return [];
+    }
+
     email = email.toLowerCase();
 
     return (findSecret ? this.secretKeys : this.keys).filter(function(key) {
@@ -223,6 +228,31 @@ Keyring.prototype.getKeysByEmail = function(email, findSecret) {
         });
     });
 };
+
+
+Keyring.prototype.getBestKeyForEmail = function(currentInput) {
+    storm.log("function getBestKeyForEmail(): BEGIN");
+    storm.log("    using "+currentInput+"");
+
+    // Make sure this input is a string
+    if (typeof currentInput !== 'string') {
+        currentInput = '';
+    }
+
+    // Parse email
+    var m = currentInput.match(/^.*\<(.*)\>\s*$/);
+    var email = isEmail(currentInput) ? currentInput : (m ? m[1] : null);
+
+    // Find keys
+    var keys = email ? storm.keyring.getKeysByEmail(email) : [];
+    keys = keys.sort(function(a, b) { return a.getTrustSortValue() > b.getTrustSortValue(); });
+
+    var bestKey = keys ? keys[0] : null;
+
+    storm.log("function getBestKeyForEmail(): END");
+    return bestKey;
+}
+
 
 /**
  * Searches for a query (or regex) in all keys. See `Key.matches` for more

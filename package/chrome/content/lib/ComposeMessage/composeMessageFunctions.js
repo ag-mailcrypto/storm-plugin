@@ -1,6 +1,8 @@
 /**
  * The main function that is called, when someone tries to send an emails
  * or tries to save it in "drafts" etc.
+ *
+ * @TODO Implement Attachments!
  */
 function handleEmailSending() {
     // messageType could be "send" or "save"
@@ -10,10 +12,21 @@ function handleEmailSending() {
     var subject     = document.getElementById("msgSubject");
     var sender      = getSender();
     var listOfRecipients  = getRecipients();
+    var sendMail = true;
+    
+    var messageDraftObject = new MessageDraft(message, sender, listOfRecipients);
 
     if (messageType == 'save') {
-        // @TODO Saved messages are to be encrypted with the owner's public key.
-        return;
+        encryptedMessageForDraft = messageDraftObject.getEncryptedMessageForDraft();
+        setMessage(encryptedMessageForDraft);
+        sendMail = true
+        return sendMail;
+    }
+
+    var isMIME = false;
+    if (isMIME || !isMIME) {
+        var signedMessage = messageDraftObject.getSignedMessageText();
+        var encryptedMessage = messageDraftObject.getSignedAndEncryptedMessageText();
     }
 
     storm.log("============================================");
@@ -23,29 +36,21 @@ function handleEmailSending() {
     storm.log("| recipients:    [" + $.each(listOfRecipients, function(key) {
           return "" + key.id + ",";
         }) + "]");
-
-    var signedMessage = signMessage(message, sender);
-    
-
-    // Get a list of all the recipients, that have no valid key
-    var recipientsWithoutKey = [];
-    $.each(listOfRecipients, function(recipient) {
-        if (null != getBestKeyForEmail(recipient)) {
-            storm.log("Key found for: " + recipient);
-            recipientsWithoutKey.push(recipient);
-        } else {
-            storm.log("No Key found for: " + recipient);
-        }
-    });
-    
-    // If empty(recipientsWithoutKey) then encrypt()
-    var encryptedMessage = signedMessage;
-    if (recipientsWithoutKey.length === 0) {
-        encryptedMessage = encryptMessage(signedMessage, listOfRecipients);
-    }
-    
     storm.log("| encryptedMessageText: " + encryptedMessage);
     storm.log("============================================");
+    
+    // Get a list of all the recipients, that have no valid key
+    var recipientsWithoutKey = [];
+    for (var i = 0; i < listOfRecipients.length; i++) {
+        email = listOfRecipients[i];
+        if (null != storm.keyring.getBestKeyForEmail(email)) {
+            storm.log("Key found for: " + email);
+            recipientsWithoutKey.push(email);
+        } else {
+            storm.log("Warning: No Key found for: " + email);
+        }
+    }
+
 
 
     // TODO: get message body
@@ -70,42 +75,13 @@ function handleEmailSending() {
 //    } else {
 //        setMessage(message);
     }
+    
+    var question = "Storm asks: Do you really want to send this email?";
+    sendMail = confirm(question);
+    return sendMail;
 }
 
-/**
- * @TODO Currently only the first recipient's key is used
- */
-function encryptMessage(message, listOfRecipients) {
-    storm.log("function encryptMessage(): BEGIN");
-    var encryptedMessage = message;
-//    $.each(listOfRecipients, function(recipient) {
-        var encryptKey = getBestKeyForEmail(listOfRecipients[0]);
-        if (null != encryptKey) {
-            encryptedMessage = storm.gpg.signEncryptContent(message, null, encryptKey);
-        }
-//    });
-    storm.log("function encryptMessage(): END");
-    return encryptedMessage;
-}
 
-/**
- * Sign Message if Valid Key can be found
- *
- * @TODO We don't want inline signatures. We want PGP/MIME.
- * @TODO Control Flow
- *
- * @return Wrapped Text
- */
-function signMessage(message, sender) {
-    storm.log("function signMessage(): BEGIN");
-    signKey = getBestKeyForEmail(sender);
-    var signedMessage = message;
-    if (null != signKey) {
-       signedMessage = storm.gpg.signEncryptContent(message, signKey);
-    }
-    storm.log("function signMessage(): END");
-    return signedMessage;
-}
 
 /**
  * resolves if the message should be encrypted with the recipient key or the own
@@ -148,13 +124,14 @@ function resolveMessageTypeString() {
  * log: msgIdentity[description] = Posteo-Account
  */
 function getSender() {
-//    storm.log("function getSender(): BEGIN");
+    storm.log("function getSender(): BEGIN");
     var msgIdentity = document.getElementById("msgIdentity"); //whereSelected();
     var accountKey = msgIdentity.getAttribute("value");
-     var identity = storm.accountList.getIdentityById(accountKey);
+    var identity = storm.accountList.getIdentityById(accountKey);
 
-//    storm.log("function getSender(): END");
-    return identity.email;
+    var email = identity.email
+    storm.log("function getSender(): END");
+    return email;
 }
 
 /**
@@ -183,7 +160,9 @@ function getRecipients() {
     $(".textbox-addressingWidget").each(function() {
         var input = $(this)[0];
         var currentInput = $(input).val();
-        recipients.push(currentInput);
+        if (currentInput.length > 0) {
+            recipients.push(currentInput);
+        }
     });
     storm.log("function getRecipients(): END");
     return recipients;
@@ -199,7 +178,7 @@ function getRecipientKeys(recipients) {
 
     var recipientKeys;
     recipientKeys.each(function() {
-        var bestKey = getBestKeyForEmail(currentInput);
+        var bestKey = storm.keyring.getBestKeyForEmail(currentInput);
         if(bestKey) {
             recipientKeys.push(bestKey);
         }
@@ -253,7 +232,7 @@ function stormComposeAddressOverlayOnInput(input) {
     var currentInput = $(input).val();
     var icon = $(input).find(".storm-trust-icon");
     
-    var bestKey = getBestKeyForEmail(currentInput);
+    var bestKey = storm.keyring.getBestKeyForEmail(currentInput);
     var cls = bestKey ? bestKey.getValidity() : "none";
     var title = bestKey ? "Key validity: " + bestKey.getValidityString() : "No key found";
 
@@ -262,29 +241,4 @@ function stormComposeAddressOverlayOnInput(input) {
     icon.attr("tooltiptext", title);
 };
 
-/**
- *
- */
-function getBestKeyForEmail(currentInput) {
-    storm.log("function getBestKeyForEmail(): BEGIN");
-    storm.log("    using "+currentInput+"");
-
-    // Make sure this input is a string
-    if (typeof currentInput !== 'string') {
-        currentInput = '';
-    }
-
-    // Parse email
-    var m = currentInput.match(/^.*\<(.*)\>\s*$/);
-    var email = isEmail(currentInput) ? currentInput : (m ? m[1] : null);
-
-    // Find keys
-    var keys = email ? storm.keyring.getKeysByEmail(email) : [];
-    keys = keys.sort(function(a, b) { return a.getTrustSortValue() > b.getTrustSortValue(); });
-
-    var bestKey = keys ? keys[0] : null;
-
-    storm.log("function getBestKeyForEmail(): END");
-    return bestKey;
-}
 
