@@ -16,9 +16,17 @@ function handleEmailSending() {
     
     var messageDraftObject = new MessageDraft(message, sender, listOfRecipients);
 
+    /**
+     * I am just about to save a draft ... then encrypt it
+     * 
+     * @TODO user preferences!
+     */ 
     if (messageType == 'save') {
-        encryptedMessageForDraft = messageDraftObject.getEncryptedMessageForDraft();
-        setMessage(encryptedMessageForDraft);
+        var userpref_encrypt_drafts = true;
+        if (true === userpref_encrypt_drafts) {
+            encryptedMessageForDraft = messageDraftObject.getEncryptedMessageForDraft();
+            setMessage(encryptedMessageForDraft);
+        }
         sendMail = true
         return sendMail;
     }

@@ -85,7 +85,12 @@ MessageDraft.prototype.getEncryptedMessageForRecipients = function() {
  * @returns String
  */
 MessageDraft.prototype.getEncryptedMessageForDraft = function() {
-    return this.cleartext;    
+    storm.log("function getEncryptedMessageForDraft() BEGIN");
+    var findSecretKey = true;
+    this.signKey = storm.keyring.getBestKeyForEmail(this.getSender(), findSecretKey);
+    this.signedAndEncryptedMessage = storm.gpg.signEncryptContent(this.cleartext, null, this.signKey);
+    storm.log("function getEncryptedMessageForDraft() END");
+    return this.signedAndEncryptedMessage;    
 }
 
 /**
@@ -112,8 +117,8 @@ MessageDraft.prototype.getSignedMessageText = function() {
 
 MessageDraft.prototype.getSignedAndEncryptedMessageText = function() {
     storm.log("function getSignedAndEncryptedMessageText() BEGIN");
-    signKeys     = storm.keyring.getKeysByEmail(this.getSender(), true);
-    this.signKey = signKeys[0];
+    findSecretKey = true;
+    this.signKey = storm.keyring.getBestKeyForEmail(this.getSender(), findSecretKey);
     this.encryptionKeyList = new Array();
     var recipientList = this.getRecipientList();
     for (var i = 0; i < recipientList.length; i++) {

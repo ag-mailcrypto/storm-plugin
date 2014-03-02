@@ -230,7 +230,7 @@ Keyring.prototype.getKeysByEmail = function(email, findSecret) {
 };
 
 
-Keyring.prototype.getBestKeyForEmail = function(currentInput) {
+Keyring.prototype.getBestKeyForEmail = function(currentInput, findSecret) {
     storm.log("function getBestKeyForEmail(): BEGIN");
     storm.log("    using "+currentInput+"");
 
@@ -244,7 +244,7 @@ Keyring.prototype.getBestKeyForEmail = function(currentInput) {
     var email = isEmail(currentInput) ? currentInput : (m ? m[1] : null);
 
     // Find keys
-    var keys = email ? storm.keyring.getKeysByEmail(email) : [];
+    var keys = email ? storm.keyring.getKeysByEmail(email, findSecret) : [];
     keys = keys.sort(function(a, b) { return a.getTrustSortValue() > b.getTrustSortValue(); });
 
     var bestKey = keys ? keys[0] : null;
