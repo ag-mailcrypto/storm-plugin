@@ -1,6 +1,19 @@
 /**
  * The main function that is called, when someone tries to send an emails
  * or tries to save it in "drafts" etc.
+
+    // TODO: get message body
+    // TODO: check if subject should be merged into body?
+    //
+    // TODO: handle attatchments
+    // TODO: check if attatchments should be merged into body?
+
+    // TODO: sign/encrypt body
+    //       LOOP: recipients and use respective key
+    // TODO: sign/encrypt attatchments if there are and the should be encryptet (options)
+    //       LOOP: recipients and use respective key
+    //       
+    // TODO: attatch own public key?
  *
  * @TODO Implement Attachments!
  */
@@ -24,8 +37,7 @@ function handleEmailSending() {
      * @TODO user preferences!
      */ 
     if (messageType == 'save') {
-        var userpref_encrypt_drafts = false;
-        if (true === userpref_encrypt_drafts) {
+        if (true === messageDraftObject.saveEncrypted) {
             encryptedMessageForDraft = messageDraftObject.getEncryptedMessageForDraft();
             setMessage(encryptedMessageForDraft);
         }
@@ -33,22 +45,7 @@ function handleEmailSending() {
         return sendMail;
     }
 
-    var isMIME = false;
-    if (isMIME || !isMIME) {
-        var signedMessage = messageDraftObject.getSignedMessageText();
-        var encryptedMessage = messageDraftObject.getSignedAndEncryptedMessageText();
-    }
-
-    storm.log("============================================");
-    storm.log("| messageType:     " + messageType);
-    storm.log("| messageText:     " + message);
-    storm.log("| sender:          " + sender);
-    storm.log("| recipients:    [" + $.each(recipientList, function(key) {
-          return "" + key.id + ",";
-        }) + "]");
-    storm.log("| encryptedMessageText: " + encryptedMessage);
-    storm.log("============================================");
-    
+    var encryptionIsPossible = true;
     // Get a list of all the recipients, that have no valid key
     var recipientsWithoutKey = [];
     for (var i = 0; i < recipientList.length; i++) {
@@ -57,33 +54,35 @@ function handleEmailSending() {
             storm.log("Key found for: " + email);
             recipientsWithoutKey.push(email);
         } else {
-            storm.log("Warning: No Key found for: " + email);
+            encryptionIsPossible = false;
+        }
+    }
+
+    var isMIME = false;
+    if (isMIME || !isMIME) {
+        var newMessage = messageDraftObject.getCleartext();
+        if (true == encryptionIsPossible && messageDraftObject.sendSigned && messageDraftObject.sendEncrypted) {
+            newMessage = messageDraftObject.getSignedAndEncryptedMessageText();
+        } else if (messageDraftObject.sendSigned) {
+            newMessage = messageDraftObject.getSignedMessageText();
         }
     }
 
 
 
-    // TODO: get message body
-    // TODO: check if subject should be merged into body?
-    //
-    // TODO: handle attatchments
-    // TODO: check if attatchments should be merged into body?
+    storm.log("============================================");
+    storm.log("| messageType:     " + messageType);
+    storm.log("| messageText:     " + message);
+    storm.log("| sender:          " + sender);
+    storm.log("| recipients:    [" + $.each(recipientList, function(key) {
+          return "" + key.id + ",";
+        }) + "]");
+    storm.log("| processedMessageText: " + newMessage);
+    storm.log("============================================");
 
-    // TODO: sign/encrypt body
-    //       LOOP: recipients and use respective key
-    // TODO: sign/encrypt attatchments if there are and the should be encryptet (options)
-    //       LOOP: recipients and use respective key
-    //       
-    // TODO: attatch own public key?
-
-    setMessage(signedMessage);
-    alert("[Storm] Look into the logs for more info.");
-
-    var question = "[Storm] Shall Storm replace your email with an armored encrypted openPGP block?"
+    var question = "[Storm] Shall Storm replace your email text with the computed blob?"
     if (confirm(question)) {
-        setMessage(encryptedMessage);
-//    } else {
-//        setMessage(message);
+        setMessage(newMessage);
     }
     
     var question = "Storm asks: Do you really want to send this email?";
