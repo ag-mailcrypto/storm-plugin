@@ -2,6 +2,7 @@ Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
+Components.utils.import("chrome://storm/content/lib/MessageDraft.jsm");
 
 /**
  * Process the receivers email address, as soon as it changes
@@ -13,25 +14,27 @@ $(window).load(function() {
     var widget = $(".textbox-addressingWidget");
     widget.attr("oninput", widget.attr("oninput") + "; stormComposeAddressOverlayOnInput(this);");
 
-
+    /**
+     * Register a Storm Message Draft as a global object
+     */
+    messageDraftObject = new MessageDraft();
+    
     /**
      * Add an event listener that is triggered before sending an email.
      */
     window.addEventListener('compose-send-message',
         function (event) {
+            var sendMail = false;
             try {
-                handleEmailSending();
+                sendMail = handleEmailSending();
             } catch (err) {
                 storm.log("An error occured: " + err);
             }
 
-            var question = "Storm asks: Do you really want to send this email?";
-            var answer = confirm(question);
-            if (answer == false) {
+            if (sendMail === false) {
                 event.preventDefault();
                 event.stopPropagation();
             }
-
         }, 
         true
     );

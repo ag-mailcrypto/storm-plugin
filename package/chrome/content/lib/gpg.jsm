@@ -103,24 +103,50 @@ GPG.prototype.call = function(arguments, input, stdout, stderr) {
  * @param {String}  content         The string to encrypt.
  * @param {Key}     signingKey      A key to sign with, if desired. This should
  *                                  rather be a private key.
- * @param {Key}     encryptionKey   A key to encrypt with, if desired. Should
+ * @param List of {Key}  encryptionKeyList   One or more keys to encrypt with, if desired. Each one should
  *                                  obviously be a public key.
  */
-GPG.prototype.signEncryptContent = function(content, signingKey, encryptionKey) {
+GPG.prototype.signEncryptContent = function(content, signingKey, encryptionKeyList) {
+    Components.utils.import("chrome://storm/content/lib/Key.jsm");
     var args = ["--armor"];
 
-    if(encryptionKey == null && signingKey == null) {
+    if(encryptionKeyList == null && signingKey == null) {
         storm.log("Warning: neither encryption nor signing key specified for signEncryptContent(). Returning input content.");
         return content;
+    }
+    if(true == encryptionKeyList instanceof Key) {
+        encryptionKeyList = new Array(encryptionKeyList);
+        storm.log("Warning: EncryptionKeyList is a single Key");
+    }
+    if (signingKey != null && false == (signingKey instanceof Key)) {
+        storm.log("Error: The signing key must be an instance of Class Key");
+        storm.log("instead: " + (signingKey.constructor) + "!");
+        storm.log("instead: " + (typeof signingKey) + "!");
+        return content;
+    }
+    if (encryptionKeyList != null && null == (encryptionKeyList.length)) {
+        storm.log("Error: encryptionKeyList must be an array");
+        storm.log("instead: " + (encryptionKeyList.constructor) + "!");
+        storm.log("instead: " + (typeof encryptionKeyList) + "!");
     }
 
     var signatureType = "clearsign";
 
-    if(encryptionKey != null) {
-        args.push("--encrypt");
-        args.push("--recipient");
-        args.push(encryptionKey.id);
-        signatureType = "sign";
+    if(encryptionKeyList != null && encryptionKeyList.length != null && encryptionKeyList.length > 0) {
+        for (var i = 0; i < encryptionKeyList.length; i++) {
+            encryptionKey = encryptionKeyList[i];
+            if (false == encryptionKey instanceof Key) {
+                storm.log("Error: Each encryptionKey key must be an instance of class Key. encryptionKey[" + i + "] is not.");
+                storm.log("instead: " + (encryptionKey.constructor) + "!");
+                return content;
+            }
+            args.push("--encrypt");
+            args.push("--trust-model");
+            args.push("always");
+            args.push("--recipient");
+            args.push(encryptionKey.id);
+            signatureType = "sign";
+        }
     }
 
     if(signingKey != null) {
