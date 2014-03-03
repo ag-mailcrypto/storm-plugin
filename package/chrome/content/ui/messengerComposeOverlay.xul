@@ -19,7 +19,7 @@
             id="button-send-storm"
             type="menu-button"
             label="Senden"
-            command="cmd_sendButton"
+            buttontype="thunderbird" 
             tooltip="aTooltipSet"
             tooltiptext="Diese Nachricht jetzt senden"
             oncommand="goDoCommand('cmd_sendButton')"
@@ -45,7 +45,7 @@
   <!-- TODO don't reinitialize the toolbar! Remove Send-Button and add new send button if possible -->
   <!-- to include the default send button add button-send to the defaultset -->
   <toolbar id="composeToolbar2"
-           defaultset="button-send,button-send-storm,separator,button-address,spellingButton,button-attach,button-security,button-save">
+           defaultset="button-send-storm,separator,button-address,spellingButton,button-attach,button-security,button-save">
   </toolbar>
 
 </overlay>

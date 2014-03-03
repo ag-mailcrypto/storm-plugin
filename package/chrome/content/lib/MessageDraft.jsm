@@ -92,6 +92,33 @@ MessageDraft.prototype.setSender = function(sender) {
     this.sender = sender;
 }
 
+/**
+ * 
+ */
+MessageDraft.prototype.getSendSigned = function() {    
+    return this.sendSigned;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.getSendEncrypted = function() {    
+    return this.sendEncrypted;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.getSaveSigned = function() {    
+    return this.saveSigned;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.getSaveEncrypted = function() {    
+    return this.saveEncrypted;
+}
 
 /**
  * 

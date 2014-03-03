@@ -40,24 +40,21 @@ $(window).load(function() {
     );
 });
 
-var sendEncrypted = true;
-var sendSigned = true;
-
 var setSendConfig = function(){
     storm.log('setting send key config checkboxes');
     // TODO get values from config
-    document.getElementById("config-send-encrypted").setAttribute("checked", sendEncrypt);
-    document.getElementById("config-send-signed").setAttribute("checked", sendSigned);
+    document.getElementById("config-send-encrypted").setAttribute("checked", messageDraftObject.getSendEncrypted());
+    document.getElementById("config-send-signed").setAttribute("checked", messageDraftObject.getSendSigned());
 };
 
 var toggleSignedCheckbox = function(){
     storm.log('toggle signed checkbox');
-    sendSigned = !sendSigned;
-    document.getElementById("config-send-signed").setAttribute("checked", sendSigned);
+    var sendSigned = !messageDraftObject.getSendSigned();
+    messageDraftObject.setSendSigned(sendSigned);
 }
 
 var toggleEncryptCheckbox = function(){
     storm.log('toggle encrypted checkbox');
-    sendEncrypted = !sendEncrypted;
-    document.getElementById("config-send-encrypted").setAttribute("checked", sendEncrypted);
+    var sendEncrypted = !messageDraftObject.getSendEncrypted();
+    messageDraftObject.setSendEncrypted(sendEncrypted);
 }
