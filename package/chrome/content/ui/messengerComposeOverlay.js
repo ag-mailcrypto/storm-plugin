@@ -37,3 +37,24 @@ $(window).load(function() {
     );
 });
 
+var sendEncrypted = true;
+var sendSigned = true;
+
+var setSendConfig = function(){
+    storm.log('setting send key config checkboxes');
+    // TODO get values from config
+    document.getElementById("config-send-encrypted").setAttribute("checked", sendEncrypt);
+    document.getElementById("config-send-signed").setAttribute("checked", sendSigned);
+};
+
+var toggleSignedCheckbox = function(){
+    storm.log('toggle signed checkbox');
+    sendSigned = !sendSigned;
+    document.getElementById("config-send-signed").setAttribute("checked", sendSigned);
+}
+
+var toggleEncryptCheckbox = function(){
+    storm.log('toggle encrypted checkbox');
+    sendEncrypted = !sendEncrypted;
+    document.getElementById("config-send-encrypted").setAttribute("checked", sendEncrypted);
+}

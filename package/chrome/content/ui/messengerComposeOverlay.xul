@@ -13,4 +13,39 @@
         <image class="storm-trust-icon none" />
     </textbox>
 
+    <!-- Storm toolbar button -->
+  <toolbarpalette id="MsgComposeToolbarPalette">
+    <toolbarbutton class="toolbarbutton-1"
+            id="button-send-storm"
+            type="menu-button"
+            label="Senden"
+            command="cmd_sendButton"
+            tooltip="aTooltipSet"
+            tooltiptext="Diese Nachricht jetzt senden"
+            oncommand="goDoCommand('cmd_sendButton')"
+            removable="true">
+
+        <menupopup onpopupshowing="setSendConfig()">
+          <menuitem id="config-send-signed"
+              type="checkbox"
+              label="signieren"
+              accesskey="s"
+              key=""
+              oncommand="toggleSignedCheckbox()" />
+          <menuitem id="config-send-encrypted"
+              type="checkbox"
+              label="verschlüsseln"
+              accesskey="v"
+              key=""
+              oncommand="toggleEncryptCheckbox()" />
+        </menupopup>
+    </toolbarbutton>
+  </toolbarpalette>
+
+  <!-- TODO don't reinitialize the toolbar! Remove Send-Button and add new send button if possible -->
+  <!-- to include the default send button add button-send to the defaultset -->
+  <toolbar id="composeToolbar2"
+           defaultset="button-send,button-send-storm,separator,button-address,spellingButton,button-attach,button-security,button-save">
+  </toolbar>
+
 </overlay>
