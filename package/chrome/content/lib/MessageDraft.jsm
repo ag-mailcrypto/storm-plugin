@@ -75,6 +75,12 @@ MessageDraft.prototype.setCleartext = function(cleartext) {
 /**
  * 
  */
+MessageDraft.prototype.getCleartext = function() {
+    return this.cleartext;
+}
+/**
+ * 
+ */
 MessageDraft.prototype.setRecipientList = function(recipientList) {
     this.recipientList = recipientList;
 }
