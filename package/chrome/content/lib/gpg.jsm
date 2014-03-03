@@ -141,6 +141,8 @@ GPG.prototype.signEncryptContent = function(content, signingKey, encryptionKeyLi
                 return content;
             }
             args.push("--encrypt");
+            args.push("--trust-model");
+            args.push("always");
             args.push("--recipient");
             args.push(encryptionKey.id);
             signatureType = "sign";
