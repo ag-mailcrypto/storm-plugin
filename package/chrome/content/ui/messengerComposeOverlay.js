@@ -14,7 +14,11 @@ $(window).load(function() {
     var widget = $(".textbox-addressingWidget");
     widget.attr("oninput", widget.attr("oninput") + "; stormComposeAddressOverlayOnInput(this);");
 
-
+    /**
+     * Register a Storm Message Draft as a global object
+     */
+    messageDraftObject = new MessageDraft();
+    
     /**
      * Add an event listener that is triggered before sending an email.
      */

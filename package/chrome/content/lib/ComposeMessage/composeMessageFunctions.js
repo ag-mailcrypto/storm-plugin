@@ -11,10 +11,12 @@ function handleEmailSending() {
     var message     = getMessage();
     var subject     = document.getElementById("msgSubject");
     var sender      = getSender();
-    var listOfRecipients  = getRecipients();
+    var recipientList  = getRecipients();
     var sendMail = true;
     
-    var messageDraftObject = new MessageDraft(message, sender, listOfRecipients);
+    messageDraftObject.setCleartext(message);
+    messageDraftObject.setSender(sender);
+    messageDraftObject.setRecipientList(recipientList);
 
     /**
      * I am just about to save a draft ... then encrypt it
@@ -22,7 +24,7 @@ function handleEmailSending() {
      * @TODO user preferences!
      */ 
     if (messageType == 'save') {
-        var userpref_encrypt_drafts = true;
+        var userpref_encrypt_drafts = false;
         if (true === userpref_encrypt_drafts) {
             encryptedMessageForDraft = messageDraftObject.getEncryptedMessageForDraft();
             setMessage(encryptedMessageForDraft);
@@ -41,7 +43,7 @@ function handleEmailSending() {
     storm.log("| messageType:     " + messageType);
     storm.log("| messageText:     " + message);
     storm.log("| sender:          " + sender);
-    storm.log("| recipients:    [" + $.each(listOfRecipients, function(key) {
+    storm.log("| recipients:    [" + $.each(recipientList, function(key) {
           return "" + key.id + ",";
         }) + "]");
     storm.log("| encryptedMessageText: " + encryptedMessage);
@@ -49,8 +51,8 @@ function handleEmailSending() {
     
     // Get a list of all the recipients, that have no valid key
     var recipientsWithoutKey = [];
-    for (var i = 0; i < listOfRecipients.length; i++) {
-        email = listOfRecipients[i];
+    for (var i = 0; i < recipientList.length; i++) {
+        email = recipientList[i];
         if (null != storm.keyring.getBestKeyForEmail(email)) {
             storm.log("Key found for: " + email);
             recipientsWithoutKey.push(email);

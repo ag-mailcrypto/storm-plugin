@@ -16,19 +16,74 @@
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/gpg.jsm");
 Components.utils.import("chrome://storm/content/lib/Key.jsm");
-
+Components.utils.import("resource:///modules/gloda/mimemsg.js");
+  
 this.EXPORTED_SYMBOLS = [];
 
 //this.EXPORTED_SYMBOLS.push("Message");
 this.EXPORTED_SYMBOLS.push("MessageDraft");
 
-function MessageDraft(message, sender, recipientList) {
-    this.cleartext      = message;
-    this.sender         = sender;
-    this.recipientList  = recipientList;
+function MessageDraft() {
+    this.cleartext      = '';
+    this.sender         = '';
+    this.recipientList  = [];
+
+    this.sendSigned = true;
+    this.sendEncrypted = true;
+    this.saveSigned = false;
+    this.saveEncrypted = false;
     
     this.encryptedMessageForRecipients = null;
     this.encryptedMessageForDraft = null;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.setSendSigned = function(sendSigned) {    
+    this.sendSigned = sendSigned;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.setSendEncrypted = function(sendEncrypted) {    
+    this.sendEncrypted = sendEncrypted;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.setSaveSigned = function(saveSigned) {    
+    this.saveSigned = saveSigned;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.setSaveEncrypted = function(saveEncrypted) {    
+    this.saveEncrypted = saveEncrypted;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.setCleartext = function(cleartext) {
+    this.cleartext = cleartext;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.setRecipientList = function(recipientList) {
+    this.recipientList = recipientList;
+}
+
+/**
+ * 
+ */
+MessageDraft.prototype.setSender = function(sender) {
+    this.sender = sender;
 }
 
 
@@ -70,7 +125,7 @@ MessageDraft.prototype.getEncryptedMessageForRecipients = function() {
     
     // Get a list of all the recipients, that have no valid key
     var recipientsWithoutKey = [];
-    $.each(listOfRecipients, function(recipient) {
+    $.each(this.recipientList, function(recipient) {
         if (null != storm.keyring.getBestKeyForEmail(recipient)) {
             storm.log("Key found for: " + recipient);
             recipientsWithoutKey.push(recipient);
@@ -88,7 +143,7 @@ MessageDraft.prototype.getEncryptedMessageForDraft = function() {
     storm.log("function getEncryptedMessageForDraft() BEGIN");
     var findSecretKey = true;
     this.signKey = storm.keyring.getBestKeyForEmail(this.getSender(), findSecretKey);
-    this.signedAndEncryptedMessage = storm.gpg.signEncryptContent(this.cleartext, null, this.signKey);
+    this.signedAndEncryptedMessage = storm.gpg.signEncryptContent(this.cleartext, null, [this.signKey]);
     storm.log("function getEncryptedMessageForDraft() END");
     return this.signedAndEncryptedMessage;    
 }
