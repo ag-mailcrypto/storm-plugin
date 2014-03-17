@@ -55,6 +55,11 @@ $(window).load(function() {
     $("button#generate-key").on("command", function() {
         storm.ui.dialogGenerateKey(window);
     });
+    
+    // Open settings button
+    $("#button-open-settings").on("command", function() {
+        storm.ui.dialogSettings(window);
+    });
 
     // Import menu buttons
     $("#import-keyserver").on("command", function() {

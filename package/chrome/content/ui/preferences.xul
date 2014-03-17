@@ -37,14 +37,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 <label class="category-name" value="My keys" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
             </richlistitem>
-            <richlistitem class="category" id="tab-settings" data-deck-index="1">
+            <richlistitem class="category" id="tab-keys-settings" data-deck-index="1">
                 <image class="category-icon" src="chrome://storm/skin/icons/32/settings.png"/>
-                <label class="category-name" value="Configuration" flex="1" />
+                <label class="category-name" value="Settings" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
             </richlistitem>
-            <richlistitem class="category" id="tab-expert-settings" data-deck-index="2">
-                <image class="category-icon" src="chrome://storm/skin/icons/32/bullet_error.png"/>
-                <label class="category-name" value="Expert settings" flex="1" />
+            <richlistitem class="category" id="tab-settings-old" data-deck-index="2">
+                <image class="category-icon" src="chrome://storm/skin/icons/32/settings.png"/>
+                <label class="category-name" value="Settings-Old" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
             </richlistitem>
         </richlistbox>
@@ -113,16 +113,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         </tabpanels>
                     </tabbox>
                 </box>
-                <box class="view-pane" flex="1">
+                <box class="view-pane tab-keys-settings" flex="1">
                     <vbox flex="1" class="view-pane" tabindex="0">
 
-                        <prefpane id="pane2">
-                            <preferences>
-                                <preference id="pref2" name="pref.nam2" type="bool"/>
-                            </preferences>
+						<!--<richlistbox id="key-list" flex="1" />-->
+						<button id="button-open-settings" label="Open Settings" />
 
-                            <checkbox id="check2" preference="pref2" label="checkbox" />
-                        </prefpane>
 
                     </vbox>
                 </box>
@@ -166,7 +162,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 <textbox preference="pref-gpg-keyserver" />
                             </vbox>
                         </prefpane>
-
+                        
                     </vbox>
                 </box>
             </deck>

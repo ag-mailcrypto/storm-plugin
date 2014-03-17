@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/settings.css" type="text/css"?>
+
+<!-- Copyright (C) 2013
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<window id="storm-settings" title="Settings" width="600" height="400"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+    <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/ui/settings.js"/>
+    
+    <tabbox id="tablist" flex="1">
+        <tabs>
+            <tab label="Normal Settings" />
+            <tab label="Expert Settings" />
+        </tabs>
+        <tabpanels flex="1">
+        
+            <tabpanel id="tab-normal-settings">
+                <hbox flex="1">
+                   <prefpane id="normal-settings">
+                        <preferences>
+                            <preference id="activate-storm" 		name="extensions.storm.activate" 			type="bool"/>
+                            <preference id="encrypt-by-default" 	name="extensions.storm.encrypt" 			type="bool"/>
+                            <preference id="sign-by-default" 		name="extensions.storm.sign" 				type="bool"/>
+                            <preference id="pref-gpg-keyserver" 	name="extensions.storm.gpg.keyserver" 		type="string"/>
+                        </preferences>
+
+                        <checkbox id="check-activate-storm" 	preference="activate-storm" 	label="Activate Storm" />
+                        <checkbox id="check-encrypt-by-default" preference="encrypt-by-default" label="Encrypt by default" />
+                        <checkbox id="check-sign-by-default" 	preference="sign-by-default" 	label="Sign by default" />
+                        
+                        <label value="GPG keyserver URL" class="section" />
+                        <textbox preference="pref-gpg-keyserver" />
+                    </prefpane>
+                </hbox>
+            </tabpanel>
+            
+            <tabpanel id="tab-expert-settings" flex="1">
+                <vbox flex="1">
+
+                </vbox>
+            </tabpanel>
+
+        </tabpanels>
+    </tabbox>
+
+    <spacer height="10" />
+
+    <hbox>
+        <spacer flex="1" />
+        <button id="button-close" icon="yes" label="Close" />
+    </hbox>
+</window>

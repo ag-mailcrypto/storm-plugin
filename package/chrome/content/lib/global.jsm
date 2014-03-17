@@ -47,6 +47,11 @@ storm.ui = {
     dialogGenerateKey: function(window) {
         window.openDialog("chrome://storm/content/ui/stormKeygenWizard.xul", "", "", "");
     },
+    
+    dialogSettings: function(window) {
+        window.openDialog("chrome://storm/content/ui/settings.xul", "", "", "");
+    },
+
 
 };
 
