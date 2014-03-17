@@ -116,7 +116,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 <box class="view-pane tab-keys-settings" flex="1">
                     <vbox flex="1" class="view-pane" tabindex="0">
 
-						<!--<richlistbox id="key-list" flex="1" />-->
+						<richlistbox id="identity-list" flex="1" />
 						<button id="button-open-settings" label="Open Settings" />
 
 

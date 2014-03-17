@@ -17,9 +17,12 @@ Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
 Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
+Components.utils.import("resource:///modules/iteratorUtils.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 var keyListCache = [];
 var accountListCache = [];
+var identityListCache = [];
 
 $(window).load(function() {
     // Category (left menu) switches view-port
@@ -43,6 +46,7 @@ $(window).load(function() {
     // Initial list setup
     buildKeyList();
     buildAccountList();
+    buildIdentitiesList();
 
     // Filter change event
     $("#filter-string").on("input", filterKeyList);
@@ -170,3 +174,26 @@ function buildAccountList() {} /*
         listbox.append(item);
     });
 }*/
+/**
+ * Builds the list of identities
+  */
+  function buildIdentitiesList() {
+	// Get and clear listbox
+    var listbox = document.getElementById("identity-list");
+    while(listbox.hasChildNodes()) {
+        listbox.removeChild(listbox.lastChild);
+    }
+
+    identityListCache = storm.accountList.getAllIdentities();
+
+    // Fill listbox with keys
+    identityListCache.forEach(function(key, index) {
+        item = document.createElement("richlistitem");
+        item.setAttribute("class", "key-list-item");
+        item.setAttribute("id", "key-" + index);
+        listbox.appendChild(item);
+        item = listbox.lastChild;
+        //item.mode = (secretKeys ? "secret" : "public");
+        //item.key = key;
+    });
+  }
