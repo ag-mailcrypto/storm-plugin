@@ -27,12 +27,17 @@ function GPG() {}
 
 /**
  * Calls the GPG executable with the specified arguments.
- * @param {Array} arguments         An array of command line argument strings
- * @param {String|Function} input   Input passed to stdin (optional)
- * @returns {String}                The program output.
- * @throws {GPGError}               If gpg prints output to stderr.
+ * @param {Array} arguments          An array of command line argument strings
+ * @param {String|Function} input    Input passed to stdin (optional)
+ * @param {Function} stdout optional Function that handles console output from gpg.
+ *                                   Makes this function return immediately and asynchronous.
+ * @param {Function} stderr optional Function that handles stderr output from gpg.
+ *                                   Makes this function return immediately and asynchronous.
+
+ * @returns {String}                 The program output.
+ * @throws {GPGError}                If gpg prints output to stderr.
  */
-GPG.prototype.call = function(arguments, input) {
+GPG.prototype.call = function(arguments, input, stdout, stderr) {
     input = input || "";
 
     var result = {
@@ -52,27 +57,34 @@ GPG.prototype.call = function(arguments, input) {
 
     var gpgHomedir = storm.preferences.getCharPref("gpg.homedir");
     if(gpgHomedir) {
-        arguments.push("--homedir");
-        arguments.push(gpgHomedir);
+        // add to beginning (for queries like --search-keys the end needs to be clean)
+        // Push them in reverse order!
+        arguments.unshift(gpgHomedir);
+        arguments.unshift("--homedir");
     }
 
     try {
-        subprocess.call({
+         storm.log("gpg.jsm: call() " + arguments);
+         p = subprocess.call({
             command:     storm.preferences.getCharPref("gpg.path"),
             arguments:   arguments,
-            //charset: "UTF-8",
+            // charset: "UTF-8",
             environment: ["GPG_AGENT_INFO="+GPG_AGENT_INFO],
-            //workdir: "/tmp",
+            // workdir: "/tmp",
             stdin: input,
-            stderr: gpgStderrThrow,
-            stdout: function(data) {
+            stderr: stderr || function(data) {
+                storm.log("GPG Error: " + data);
+            },
+            stdout: stdout || function(data) {
                 result.output += data;
             },
             done: function(data) {
                 result.code = data.exitCode;
+                storm.log("gpg.jsm: call() terminated with exit code " + data.exitCode);
             },
             mergeStderr: false
-        }).wait();
+        });
+        p.wait();
     } catch(err) {
         if(typeof(err) == "GPGError") {
             throw err;
@@ -82,12 +94,46 @@ GPG.prototype.call = function(arguments, input) {
         }
     }
 
-    if(result.code) {
-        storm.log("GPG result code: " + result.code);
-    }
-
     return result.output;
 }
+
+/**
+ * Encrypts or signs the content for the specified key. By default, an armored ASCII block
+ * is generated.
+ * @param {String}  content         The string to encrypt.
+ * @param {Key}     signingKey      A key to sign with, if desired. This should
+ *                                  rather be a private key.
+ * @param {Key}     encryptionKey   A key to encrypt with, if desired. Should
+ *                                  obviously be a public key.
+ */
+GPG.prototype.signEncryptContent = function(content, signingKey, encryptionKey) {
+    var args = ["--armor"];
+
+    if(encryptionKey == null && signingKey == null) {
+        storm.log("Warning: neither encryption nor signing key specified for signEncryptContent(). Returning input content.");
+        return content;
+    }
+
+    var signatureType = "clearsign";
+
+    if(encryptionKey != null) {
+        args.push("--encrypt");
+        args.push("--recipient");
+        args.push(encryptionKey.id);
+        signatureType = "sign";
+    }
+
+    if(signingKey != null) {
+        args.push("--" + signatureType);
+        args.push("--local-user");
+        args.push(signingKey.id);
+    }
+
+    return storm.gpg.call(args, function(pipe) {
+        pipe.write(content);
+        pipe.close();
+    });
+};
 
 // Prepare the instance
 storm.gpg = new GPG();

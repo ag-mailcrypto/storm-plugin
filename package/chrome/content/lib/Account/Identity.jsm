@@ -15,9 +15,8 @@
 
 this.EXPORTED_SYMBOLS = [];
 
-this.EXPORTED_SYMBOLS.push("Account");
+this.EXPORTED_SYMBOLS.push("Identity");
 
-function Account(id) {
-    this.email = null;
-    this.key = null;
+function IdentityInterface (id) {
+
 }

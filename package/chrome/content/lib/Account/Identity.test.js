@@ -13,23 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-$(window).ready(function() {
-    /**
-     * On expert settings: Show the tab "Advanced options"
-     */
-    $("#keygen-expert-settings").on("command", function() {
-        $(".advances-options").show();
-    });
+this.EXPORTED_SYMBOLS = [];
 
-    /**
-     * On recommended settings: Hide the tab "Advanced options"
-     */
-    $("#keygen-recommended").on("command", function() {
-        $(".advances-options").hide();
-    });
+this.EXPORTED_SYMBOLS.push("Identity");
 
-    /**
-     * Hide the tab "Advanced options" on default
-     */
-    $(".advances-options").hide();
-});
+function Identity(id) {
+    this.email = null;
+    this.key = null;
+}

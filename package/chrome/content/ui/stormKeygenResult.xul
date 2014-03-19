@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/common.css" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/key-list.css" type="text/css"?>
+
+<window
+    id="stormKeygenResult"
+    title="Storm Key Generated"
+    onload="stormKeygenStart(window.arguments[1]);"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    width="700"
+    height="600"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"/>
+    <script type="application/x-javascript" src="chrome://storm/content/ui/stormKeygenWizard.js"/>
+    <script type="application/x-javascript" src="chrome://storm/content/ui/stormKeygenWizardValidation.js"/>
+
+    <stack flex="1">
+        <vbox flex="1">
+            <vbox id="keygenStatus">
+                <hbox>
+                    <label class="page-title" value="Key is being generated ..." />
+                    <spacer flex="1" />
+                    <image class="spinner" />
+                </hbox>
+            </vbox>
+
+            <html:hr />
+            
+            <label>Details</label>
+            <textbox id="keygenDetails" style="height: 400px;" multiline="true"></textbox>
+            
+            <html:hr />
+            
+            <groupbox>
+                <caption label="After finish"/>
+                <hbox>
+                    <!-- TODO store these in the user preferences -->
+                    <checkbox id="close-result-window" checked="true" label="Close window" />
+                </hbox>
+                <hbox>
+                    <checkbox id="open-details-window" checked="true" label="Show new key"/>
+                </hbox>
+            </groupbox>
+        </vbox>
+    </stack>
+</window>

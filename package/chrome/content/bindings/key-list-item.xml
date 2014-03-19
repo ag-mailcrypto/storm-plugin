@@ -53,6 +53,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             <button label="Details"
                                 class="key-details-button"
                                 oncommand="storm.ui.dialogKeyDetails(window, parentNode.parentNode.parentNode.parentNode.parentNode.key);" />
+                            <button label="Import"
+                                class="key-import-button"
+                                oncommand="parentNode.parentNode.parentNode.parentNode.parentNode.import();" />
                         </hbox>
                     </vbox>
                 </hbox>
@@ -63,6 +66,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
             <xbl:field name="_open" />
             <xbl:field name="_trust" />
             <xbl:field name="_key" />
+            <xbl:field name="_mode" /> <!-- public|secret|import -->
+            <xbl:field name="_onImport" />
 
             <xbl:property name="key">
                 <xbl:setter>
@@ -95,6 +100,26 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 </xbl:setter>
                 <xbl:getter>
                     return this._trust;
+                </xbl:getter>
+            </xbl:property>
+
+            <xbl:property name="onImport">
+                <xbl:setter>
+                    this._onImport = val;
+                    this.setAttribute("onImport", this._mode);
+                </xbl:setter>
+                <xbl:getter>
+                    return this._onImport;
+                </xbl:getter>
+            </xbl:property>
+
+            <xbl:property name="mode">
+                <xbl:setter>
+                    this._mode = val;
+                    this.setAttribute("mode", this._mode);
+                </xbl:setter>
+                <xbl:getter>
+                    return this._mode;
                 </xbl:getter>
             </xbl:property>
 
@@ -135,8 +160,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         item = listbox.lastChild;
                         item.userID = userID;
                     });
+
+                    vbox.setAttribute("class", "mode-" + this.mode);
                 </xbl:body>
             </xbl:method>
+
+            <xbl:method name="import">
+                <parameter name="button"/>
+                <xbl:body>
+                    var button = document.getAnonymousNodes(this)[0].childNodes[1].childNodes[2].childNodes[1].childNodes[2];
+                    button.setAttribute("disabled", true);
+                    button.setAttribute("label", "Importing...");
+                    this.key = this._onImport(this.key);
+                    button.setAttribute("label", "Imported");
+                </xbl:body>
+            </xbl:method>
+
         </xbl:implementation>
     </xbl:binding>
 </xbl:bindings>

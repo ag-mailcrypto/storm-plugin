@@ -15,7 +15,7 @@
 
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
-Components.utils.import("chrome://storm/content/lib/AccountList.jsm");
+Components.utils.import("chrome://storm/content/lib/Account/AccountList.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 
 var keyListCache = [];
@@ -26,13 +26,12 @@ $(window).load(function() {
     $("#categories").select(function() {
         var selected = $(this).find(":selected");
         $("#view-port").attr("selectedIndex", (selected.attr("data-deck-index")));
+        $("#view-port .view-pane").attr("class", "view-pane").addClass(selected.attr("id"));
 
         // rebuild key list if switching to a key list viewport
         if(selected.attr("id").startsWith("tab-keys-")) {
             buildKeyList();
         }
-
-        $("#view-port .view-pane").attr("class", "view-pane").addClass(selected.attr("id"));
     });
 
     // Refresh the key list
@@ -53,7 +52,7 @@ $(window).load(function() {
     });
 
     // Generate key button
-    $(".generate-key").on("command", function() {
+    $("button#generate-key").on("command", function() {
         storm.ui.dialogGenerateKey(window);
     });
 
@@ -120,6 +119,7 @@ function buildKeyList() {
         item.setAttribute("id", "key-" + index);
         listbox.appendChild(item);
         item = listbox.lastChild;
+        item.mode = (secretKeys ? "secret" : "public");
         item.key = key;
     });
 
@@ -150,7 +150,7 @@ function filterKeyList() {
 /**
  * Builds the list of account mappings.
  */
-function buildAccountList() {
+function buildAccountList() {} /*
     var listbox = $("#account-list > treechildren");
     listbox.children().remove();
 
@@ -164,4 +164,4 @@ function buildAccountList() {
         item.find('[name="key"]').attr("label", account.key);
         listbox.append(item);
     });
-}
+}*/

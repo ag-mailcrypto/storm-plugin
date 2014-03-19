@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/stormKeygenWizard.css" type="text/css"?>
+
+<?xul-overlay href="chrome://global/content/dialogOverlay.xul"?>
+
+<!DOCTYPE window SYSTEM "chrome://enigmail/locale/enigmail.dtd" >
+
+
+<wizard
+    id="stormKeygen"
+    title="keygenTitle.label;"
+    onload="loadStormKeygenJs(); stormPrepareWizardWindow();"
+    onclose=""
+    
+    onwizardfinish="return stormKeygenTrigger();"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    width="800"
+    height="600"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript" src="chrome://storm/content/ui/stormKeygenWizardPreload.js"/>
+
+    <popupset id="aTooltipSet"/>
+    <wizardpage>
+        <vbox>
+        <description>
+            Generate new key pair: STEP 1
+        </description>
+        <label value="With which identity shall you new keypair be associated?"/>
+        <radiogroup id="selectIdentities">
+            <radio id="allIdentities"      value="all"      label="All identities"          accesskey="A" selected="true"/>
+            <radio id="selectedIdentities" value="selected" label="The selected identities" accesskey="S"/>
+        </radiogroup>
+        <groupbox id="userIdBox" orient="vertical">
+            <label value="Please select the identities, for which you want to create an encryption key:" />
+          <hbox  orient="horizontal" align="center">
+            <label value="User Identity" control="userIdentities"/>
+            <vbox class="multipleIdentities" id="userIdentities" label="..." flex="1" minheight="50">
+                <!--checkbox id="checkbox-id0" checked="true"><label>Marius Stübs 
+                <checkbox id="checkbox-id1" checked="true"-->
+            </vbox>
+            <textbox class="oneIdentity" id="userIdentityField" disabled="true" size="61"></textbox>
+          </hbox>
+        </groupbox>
+        </vbox>
+    </wizardpage>
+    <wizardpage>
+        <vbox id="mainIdentity2">
+            <description>
+                Select main identity
+            </description>
+            
+            <menulist id="mainIdentity">
+                <menupopup>
+                    <menuitem label="Car" />
+                    <menuitem label="Taxi" />
+                    <menuitem label="Bus" selected="true" />
+                    <menuitem label="Train" />
+                </menupopup>
+            </menulist>
+        </vbox>    
+        <vbox id="passphraseBox" align="left">
+            <hbox id="passphraseFirst">
+                <label control="passphrase" value="key Passphrase" />
+                <textbox id="passphrase" type="password" />
+                <checkbox id="noPassphrase" label="key No Passphrase" oncommand="onNoPassphrase();" /> 
+            </hbox>
+            <hbox id="passphraseSecond">
+                <label control="passphraseRepeat" value="key Passphrase Repeat" />
+                <textbox id="passphraseRepeat" type="password" />
+            </hbox>
+        </vbox>
+        
+        <spacer flex="1" />
+
+        
+
+        <groupbox>
+            <caption label="Expertenoptionen" id="advanced-options-toggle" context="advanced-options"/>
+            <section id="advanced-options" hidden="true"> <!-- Advanced Tab -->
+              <vbox> 
+                <grid>
+                  <columns>
+                    <column flex="1"/>
+                  </columns>
+
+                  <rows>
+                    <row>
+                      <hbox align="center">
+                        <label value="keyLength" control="keyLength"/>
+                      </hbox>
+                      <hbox flex="0">
+                        <menulist id="keyLength" label="xxx" value="xxx" >
+                          <menupopup id="keyLengthPopup">
+                            <menuitem id="keyLength_1024" value="1024" label="1024"/>
+                            <menuitem id="keyLength_2048" value="2048" label="2048"/>
+                            <menuitem id="keyLength_4096" value="4096" label="4096" selected="true"/>
+                          </menupopup>
+                        </menulist>
+                      </hbox>
+                    </row>
+                    <row>
+                      <hbox align="center">
+                        <label value="keyType" control="keyType"/>
+                      </hbox>
+                      <hbox flex="0">
+                        <menulist id="keyType" label=".keyGen.keyType.dsa;" value="1" >
+                          <menupopup id="keyTypePopup">
+                            <menuitem id="keyLength_rsa" value="2" label="keyType.rsa;" selected="true"/>
+                            <menuitem id="keyType_dsa" value="1" label="keyType.dsa;"/>
+                          </menupopup>
+                        </menulist>
+                      </hbox>
+                    </row>
+                    <row>
+                      <hbox align="center">
+                        <label control="keyComment" value="key Comment" />
+                      </hbox>
+                      <textbox id="keyComment" />
+                    </row>
+                    <row>
+                      <label value="key Gen expire" control="expireInput"/>
+                      <menulist id="expireInput" length="5" label="9" value="9">
+                        <menupopup id="expireInputPopup" length="5">
+                          <menuitem id="1" value="1" label="1"/>
+                          <menuitem id="2" value="2" label="2"/>
+                          <menuitem id="3" value="3" label="3"/>
+                          <menuitem id="4" value="4" label="4"/>
+                          <menuitem id="5" value="5" label="5"/>
+                          <menuitem id="6" value="6" label="6"/>
+                          <menuitem id="7" value="7" label="7"/>
+                          <menuitem id="8" value="8" label="8"/>
+                          <menuitem id="9" value="9" label="9" selected="true"/>
+                        </menupopup>
+                      </menulist>
+
+                      <menulist id="timeScale" label="years" value="365">
+                        <menupopup id="timeScalePopup">
+                          <menuitem id="years" value="y" label="years"/>
+                          <menuitem id="months" value="m" label="months" selected="true"/>
+                          <menuitem id="weeks" value="w" label="weeks"/>
+                          <menuitem id="days" value="d" label="days"/>
+                        </menupopup>
+                      </menulist>
+                    </row>
+                    </rows>
+                    </grid>
+                </vbox>
+            </section>
+        </groupbox>
+    </wizardpage>
+</wizard>

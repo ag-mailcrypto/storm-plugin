@@ -22,6 +22,7 @@ var storm = {};
 var preferences = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 storm.preferences = preferences.getBranch("extensions.storm.");
 storm.defaultPreferences = preferences.getDefaultBranch("extensions.storm.");
+storm.window = null;
 
 // New uniform configuration/preferences accessing point
 storm.config = new Config();
@@ -37,7 +38,7 @@ storm.ui = {
     },
 
     dialogKeyserver: function(window) {
-        window.alert("Keyserver dialog");
+        window.openDialog("chrome://storm/content/ui/keyserverSearch.xul", "", "", "");
     },
 
     dialogImportKeyFromFile: function(window) {
@@ -49,7 +50,7 @@ storm.ui = {
     },
 
     dialogGenerateKey: function(window) {
-        window.openDialog("chrome://storm/content/ui/enigmailKeygen.xul", "", "", "");
+        window.openDialog("chrome://storm/content/ui/stormKeygenWizard.xul", "", "", "");
     },
 
 };
