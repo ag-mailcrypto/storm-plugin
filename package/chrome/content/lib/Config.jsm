@@ -19,57 +19,113 @@ this.EXPORTED_SYMBOLS = [];
 this.EXPORTED_SYMBOLS.push("Config");
 
 /**
- * A signature record inside a key.
+ * A class for accessing configuration/preferences of all kinds at a central place in a uniform way.
+ * If no value is set on the requested level, the getter methods will fall back to the value of the next lower level in the hierarchy (default, user, identity)
+ *  
+ * e.g. storm.config.defaultPrefs.get("gpg.path") to access the default value of a pref
+ * e.g. storm.config.userPrefs.get("gpg.path") to access a user specific value of a pref
+ * e.g. storm.config.identityPrefs(identityId).get("gpg.path") to access a identity specific value of a pref
  */
-function Config() {
-	
-	//var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
-	this.prefsService = Services.prefs;
-	this.defaultPreferences = this.prefsService.getDefaultBranch("extensions.storm.");
-	this.userPreferences = this.prefsService.getBranch("extensions.storm.");
-	
-	this.getPreferencesById = function(identityId){
-		//TODO: null-check
-		return this.prefsService.getBranch("extensions.storm.identity."+identityId+".");
-	}
-	
-	function getPrefById(prefName, aPrefName, identityId){
-		//...
-	}
-	
+function Config(){
+	this.defaultPrefs = Services.prefs.getDefaultBranch("extensions.storm.");
+	this.userPrefs = Services.prefs.getBranch("extensions.storm.");	
 }
 
-/**
- * 
- * @param aPrefName
- * @param identityId
- * @returns
- */
-Config.prototype.getCharPrefById = function(aPrefName, identityId) {
-	var identityPreferences = this.getPreferencesById(identityId);
-	if(identityPreferences.getPrefType(aPrefName)){
-		return identityPreferences.getCharPref(aPrefName);
-	}else{
-		return this.userPreferences.getCharPref(aPrefName);
-	}
+Config.prototype.identityPrefs = function(identityId){
+	return new IdentityPrefBranchWrapper(identityId, this.userPrefs);
 };
 
 /**
- * 
- * @param aPrefName
- * @param value
+ * A class for accessing the identityPrefs of a specific identity the same way as the defaultPrefs and userPrefs branch.
+ * This behavior is realized as a wrapper class that overwrites the getters and delegates the (non overwritten) method calls to the original methods.
+ * (Inheritance would be nicer, yes, but i think it isn't possible for the (c?) implementation of nsIPrefBranch)
+ * NOT IMPLEMENTED: getComplexValue, setComplexValue
+ *
  * @param identityId
- * @returns
+ * @param userPrefs
+ * @returns {IdentityPrefBranchWrapper}
  */
-Config.prototype.setCharPrefById = function(aPrefName, value, identityId) {
-	this.getPreferencesById(identityId).setCharPref(aPrefName, value);
+function IdentityPrefBranchWrapper(identityId, userPrefs){
+	
+	this.identityId = identityId;
+	this.userPrefs = userPrefs;
+	this.identityPrefs = Services.prefs.getBranch("extensions.storm.identity."+this.identityId+".");
+	
+	/**
+	 * private helper function for the delegating getters
+	 * (should be private)
+	 * 
+	 * @param aPrefName
+	 * @param funcName
+	 * @returns String
+	 */
+	this.getPrefByFuncName = function(aPrefName, funcName){
+		if(this.identityPrefs.getPrefType(aPrefName)){
+			return this.identityPrefs[funcName](aPrefName);
+		}else{
+			return this.userPrefs[funcName](aPrefName);
+		}
+	};
+
+}
+
+/*
+ * getters will fall back to original nsIPrefBranch values, if no specific value for this identity is set
+ */
+IdentityPrefBranchWrapper.prototype.getCharPref = function(aPrefName) {
+	return this.getPrefByFuncName(aPrefName, "getCharPref");
+};
+IdentityPrefBranchWrapper.prototype.getBoolPref = function(aPrefName) {
+	return this.getPrefByFuncName(aPrefName, "getBoolPref");
+};
+IdentityPrefBranchWrapper.prototype.getIntPref = function(aPrefName) {
+	return this.getPrefByFuncName(aPrefName, "getIntPref");
+};
+IdentityPrefBranchWrapper.prototype.getPrefType = function(aPrefName) {
+	return this.getPrefByFuncName(aPrefName, "getPrefType");
 };
 
-/**
- * 
- * @param identityId
- * @returns
+
+/*
+ * these methods will just delegate to the original nsIPrefBranch functions of the identityPrefs branch (without doing anything special)
  */
-Config.prototype.isSetForIdentity = function(identityId) {
-	return this.getPreferencesById(identityId).getPrefType(aPrefName);
+IdentityPrefBranchWrapper.prototype.setCharPref = function() {
+	this.identityPrefs.setCharPref.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.setBoolPref = function() {
+	this.identityPrefs.setBoolPref.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.setIntPref = function() {
+	this.identityPrefs.setIntPref.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.addObserver = function() {
+	this.identityPrefs.addObserver.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.removeObserver = function() {
+	this.identityPrefs.removeObserver.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.deleteBranch = function() {
+	this.identityPrefs.deleteBranch.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.resetBranch = function() {
+	this.identityPrefs.resetBranch.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.lockPref = function() {
+	this.identityPrefs.lockPref.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.unlockPref = function() {
+	this.identityPrefs.unlockPref.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.getChildList = function() {
+	this.identityPrefs.getChildList.apply(this, arguments);
+};
+IdentityPrefBranchWrapper.prototype.prefIsLocked = function() {
+	return this.identityPrefs.prefIsLocked.apply(this, arguments);
+};
+
+/*
+ * additional methods that are not given in the interface nsIPrefBranch
+ */
+IdentityPrefBranchWrapper.prototype.isSet = function(aPrefName) {
+	return (this.identityPrefs.getPrefType(aPrefName) != 0);
 };
