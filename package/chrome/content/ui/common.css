@@ -77,3 +77,8 @@ textbox.userValueReadOnly {
     background: transparent;
     padding: none;
 }
+
+.simple-listbox {
+    background: #FFF;
+    border: 1px solid #999;
+}

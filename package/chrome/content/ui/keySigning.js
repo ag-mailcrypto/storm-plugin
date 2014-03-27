@@ -26,6 +26,7 @@ function updateUserIDs(index) {
         var checkbox = document.createElement('checkbox');
         checkbox.setAttribute('checked', "true");
         checkbox.setAttribute('id', "checkbox-" + index);
+        checkbox.setAttribute('index', index);
         checkbox.setAttribute('label', uid.toString());
 
         userIdentityList.append(checkbox);
@@ -42,6 +43,21 @@ function displayQrCode() {
 
 function updateKeyData() {
     $("#fingerprint").val(formatFingerprint(key.fingerprint));
+    $("#realname").text(key.getPrimaryUserId().realName);
+}
+
+function cancel() {
+    window.close();
+}
+
+function getSelectedUserIds() {
+    var ids = [];
+    $("#userIdentities checkbox").each(function() {
+        if($(this).attr("checked")) {
+            ids.push(key.userIDs[$(this).attr("index")]);
+        }
+    });
+    return ids;
 }
 
 $(window).ready(function() {
@@ -50,4 +66,29 @@ $(window).ready(function() {
     updateUserIDs();
     updateKeyData();
     displayQrCode();
+
+    $(window).keypress(function(e) {
+        if(e.keyCode == 27) cancel();
+    });
+
+    $("#button-cancel").on("command", function() {
+        cancel();
+    });
+
+    $("#userIdentities").on("command", "checkbox", function() {
+        $("#button-sign").attr("disabled", getSelectedUserIds().length <= 0);
+    });
+
+    $("#button-sign").on("command", function() {
+        var ids = getSelectedUserIds();
+        if(ids.length <= 0) {
+            alert("Please select at least one user ID to sign.");
+            return;
+        }
+
+        var signatureLevel = $("#signature-level :selected").val();
+        storm.gpg.signKey(key, ids, signatureLevel);
+        window.close();
+        // TODO: refresh key list
+    });
 });

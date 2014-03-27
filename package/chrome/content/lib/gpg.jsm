@@ -37,8 +37,9 @@ function GPG() {}
  * @returns {String}                 The program output.
  * @throws {GPGError}                If gpg prints output to stderr.
  */
-GPG.prototype.call = function(arguments, input, stdout, stderr) {
+GPG.prototype.call = function(arguments, input, stdout, stderr, notty) {
     input = input || "";
+    arguments = arguments.slice(0); // clone it, since we modify it
 
     var result = {
         output: "",
@@ -61,6 +62,17 @@ GPG.prototype.call = function(arguments, input, stdout, stderr) {
         // Push them in reverse order!
         arguments.unshift(gpgHomedir);
         arguments.unshift("--homedir");
+    }
+
+    if(notty) {
+        // read from bottom to top
+        arguments.unshift("0");
+        arguments.unshift("--command-fd");
+        arguments.unshift("1");
+        arguments.unshift("--logger-fd");
+        arguments.unshift("1");
+        arguments.unshift("--status-fd");
+        arguments.unshift("--no-tty");
     }
 
     try {
@@ -133,6 +145,31 @@ GPG.prototype.signEncryptContent = function(content, signingKey, encryptionKey) 
         pipe.write(content);
         pipe.close();
     });
+};
+
+/**
+ * Signs a public key.
+ * @param  {Key} key            The key to sign.
+ * @param  {UserID[]} ids       The ids of the key to sign, or null to sign all keys.
+ * @param  {int} signatureLevel The signature level.
+ */
+GPG.prototype.signKey = function(key, ids, signatureLevel) {
+    var signAll = (ids == null || ids.length == key.userIDs.length);
+
+    var args = ["--ask-cert-level", "--edit-key", key.id];
+    var input = "";
+
+    if(signAll) {
+        var input = "sign\ny\n" + signatureLevel + "\ny\nsave\n";
+        var text = storm.gpg.call(args, input, null, null, true); // notty=true
+    } else {
+        // assume the order is the same... maybe we have to check that :(
+        ids.forEach(function(id) {
+            uidIndex = key.userIDs.indexOf(id) + 1;
+            var input = "uid " + uidIndex + "\nsign\n" + signatureLevel + "\ny\nsave\n";
+            var text = storm.gpg.call(args, input, null, null, true); // notty=true
+        });
+    }
 };
 
 // Prepare the instance

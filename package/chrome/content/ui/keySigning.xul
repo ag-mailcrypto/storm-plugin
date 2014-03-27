@@ -35,24 +35,26 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         </vbox>
         <spacer width="10" />
         <vbox flex="1">
-            <label id="title" class="page-title" value="Sign key of ..." />
+            <description id="title" class="page-title">
+                Sign key of <html:span id="realname">...</html:span>
+            </description>
 
-            <label class="section" value="User identities" />
-            <vbox class="multipleIdentities" id="userIdentities" flex="1" minheight="50">
-                <!--checkbox id="checkbox-id0" checked="true"><label>Marius Stübs 
-                <checkbox id="checkbox-id1" checked="true"-->
-            </vbox>
+            <label class="section" value="Select the user identities you want to sign" />
+            <scrollbox style="overflow: auto;" flex="1" align="start">
+                <vbox id="userIdentities" class="multipleidentities simple-listbox" flex="1" minheight="50">
+                </vbox>
+            </scrollbox>
 
             <label class="section" value="Fingerprint" />
             <label class="fingerprint" id="fingerprint" value="A041 4225 12CD C9AD A041 4A00 AADA C00A" />
 
             <label class="section" value="Trust" />
             <description>
-                How carefully have you checked, that the fingerprint is correct?
+                How carefully have you checked that the fingerprint is correct?
             </description>
 
             <menulist>
-                <menupopup>
+                <menupopup id="signature-level">
                    <menuitem label="I will not answer. (default)"       value="0" />
                    <menuitem label="I have not checked at all."         value="1" />
                    <menuitem label="I have done casual checking."       value="2" />
@@ -66,7 +68,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
     <hbox>
         <spacer flex="1" />
-        <button id="button-edit" icon="" label="Cancel" />
+        <button id="button-cancel" icon="" label="Cancel" />
         <button id="button-sign" icon="" label="Sign" />
     </hbox>
 </window>

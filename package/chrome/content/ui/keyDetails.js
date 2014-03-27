@@ -32,6 +32,9 @@ var keyDetailsWindowFunctions = {
         $('#button-close').on('command', function() {
             keyDetailsWindowFunctions.closeWindow();
         });
+        $('#button-sign').on('command', function() {
+            keyDetailsWindowFunctions.signKey();
+        });
         
         // Set the textboxes readonly
         // Textboxes are necessary from a user experience point-of-view, to make
@@ -41,6 +44,9 @@ var keyDetailsWindowFunctions = {
     },
     closeWindow: function() {
         window.close();
+    },
+    signKey: function() {
+        storm.ui.dialogSignKey(window, keyDetailsWindowFunctions.key);
     },
     /**
      * Updates the signatures list to the signatures of the selected user ID.
@@ -94,8 +100,6 @@ var keyDetailsWindowFunctions = {
         qr.addData(keyDetailsWindowFunctions.key.fingerprint);
         qr.make();
         $("#fingerprint-qr").html(qr.createImgTag(3).replace("<img", "<image"));
-        
-            
     },
     displayUserTrust: function () {
         // get the keys this user trusts
