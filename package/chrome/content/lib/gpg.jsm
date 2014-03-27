@@ -170,6 +170,8 @@ GPG.prototype.signKey = function(key, ids, signatureLevel) {
             var text = storm.gpg.call(args, input, null, null, true); // notty=true
         });
     }
+
+    storm.keyring.loadKeys();
 };
 
 // Prepare the instance
