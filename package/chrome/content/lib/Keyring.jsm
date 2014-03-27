@@ -78,6 +78,7 @@ Keyring.prototype.searchKeyserver = function(query, keyserver) {
 Keyring.prototype.receiveKey = function(id, keyserver) {
     if(!keyserver) keyserver = storm.preferences.getCharPref("gpg.keyserver");
     var output = storm.gpg.call(["--keyserver", keyserver, "--recv-keys", id]);
+    this.loadKeys();
     // return parseKeysFromKeyserver(output.split("\n"));
 }
 

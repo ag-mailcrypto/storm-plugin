@@ -29,3 +29,5 @@ pref("extensions.storm.gpg.homedir", "");
 // Accepted values: nothing|ask|marginal-owner|marginal-sign
 pref("extensions.storm.receive.signedAction",       "marginal-owner");
 
+// Autofetch key(s) from keyserver if not found in keyring
+pref("extensions.storm.autofetchKey",         			true);

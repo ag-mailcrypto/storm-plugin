@@ -37,8 +37,19 @@ function stormComposeAddressOverlayOnInput(input) {
     var m = currentInput.match(/^.*\<(.*)\>\s*$/);
     var email = isEmail(currentInput) ? currentInput : (m ? m[1] : null);
 
-    // Find keys
+    // Find keysreceiveKey
     var keys = email ? storm.keyring.getKeysByEmail(email) : [];
+
+    // Find keys if they are not in our local keyring
+    if(keys.length == 0 && storm.preferences.getBoolPref("autofetchKey")) {
+        var found_keys = storm.keyring.searchKeyserver(email);
+        if(found_keys.length == 1) {
+            storm.keyring.receiveKey(found_keys[0].formatID());
+        }
+
+        keys = storm.keyring.getKeysByEmail(email);
+    }
+
     keys = keys.sort(function(a, b) { return a.getTrustSortValue() > b.getTrustSortValue(); });
 
     var bestKey = keys ? keys[0] : null;
