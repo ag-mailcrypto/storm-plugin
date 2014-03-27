@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://storm/content/ui/messengerComposeOverlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/skin/font-awesome/css/font-awesome.css" type="text/css"?>
 
 <overlay id="stormMessengerComposeOverlay"
     xmlns:html="http://www.w3.org/1999/xhtml"
@@ -12,40 +13,40 @@
     <textbox id="addressCol2#1">
         <image class="storm-trust-icon none" />
     </textbox>
+    
+    <vbox id="addresses-box">
+    	<hbox id="top-gradient-box">
+			<toolbarbutton id="storm-button-sign" type="checkbox" crop="none" minwidth="16" tooltiptext="Soll die Nachricht signiert werden?" checkState="0">
+				<i class="fa fa-edit"></i>
+				<span class="storm-image-button-text">Signieren</span>
+			</toolbarbutton>
+    	</hbox>
+    </vbox>
 
     <!-- Storm toolbar button -->
   <toolbarpalette id="MsgComposeToolbarPalette">
     <toolbarbutton class="toolbarbutton-1"
-            id="button-send-storm"
+            id="storm-button-send"
             type="menu-button"
-            label="Senden"
-            buttontype="thunderbird" 
+            label="Verschlüsselt Senden"
+            buttontype="thunderbird"
             tooltip="aTooltipSet"
             tooltiptext="Diese Nachricht jetzt senden"
+            command="cmd_sendButton"
             oncommand="goDoCommand('cmd_sendButton')"
             removable="true">
-
-        <menupopup onpopupshowing="setSendConfig()">
-          <menuitem id="config-send-signed"
-              type="checkbox"
-              label="signieren"
-              accesskey="s"
-              key=""
-              oncommand="toggleSignedCheckbox()" />
-          <menuitem id="config-send-encrypted"
-              type="checkbox"
-              label="verschlüsseln"
-              accesskey="v"
-              key=""
-              oncommand="toggleEncryptCheckbox()" />
-        </menupopup>
+            <menupopup>
+        		<menuitem type="menu-button" id="storm-button-send-subbutton" label="test" style="list-style-image: url('moz-icon://stock/gtk-info?size=menu')"/>
+            </menupopup>
     </toolbarbutton>
   </toolbarpalette>
-
+<menupopup id="button-attachPopup">
+	<menuitem type="menu-button" id="storm-button-send-subbutton" class="send-unencrypted" label="blub" />
+</menupopup>
   <!-- TODO don't reinitialize the toolbar! Remove Send-Button and add new send button if possible -->
   <!-- to include the default send button add button-send to the defaultset -->
   <toolbar id="composeToolbar2"
-           defaultset="button-send-storm,separator,button-address,spellingButton,button-attach,button-security,button-save">
+           defaultset="storm-button-send,separator,button-address,spellingButton,button-attach,button-security,button-save">
   </toolbar>
 
 </overlay>

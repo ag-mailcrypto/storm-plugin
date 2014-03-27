@@ -39,17 +39,21 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     list-style-image: url("chrome://storm/skin/icons/trust-level/none.png");
 }
 
-#button-send-storm {
-    list-style-image: url("chrome://messenger/skin/messengercompose/button-send.svg");
+.send-encrypted {
+    list-style-image: url("chrome://messenger/skin/messengercompose/button-security.svg");
     -moz-image-region: auto;
 }
 
-#button-send-storm:hover {
-    list-style-image: url("chrome://messenger/skin/messengercompose/button-send-hover.svg");
+.send-unencrypted {
+/*	TODO insert unencrypted image and make it appear in the frontend */
+    list-style-image: url("chrome://messenger/skin/messengercompose/button-security.svg");
     -moz-image-region: auto;
 }
 
-#button-send-storm[disabled="true"] {
-    list-style-image: url("chrome://messenger/skin/messengercompose/button-send-disabled.svg");
-    -moz-image-region: auto;
+.storm-image-button-text{
+	margin-left: 2px;
+}
+
+#storm-button-sign{
+	margin-right: 4px;
 }
