@@ -89,3 +89,53 @@
 .mode-secret .key-import-button {
     visibility: collapse !important;
 }
+
+.identity-list-item {
+    -moz-binding: url('chrome://storm/content/bindings/identity-list-item.xml#identity-list-item');
+    background: #FFF;
+    color: #000;
+    padding: 0;
+    border-bottom: 1px solid #CCC;
+}
+
+.identity-list-item[selected] {
+    color: inherit;
+}
+
+/* Layout parts */
+
+.identity-list-item .key-header {
+    padding: 5px;
+}
+
+.identity-list-item .key-details {
+    background: #FFF;
+    border-top: 1px dotted #CCC;
+    padding: 5px;
+    visibility: collapse;
+}
+
+.identity-list-item[trust="invalid"] .key-header {
+    color: #CCC;
+}
+
+/* Content elements */
+.identity-list-item .realname {
+    font-weight: bold;
+}
+
+.identity-list-item .key-id {
+    color: #777;
+}
+
+
+.custom-list-item {
+    background: #FFF;
+    color: #000;
+    padding: 0;
+}
+
+.custom-list-item .key-header {
+    padding: 5px;
+}
+

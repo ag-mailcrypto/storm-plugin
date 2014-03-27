@@ -37,14 +37,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 <label class="category-name" value="My keys" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
             </richlistitem>
-            <richlistitem class="category" id="tab-settings" data-deck-index="1">
+            <richlistitem class="category" id="tab-keys-settings" data-deck-index="1">
                 <image class="category-icon" src="chrome://storm/skin/icons/32/settings.png"/>
-                <label class="category-name" value="Configuration" flex="1" />
-                <label anonid="badge" class="category-badge" value="0" />
-            </richlistitem>
-            <richlistitem class="category" id="tab-expert-settings" data-deck-index="2">
-                <image class="category-icon" src="chrome://storm/skin/icons/32/bullet_error.png"/>
-                <label class="category-name" value="Expert settings" flex="1" />
+                <label class="category-name" value="Settings" flex="1" />
                 <label anonid="badge" class="category-badge" value="0" />
             </richlistitem>
         </richlistbox>
@@ -112,62 +107,24 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         </tabpanels>
                     </tabbox>
                 </box>
-                <box class="view-pane" flex="1">
+                <box class="view-pane tab-keys-settings" flex="1">
                     <vbox flex="1" class="view-pane" tabindex="0">
+                    	
+						<box class="custom-list-item"><vbox flex="1">
+                			<hbox flex="1" class="key-header">
+                				<label value="Custom User Settings (Fallback for all identities)"/>
 
-                        <prefpane id="pane2">
-                            <preferences>
-                                <preference id="pref2" name="pref.nam2" type="bool"/>
-                            </preferences>
+                    			<spacer flex="1" />
+                    
+								<button id="button-open-settings" label="Open Settings" />
+                			</hbox>
+            			</vbox></box>
 
-                            <checkbox id="check2" preference="pref2" label="checkbox" />
-                        </prefpane>
+						<richlistbox id="identity-list" flex="1" />
 
                     </vbox>
                 </box>
-                <box class="view-pane" flex="1">
-                    <vbox flex="1" class="view-pane" tabindex="0">
 
-                        <prefpane id="export-preferences" flex="1">
-                            <preferences>
-                                <preference id="pref-gpg-path"              name="extensions.storm.gpg.path"                type="string"/>
-                                <preference id="pref-gpg-path-autodetect"   name="extensions.storm.gpg.pathAutodetect"      type="bool"/>
-                                <preference id="pref-receive-signed-action" name="extensions.storm.receive.signedAction"    type="string"/>
-                                <preference id="pref-gpg-homedir"           name="extensions.storm.gpg.homedir"             type="string"/>
-                                <preference id="pref-gpg-keyserver"         name="extensions.storm.gpg.keyserver"           type="string"/>
-                            </preferences>
-
-                            <vbox class="settings-page">
-                                <label value="OpenPGP binary path" class="section" />
-                                <checkbox id="textbox-gpg-pathAutodetect" preference="pref-gpg-path-autodetect" label="Autodetect (does not work yet, text field below is used anyway)" />
-                                <textbox id="textbox-gpg-path" preference="pref-gpg-path" preference-editable="true"/>
-
-                                <label value="Trust settings" class="section" />
-                                <hbox align="baseline">
-                                    <label value="Upon receiving a signed mail from an unknown key" />
-                                    <menulist preference="pref-receive-signed-action">
-                                        <menupopup>
-                                            <menuitem label="do not trust without checking" value="nothing"/>
-                                            <menuitem label="ask for validation"            value="ask"/>
-                                            <menuitem label="set marginal owner trust"      value="marginal-owner"/>
-                                            <menuitem label="sign with marginal trust"      value="marginal-sign"/>
-                                        </menupopup>
-                                    </menulist>
-                                </hbox>
-
-                                <label value="Sending mail" class="section" />
-                                <checkbox label="Encrypt for SENT folder" />
-
-                                <label value="GPG home directory, leave empty for default (~/.gnupg)" class="section" />
-                                <textbox preference="pref-gpg-homedir" />
-
-                                <label value="GPG keyserver URL" class="section" />
-                                <textbox preference="pref-gpg-keyserver" />
-                            </vbox>
-                        </prefpane>
-
-                    </vbox>
-                </box>
             </deck>
         </box>
     </hbox>

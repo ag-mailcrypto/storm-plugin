@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/settings.css" type="text/css"?>
+
+<!-- Copyright (C) 2013
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<window id="storm-settings" title="Settings" width="600" height="400"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+    <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/ui/settings.js"/>
+    
+    <tabbox id="tablist" flex="1">
+        <tabs>
+            <tab label="Normal Settings" />
+            <tab label="Expert Settings" />
+        </tabs>
+        <tabpanels flex="1">
+        
+            <tabpanel id="tab-normal-settings">
+                <hbox flex="1">
+                   <prefpane id="normal-settings">
+                        <preferences>
+                            <preference id="activate-storm" 		name="extensions.storm.activate" 			type="bool"/>
+                            <preference id="encrypt-by-default" 	name="extensions.storm.encrypt" 			type="bool"/>
+                            <preference id="sign-by-default" 		name="extensions.storm.sign" 				type="bool"/>
+                            <preference id="pref-gpg-keyserver" 	name="extensions.storm.gpg.keyserver" 		type="string"/>
+                        </preferences>
+
+                        <checkbox id="check-activate-storm" 	preference="activate-storm" 	label="Activate Storm" />
+                        <checkbox id="check-encrypt-by-default" preference="encrypt-by-default" label="Encrypt by default" />
+                        <checkbox id="check-sign-by-default" 	preference="sign-by-default" 	label="Sign by default" />
+                        
+                        <label value="GPG keyserver URL" class="section" />
+                        <textbox preference="pref-gpg-keyserver" />
+                    </prefpane>
+                </hbox>
+            </tabpanel>
+            
+            <tabpanel id="tab-expert-settings">
+                <hbox flex="1">
+                 <prefpane id="expert-settings">
+                        <preferences>
+                        	<preference id="pref-gpg-homedir"           name="extensions.storm.gpg.homedir"             type="string"/>
+                        	<preference id="pref-receive-signed-action" name="extensions.storm.receive.signedAction"    type="string"/>
+                        	<preference id="pref-gpg-path-autodetect"   name="extensions.storm.gpg.pathAutodetect"      type="bool"/>
+                            <preference id="pref-gpg-path"              name="extensions.storm.gpg.path"                type="string"/>
+                            <preference id="pref-remember-passphrase"   name="extensions.storm.gpg.rememberPassphrase"  type="int"/>
+                            <preference id="pref-storm-info-into-header"   name="extensions.storm.infoIntoHeader"  type="bool"/>
+                        </preferences>
+
+                            <vbox class="settings-page">
+                                <label value="OpenPGP binary path" class="section" />
+                                <checkbox id="textbox-gpg-pathAutodetect" preference="pref-gpg-path-autodetect" label="Autodetect (does not work yet, text field below is used anyway)" />
+                                <textbox id="textbox-gpg-path" preference="pref-gpg-path" preference-editable="true"/>
+
+                                <label value="Trust settings" class="section" />
+                                <hbox align="baseline">
+                                    <label value="Upon receiving a signed mail from an unknown key" />
+                                    <menulist preference="pref-receive-signed-action">
+                                        <menupopup>
+                                            <menuitem label="do not trust without checking" value="nothing"/>
+                                            <menuitem label="ask for validation"            value="ask"/>
+                                            <menuitem label="set marginal owner trust"      value="marginal-owner"/>
+                                            <menuitem label="sign with marginal trust"      value="marginal-sign"/>
+                                        </menupopup>
+                                    </menulist>
+                                </hbox>
+
+                                <label value="Sending mail" class="section" />
+                                <checkbox label="Encrypt for SENT folder" />
+
+                                <label value="GPG home directory, leave empty for default (~/.gnupg)" class="section" />
+                                <textbox preference="pref-gpg-homedir" />
+                                
+                                <label value="Remember passphrase for minutes" class="section" />
+                                <textbox preference="pref-remember-passphrase" />
+                                
+                                <label value="Storm Info" class="section" />
+                                <checkbox label="Write specific storm info into header" preference="pref-storm-info-into-header" />
+                                
+                                 <!--  TODO: Use specific key: []-->
+                            </vbox>
+
+                    </prefpane>
+                </hbox>
+            </tabpanel>
+
+        </tabpanels>
+    </tabbox>
+
+    <spacer height="10" />
+
+    <hbox>
+        <spacer flex="1" />
+        <button id="button-close" icon="yes" label="Close" />
+    </hbox>
+</window>
