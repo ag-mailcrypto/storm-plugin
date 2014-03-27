@@ -185,15 +185,16 @@ function buildAccountList() {} /*
     }
 
     identityListCache = storm.accountList.getAllIdentities();
-
-    // Fill listbox with keys
-    identityListCache.forEach(function(key, index) {
-        item = document.createElement("richlistitem");
-        item.setAttribute("class", "key-list-item");
-        item.setAttribute("id", "key-" + index);
-        listbox.appendChild(item);
-        item = listbox.lastChild;
-        //item.mode = (secretKeys ? "secret" : "public");
-        //item.key = key;
-    });
+	var index = 0;
+	
+    for each (let thisIdentity in fixIterator(identityListCache, Components.interfaces.nsIMsgIdentity)) {
+    	Application.console.log(thisIdentity.email + ", " + index);
+    	item = document.createElement("richlistitem");
+    	item.setAttribute("class", "identity-list-item");
+    	item.setAttribute("id", "key-" + index);
+    	listbox.appendChild(item);
+    	item = listbox.lastChild;
+    	item.userID = thisIdentity;
+    	index++;
+    }
   }
