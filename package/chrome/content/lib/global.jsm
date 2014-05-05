@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+Components.utils.import("chrome://storm/content/lib/Config.jsm");
+
 this.EXPORTED_SYMBOLS = ["storm"];
 var storm = {};
 
@@ -21,6 +23,9 @@ var preferences = Components.classes["@mozilla.org/preferences-service;1"].getSe
 storm.preferences = preferences.getBranch("extensions.storm.");
 storm.defaultPreferences = preferences.getDefaultBranch("extensions.storm.");
 storm.window = null;
+
+// New uniform configuration/preferences accessing point
+storm.config = new Config();
 
 // TODO: this should be somewhere else, at some point
 storm.ui = {
