@@ -65,12 +65,7 @@ $(window).load(function() {
     $('#storm-button-sign').click(function(){
     	var state = $(this).attr('checked');
     	messageDraftObject.setSendSigned(state);
-    	alert(messageDraftObject.getSendEncrypted());
     });
-
-    var sendButtonPressed = function(button){
-    	
-    };
 
     $('#storm-button-send').click(function(){
     	var encryptMessage = $(this).hasClass("send-encrypted");
@@ -85,12 +80,9 @@ $(window).load(function() {
     	var encryptMessage = $(this).hasClass("send-encrypted");
     	if(encryptMessage){
     		messageDraftObject.setSendEncrypted(true);
-    		alert(messageDraftObject.getSendEncrypted);
     	}else{
     		messageDraftObject.setSendEncrypted(false);
-    		alert(messageDraftObject.getSendEncrypted());
     	}
-//    	sendButtonPressed(this);
     });
     
 });
