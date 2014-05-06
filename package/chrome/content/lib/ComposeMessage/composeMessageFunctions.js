@@ -41,7 +41,7 @@ function handleEmailSending() {
             encryptedMessageForDraft = messageDraftObject.getEncryptedMessageForDraft();
             setMessage(encryptedMessageForDraft);
         }
-        sendMail = true
+        sendMail = true;
         return sendMail;
     }
 
@@ -80,7 +80,7 @@ function handleEmailSending() {
     storm.log("| processedMessageText: " + newMessage);
     storm.log("============================================");
 
-    var question = "[Storm] Shall Storm replace your email text with the computed blob?"
+    var question = "[Storm] Shall Storm replace your email text with the computed blob?";
     if (confirm(question)) {
         setMessage(newMessage);
     }
@@ -138,7 +138,7 @@ function getSender() {
     var accountKey = msgIdentity.getAttribute("value");
     var identity = storm.accountList.getIdentityById(accountKey);
 
-    var email = identity.email
+    var email = identity.email;
     storm.log("function getSender(): END");
     return email;
 }
@@ -205,11 +205,12 @@ function setMessage(message) {
         editor.selectAll();
         editor.insertText(message);  
         editor.insertLineBreak();  
-        editor.endTransaction();  
+        editor.endTransaction();
     } catch(ex) {  
         Components.utils.reportError(ex);  
         return false;  
     }
+    return true;
 }
 
 function getMessage() {
@@ -226,12 +227,11 @@ function getMessage() {
 var _original_awAppendNewRow = awAppendNewRow;
 awAppendNewRow = function(setFocus) {
     _original_awAppendNewRow(setFocus);
-
     // FIX ALL THE ROWS!
     $(".textbox-addressingWidget").each(function() {
         stormComposeAddressOverlayOnInput($(this)[0]);
     });
-}
+};
 
 /**
  * Sets the trust icon for an address input box.
@@ -240,8 +240,27 @@ awAppendNewRow = function(setFocus) {
 function stormComposeAddressOverlayOnInput(input) {
     var currentInput = $(input).val();
     var icon = $(input).find(".storm-trust-icon");
-    
-    var bestKey = storm.keyring.getBestKeyForEmail(currentInput);
+
+    // Parse email
+    var m = currentInput.match(/^.*\<(.*)\>\s*$/);
+    var email = isEmail(currentInput) ? currentInput : (m ? m[1] : null);
+
+    // Find keysreceiveKey
+    var keys = email ? storm.keyring.getKeysByEmail(email) : [];
+
+    // Find keys if they are not in our local keyring
+    if(keys.length == 0 && storm.preferences.getBoolPref("autofetchKey")) {
+        var found_keys = storm.keyring.searchKeyserver(email);
+        if(found_keys.length == 1) {
+            storm.keyring.receiveKey(found_keys[0].formatID());
+        }
+
+        keys = storm.keyring.getKeysByEmail(email);
+    }
+
+    keys = keys.sort(function(a, b) { return a.getTrustSortValue() > b.getTrustSortValue(); });
+
+    var bestKey = keys ? keys[0] : null;
     var cls = bestKey ? bestKey.getValidity() : "none";
     var title = bestKey ? "Key validity: " + bestKey.getValidityString() : "No key found";
 

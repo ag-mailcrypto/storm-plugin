@@ -92,7 +92,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         </tree>
 
                         <label class="section" value="Fingerprint" />
-                        <label class="fingerprint" id="fingerprint" value="A041 4225 12CD C9AD A041 4A00 AADA C00A" />
+                        <textbox context="copyOnly" class="userValueReadOnly fingerprint" id="fingerprint" value="A041 4225 12CD C9AD A041 4A00 AADA C00A" />
                     </vbox>
                 </hbox>
 

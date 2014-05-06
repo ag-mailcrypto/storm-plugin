@@ -17,8 +17,6 @@ Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/global.jsm");
 Components.utils.import("chrome://storm/content/lib/Keyring.jsm");
 
-
-
 var keyDetailsWindowFunctions = {
     key: window.arguments[0],
     init: function() {
@@ -34,6 +32,9 @@ var keyDetailsWindowFunctions = {
         $('#button-close').on('command', function() {
             keyDetailsWindowFunctions.closeWindow();
         });
+        $('#button-sign').on('command', function() {
+            keyDetailsWindowFunctions.signKey();
+        });
         
         // Set the textboxes readonly
         // Textboxes are necessary from a user experience point-of-view, to make
@@ -43,6 +44,9 @@ var keyDetailsWindowFunctions = {
     },
     closeWindow: function() {
         window.close();
+    },
+    signKey: function() {
+        storm.ui.dialogSignKey(window, keyDetailsWindowFunctions.key);
     },
     /**
      * Updates the signatures list to the signatures of the selected user ID.
@@ -86,7 +90,7 @@ var keyDetailsWindowFunctions = {
         $("#created").attr("value",  keyDetailsWindowFunctions.key.creationDate);
         $("#expiry").attr("value",   keyDetailsWindowFunctions.key.expirationDate || "[never]");
 
-        $("#fingerprint").attr("value", keyDetailsWindowFunctions.key.fingerprint.replace(/(.{4})/g, function(match) { return match + " "; }));
+        $("#fingerprint").attr("value", formatFingerprint(keyDetailsWindowFunctions.key.fingerprint));
         var newTitle = "Key details: 0x" + keyDetailsWindowFunctions.key.id + " (" + uid.realName + ")";
         $("window").attr("trust", keyDetailsWindowFunctions.key.getValidity()).attr("title", newTitle);
     },
@@ -96,8 +100,6 @@ var keyDetailsWindowFunctions = {
         qr.addData(keyDetailsWindowFunctions.key.fingerprint);
         qr.make();
         $("#fingerprint-qr").html(qr.createImgTag(3).replace("<img", "<image"));
-        
-            
     },
     displayUserTrust: function () {
         // get the keys this user trusts
@@ -113,7 +115,6 @@ var keyDetailsWindowFunctions = {
     }
 }
 
-
 $(window).ready(function() {
     keyDetailsWindowFunctions.init();
     keyDetailsWindowFunctions.displayUserIDs();
@@ -121,6 +122,3 @@ $(window).ready(function() {
     keyDetailsWindowFunctions.displayQrCode();
     keyDetailsWindowFunctions.displayUserTrust();
 });
-
-
-

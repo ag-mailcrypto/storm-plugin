@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://storm/content/ui/keySigning.css" type="text/css"?>
+
+<!-- Copyright (C) 2013
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<window id="storm-key-signing" title="Sign a key" width="600" height="400"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+    <script type="application/javascript" src="chrome://storm/content/ext/qrcode.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/ext/jquery-2.0.3.min.js"></script>
+    <script type="application/javascript" src="chrome://storm/content/ui/keySigning.js"/>
+
+    <hbox flex="1">
+        <vbox>
+            <image width="120" src="chrome://storm/skin/photo-dummy.png" class="key-photo" />
+
+            <html:div id="fingerprint-qr"></html:div>
+        </vbox>
+        <spacer width="10" />
+        <vbox flex="1">
+            <description id="title" class="page-title">
+                Sign key of <html:span id="realname">...</html:span>
+            </description>
+
+            <label class="section" value="Select the user identities you want to sign" />
+            <scrollbox style="overflow: auto;" flex="1" align="start">
+                <vbox id="userIdentities" class="multipleidentities simple-listbox" flex="1" minheight="50">
+                </vbox>
+            </scrollbox>
+
+            <label class="section" value="Fingerprint" />
+            <label class="fingerprint" id="fingerprint" value="A041 4225 12CD C9AD A041 4A00 AADA C00A" />
+
+            <label class="section" value="Trust" />
+            <description>
+                How carefully have you checked that the fingerprint is correct?
+            </description>
+
+            <menulist>
+                <menupopup id="signature-level">
+                   <menuitem label="I will not answer. (default)"       value="0" />
+                   <menuitem label="I have not checked at all."         value="1" />
+                   <menuitem label="I have done casual checking."       value="2" />
+                   <menuitem label="I have done very careful checking." value="3" />
+                </menupopup>
+            </menulist>
+        </vbox>
+    </hbox>
+
+    <spacer height="10" />
+
+    <hbox>
+        <spacer flex="1" />
+        <button id="button-cancel" icon="" label="Cancel" />
+        <button id="button-sign" icon="" label="Sign" />
+    </hbox>
+</window>

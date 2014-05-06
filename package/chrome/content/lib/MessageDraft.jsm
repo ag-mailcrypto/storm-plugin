@@ -19,8 +19,6 @@ Components.utils.import("chrome://storm/content/lib/Key.jsm");
 Components.utils.import("resource:///modules/gloda/mimemsg.js");
   
 this.EXPORTED_SYMBOLS = [];
-
-//this.EXPORTED_SYMBOLS.push("Message");
 this.EXPORTED_SYMBOLS.push("MessageDraft");
 
 function MessageDraft() {
