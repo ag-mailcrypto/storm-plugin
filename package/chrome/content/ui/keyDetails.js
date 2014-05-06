@@ -113,7 +113,7 @@ var keyDetailsWindowFunctions = {
         });
 
     }
-}
+};
 
 $(window).ready(function() {
     keyDetailsWindowFunctions.init();

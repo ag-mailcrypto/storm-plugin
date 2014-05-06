@@ -61,7 +61,7 @@ function stormPrepareWizardWindow() {
 
 
 function fillMainIdentityDom() {
-    var idContainerOuter = $('#mainIdentity')
+    var idContainerOuter = $('#mainIdentity');
     var idContainerInner = idContainerOuter.find('menupopup');
     var selectedIdCaption = idContainerInner.val();
     
@@ -322,7 +322,7 @@ function getKeygenFormValues() {
             noExpiry: $("#noExpiry").attr('checked'),
             expireInput: $("#expireInput").val(),
             timeScale: $("#timeScale").val(),
-            comment: document.getElementById("keyComment").value,
+            comment: document.getElementById("keyComment").value
     };
     return formValues;
 }
