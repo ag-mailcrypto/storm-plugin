@@ -61,9 +61,14 @@ function handleEmailSending() {
     var isMIME = false;
     if (isMIME || !isMIME) {
         var newMessage = messageDraftObject.getCleartext();
-        if (true == encryptionIsPossible && messageDraftObject.sendSigned && messageDraftObject.sendEncrypted) {
+        if (encryptionIsPossible && messageDraftObject.sendSigned && messageDraftObject.sendEncrypted) {
+        	storm.log("Encrypting and Signing activated");
             newMessage = messageDraftObject.getSignedAndEncryptedMessageText();
+        } else if (encryptionIsPossible && messageDraftObject.sendEncrypted) {
+        	storm.log("Encrypting activated");
+            newMessage = messageDraftObject.getEncryptedMessageText("send");
         } else if (messageDraftObject.sendSigned) {
+        	storm.log("Signing activated");
             newMessage = messageDraftObject.getSignedMessageText();
         }
     }

@@ -153,21 +153,32 @@ MessageDraft.prototype.getEncryptedMessageText = function(sendType) {
  * @returns String
  */
 MessageDraft.prototype.getEncryptedMessageForRecipients = function() {
-    
+    storm.log("function getEncryptedMessageForRecipients() BEGIN");
     // Get a list of all the recipients, that have no valid key
     var recipientsWithoutKey = [];
-    $.each(this.recipientList, function(recipient) {
+    for (var i = 0; i < this.recipientList.length; i++){
+    	var recipient = this.recipientList[i];
         if (null != storm.keyring.getBestKeyForEmail(recipient)) {
             storm.log("Key found for: " + recipient);
-            recipientsWithoutKey.push(recipient);
         } else {
             storm.log("No Key found for: " + recipient);
+            recipientsWithoutKey.push(recipient);
         }
-    });
+    }
+    
+    // encrypt message if all recipients have keys
+    if(recipientsWithoutKey.length === 0){
+        this._buildRecipientKeyList();
+    	this.encryptedMessageForRecipients = storm.gpg.signEncryptContent(this.cleartext, null, this.encryptionKeyList);
+    }else{
+    	// TODO handle case of recipients without a key
+    }
+    storm.log("function getEncryptedMessageForRecipients() END");
+	return this.encryptedMessageForRecipients;
 }
 
 /**
- * 
+ * Encrypts with the privateKey!
  * @returns String
  */
 MessageDraft.prototype.getEncryptedMessageForDraft = function() {
@@ -205,15 +216,22 @@ MessageDraft.prototype.getSignedAndEncryptedMessageText = function() {
     storm.log("function getSignedAndEncryptedMessageText() BEGIN");
     findSecretKey = true;
     this.signKey = storm.keyring.getBestKeyForEmail(this.getSender(), findSecretKey);
-    this.encryptionKeyList = new Array();
-    var recipientList = this.getRecipientList();
-    for (var i = 0; i < recipientList.length; i++) {
-        recipient = recipientList[i];
-        firstEmail = storm.keyring.getBestKeyForEmail(recipient);
-        this.encryptionKeyList.push(firstEmail);
-    }
+    this._buildRecipientKeyList();
     this.signedAndEncryptedMessage = storm.gpg.signEncryptContent(this.cleartext, this.signKey, this.encryptionKeyList);
     storm.log("function getSignedAndEncryptedMessageText() END");
     return this.signedAndEncryptedMessage;    
+}
+
+/**
+ * Private method to gather the keys for all recipients
+ */
+MessageDraft.prototype._buildRecipientKeyList = function(){
+	this.encryptionKeyList = new Array();
+	var recipientList = this.getRecipientList();
+	for (var i = 0; i < recipientList.length; i++) {
+	    recipient = recipientList[i];
+	    firstEmail = storm.keyring.getBestKeyForEmail(recipient);
+	    this.encryptionKeyList.push(firstEmail);
+	}
 }
 
