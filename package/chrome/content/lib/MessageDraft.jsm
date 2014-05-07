@@ -21,6 +21,10 @@ Components.utils.import("resource:///modules/gloda/mimemsg.js");
 this.EXPORTED_SYMBOLS = [];
 this.EXPORTED_SYMBOLS.push("MessageDraft");
 
+/**
+ * Represents an email message.
+ * Is created on hitting the send button.
+ */
 function MessageDraft() {
     this.cleartext      = '';
     this.sender         = '';
@@ -28,11 +32,9 @@ function MessageDraft() {
 
     this.sendSigned = true;
     this.sendEncrypted = true;
+    
     this.saveSigned = false;
     this.saveEncrypted = false;
-    
-    this.encryptedMessageForRecipients = null;
-    this.encryptedMessageForDraft = null;
 }
 
 /**
@@ -165,16 +167,16 @@ MessageDraft.prototype.getEncryptedMessageForRecipients = function() {
             recipientsWithoutKey.push(recipient);
         }
     }
-    
+    var encryptedMessageForRecipients;
     // encrypt message if all recipients have keys
     if(recipientsWithoutKey.length === 0){
         this._buildRecipientKeyList();
-    	this.encryptedMessageForRecipients = storm.gpg.signEncryptContent(this.cleartext, null, this.encryptionKeyList);
+    	encryptedMessageForRecipients = storm.gpg.signEncryptContent(this.cleartext, null, this.encryptionKeyList);
     }else{
     	// TODO handle case of recipients without a key
     }
     storm.log("function getEncryptedMessageForRecipients() END");
-	return this.encryptedMessageForRecipients;
+	return encryptedMessageForRecipients;
 }
 
 /**
@@ -185,9 +187,9 @@ MessageDraft.prototype.getEncryptedMessageForDraft = function() {
     storm.log("function getEncryptedMessageForDraft() BEGIN");
     var findSecretKey = true;
     this.signKey = storm.keyring.getBestKeyForEmail(this.getSender(), findSecretKey);
-    this.signedAndEncryptedMessage = storm.gpg.signEncryptContent(this.cleartext, null, [this.signKey]);
+    var signedAndEncryptedMessage = storm.gpg.signEncryptContent(this.cleartext, null, [this.signKey]);
     storm.log("function getEncryptedMessageForDraft() END");
-    return this.signedAndEncryptedMessage;    
+    return signedAndEncryptedMessage;    
 }
 
 /**

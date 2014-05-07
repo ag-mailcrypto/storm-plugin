@@ -8,6 +8,9 @@ Components.utils.import("chrome://storm/content/lib/MessageDraft.jsm");
  * Register a Storm Message Draft as a global object
  */
 messageDraftObject = new MessageDraft();
+// TODO get values from config
+messageDraftObject.setSendEncrypted(true);
+messageDraftObject.setSendSigned(true);
 
 /**
  * Process the receivers email address, as soon as it changes
@@ -89,7 +92,6 @@ $(window).load(function() {
 
 var setSendConfig = function(){
     storm.log('setting send key config checkboxes');
-    // TODO get values from config
     document.getElementById("config-send-encrypted").setAttribute("checked", messageDraftObject.getSendEncrypted());
     document.getElementById("config-send-signed").setAttribute("checked", messageDraftObject.getSendSigned());
 };
