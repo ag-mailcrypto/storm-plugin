@@ -18,3 +18,19 @@ Components.utils.import("chrome://storm/content/lib/utils.jsm");
 function openStormConfiguration() {
     openBrowserTab(window, "chrome://storm/content/ui/preferences.xul");
 }
+
+var EnigmailWarning = {
+  onLoad: function() {
+    // initialization code
+	Application.getExtensions(function(extensions) {
+		if (!extensions.has("{847b3a00-7ab1-11d4-8f02-006008948af5}")) {
+		  window.alert("Enigmal isn't installed!");//" Version: " + extensions.get("{847b3a00-7ab1-11d4-8f02-006008948af5}").version);
+		}
+		else if (!extensions.get("{847b3a00-7ab1-11d4-8f02-006008948af5}").enabled) {
+		  window.alert("Enigmal isn't enabled!");
+		}
+	});
+  }
+};
+
+window.addEventListener("load", function(e) { EnigmailWarning.onLoad(e); }, false); 
