@@ -13,5 +13,5 @@ loadStormKeygenJs = function() {
     for (i=0; i < jsScriptFiles.length; i++) {
         loader.loadSubScript(jsScriptFiles[i]);
     }
-}
+};
 

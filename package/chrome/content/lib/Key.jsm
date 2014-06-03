@@ -13,13 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+Components.utils.import("chrome://storm/content/lib/global.jsm");
+Components.utils.import("chrome://storm/content/lib/gpg.jsm");
 Components.utils.import("chrome://storm/content/lib/utils.jsm");
 Components.utils.import("chrome://storm/content/lib/UserID.jsm");
-Components.utils.import("chrome://storm/content/lib/global.jsm");
 
 this.EXPORTED_SYMBOLS = [];
 
 this.EXPORTED_SYMBOLS.push("Key");
+
 /**
  * A Key object represents one record in the keyring, either a public key,
  * secret key, or subkey. It can have multiple userIDs and subKeys.

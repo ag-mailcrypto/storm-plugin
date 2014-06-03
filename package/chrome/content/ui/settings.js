@@ -36,7 +36,7 @@ var settingsWindowFunctions = {
         window.close();
     }
 
-}
+};
 
 
 $(window).ready(function() {
