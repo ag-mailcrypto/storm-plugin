@@ -62,7 +62,9 @@ storm.ui = {
 
 storm.log = function(msg) {
     // error console
-    Components.utils.reportError(msg);
+    // Components.utils.reportError(msg);
+	var aConsoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+	aConsoleService.logStringMessage(msg);
 
     // stdout
     var console = (Components.utils.import("resource://gre/modules/devtools/Console.jsm", {})).console;
