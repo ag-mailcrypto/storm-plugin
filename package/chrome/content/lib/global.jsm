@@ -13,10 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-Components.utils.import("chrome://storm/content/lib/Config.jsm");
-
+// Always place the EXPORTED_SYMBOLS array on the very top of your jsm file!  
 this.EXPORTED_SYMBOLS = ["storm"];
 var storm = {};
+
+Components.utils.import("chrome://storm/content/lib/Config.jsm");
 
 // load preferences branch
 var preferences = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
