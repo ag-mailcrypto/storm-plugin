@@ -61,7 +61,7 @@ function stormPrepareWizardWindow() {
 
 
 function fillMainIdentityDom() {
-    var idContainerOuter = $('#mainIdentity')
+    var idContainerOuter = $('#mainIdentity');
     var idContainerInner = idContainerOuter.find('menupopup');
     var selectedIdCaption = idContainerInner.val();
     
