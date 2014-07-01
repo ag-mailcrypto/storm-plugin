@@ -27,7 +27,10 @@ var EnigmailWarning = {
 		  window.alert("Enigmal isn't installed!");//" Version: " + extensions.get("{847b3a00-7ab1-11d4-8f02-006008948af5}").version);
 		}
 		else if (!extensions.get("{847b3a00-7ab1-11d4-8f02-006008948af5}").enabled) {
-		  window.alert("Enigmal isn't enabled!");
+		  window.alert("Enigmal isn't enabled stuff!");
+		  element = document.getElementById("storm-notification-box");
+		  element.style.color = 'blue';
+		  element.appendNotification("storm is better than enigmal" , 42 , '' , 'PRIORITY_INFO_LOW' , 0, 0 );
 		}
 	});
   }
